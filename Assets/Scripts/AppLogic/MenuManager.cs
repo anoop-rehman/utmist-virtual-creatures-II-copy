@@ -236,11 +236,15 @@ public class MenuManager : MonoBehaviour
         optimizationSettings.mp.mutateNeural = !lockNeuralMutations;
         optimizationSettings.mp.mutateMorphology = !lockPhysicalMutations;
         optimizationSettings.mp.maxSegments = maxSegments;
-        optimizationSettings.initialGenotype = templateCGSO == null ? null : templateCGSO.cg;
-        //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Fish.creature", false); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
-        
-        TrainingSettings ts = new TrainingSettings(optimizationSettings, new OceanEnvSettings());
-        //TrainingSettings ts = new TrainingSettings(optimizationSettings, new FloorEnvSettings());
+        //optimizationSettings.initialGenotype = templateCGSO == null ? null : templateCGSO.cg;
+        //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Leaper.creature", false); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
+        optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Users/anooprehman/Downloads/utmist-virtual-creatures/Creatures/aer-ignisflumen.creature", true); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
+        //optimizationSettings.initialGenotype = null;
+
+
+
+        //TrainingSettings ts = new TrainingSettings(optimizationSettings, new OceanEnvSettings());
+        TrainingSettings ts = new TrainingSettings(optimizationSettings, new FloorEnvSettings());
 
 
         KSSSave save = new KSSSave();

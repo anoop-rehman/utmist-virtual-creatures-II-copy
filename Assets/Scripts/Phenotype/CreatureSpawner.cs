@@ -73,6 +73,9 @@ public class CreatureSpawner : MonoBehaviour
     }
 
     public Creature SpawnCreature(CreatureGenotype cg, Vector3 position){
+
+        //test_cg = 
+
         return SpawnCreature(cg, position, null);
     }
 
