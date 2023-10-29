@@ -201,7 +201,7 @@ public class CreatureSpawner : MonoBehaviour
         public int otherReflectInt;
     }
 
-    private void InitialSegmentGrab(SegmentGrabData sgd, out Segment spawnedSegment,
+    private void SetupSegment(SegmentGrabData sgd, out Segment spawnedSegment,
         out GameObject spawnedSegmentGameObject,
         out bool runTerminalOnly)
     {
@@ -221,6 +221,7 @@ public class CreatureSpawner : MonoBehaviour
         spawnedSegmentGameObject.name = $"Segment {id}";
         spawnedSegment.SetId(id);
         spawnedSegment.SetCreature(sgd.c);
+        sgd.c.segments.Add(spawnedSegment);
 
         if (!sgd.isRoot)
         {
@@ -309,9 +310,6 @@ public class CreatureSpawner : MonoBehaviour
                 spawnedSegment.AddNeuron(addedNeuron);
             }
         }
-
-        // Add segment to creature
-        sgd.c.segments.Add(spawnedSegment);
     }
 
     private struct SpawnSegmentData
@@ -396,7 +394,7 @@ public class CreatureSpawner : MonoBehaviour
 
         // Spawn the segment
         if (segmentPool == null) InitializeSegmentObjectPool();
-        InitialSegmentGrab(sgd, out Segment spawnedSegment, out GameObject spawnedSegmentGameObject, out bool runTerminalOnly);
+        SetupSegment(sgd, out Segment spawnedSegment, out GameObject spawnedSegmentGameObject, out bool runTerminalOnly);
 
         // Check if self-intersecting TODO
 
@@ -411,9 +409,11 @@ public class CreatureSpawner : MonoBehaviour
                 }
                 var recursiveLimitClone = ssd.recursiveLimitValues.ToDictionary(entry => entry.Key, entry => entry.Value);
                 
+                // Clone the connection path for the child segments, create new path if root
                 var connectionPathClone = ssd.isRoot ? new List<byte>() : ssd.connectionPath.Select(item => item).ToList();
                 connectionPathClone.Add(connection.id);
 
+                // Create new data packet for recursion
                 SpawnSegmentData ssd2 = new SpawnSegmentData();
                 ssd2.cg = ssd.cg;
                 ssd2.c = ssd.c;
@@ -425,144 +425,13 @@ public class CreatureSpawner : MonoBehaviour
                 ssd2.parentReflect = otherReflectBool;
                 ssd2.connectionPath = connectionPathClone;
 
+                // Recurse to child segment
                 Segment childSegment = SpawnSegment(ssd2);
-                // Segment childSegment = SpawnSegment(ssd.cg, ssd.c, recursiveLimitClone, connection, spawnedSegmentGameObject, ssd.parentGlobalScale * ssd.myConnection.scale, otherReflectBool, connectionPathClone);
                 childSegment.SetParent(connection.id, spawnedSegment);
                 spawnedSegment.AddChild(connection.id, childSegment);
             }
         }
-
         return spawnedSegment;
-    }
-
-    // Non-root (ID 2>)
-    [Obsolete]
-    Segment SpawnSegment(CreatureGenotype cg, Creature c, Dictionary<byte, byte> recursiveLimitValues, SegmentConnectionGenotype myConnection, GameObject parentSegment, float parentGlobalScale, bool parentReflect, List<byte> connectionPath)
-    {
-        // Debug.Log(counter);
-        if (counter++ == 80) cg.SaveDebug();
-
-
-        // Find SegmentGenotype
-        byte id = myConnection.destination;
-        SegmentGenotype currentSegmentGenotype = cg.GetSegment(id);
-        if (currentSegmentGenotype == null) return null;
-
-        myConnection.EulerToQuat(); // Debug, remove later (this changes internal rotation storage stuff to make inspector editing easier.)
-
-        // Calculate required transform properties
-        Transform parentTransform = parentSegment.transform;
-
-        int reflectInt = myConnection.reflected ? -1 : 1;
-        int parentReflectInt = parentReflect ? -1 : 1;
-        bool otherReflectBool = myConnection.reflected ^ parentReflect;
-        int otherReflectInt = otherReflectBool ? -1 : 1;
-
-        Vector3 spawnPos = parentTransform.position +
-            parentTransform.right * parentTransform.localScale.x * myConnection.anchorX * reflectInt * parentReflectInt +
-            parentTransform.up * parentTransform.localScale.y * (myConnection.anchorY + 0.5f) +
-            parentTransform.forward * parentTransform.localScale.z * myConnection.anchorZ;
-
-        Quaternion spawnAngle = Quaternion.identity;
-        spawnAngle *= parentTransform.rotation;
-        spawnAngle *= new Quaternion(myConnection.orientationX, myConnection.orientationY, myConnection.orientationZ, myConnection.orientationW);
-
-        if (otherReflectBool)
-        {
-            spawnAngle = Quaternion.LookRotation(Vector3.Reflect(spawnAngle * Vector3.forward, Vector3.right), Vector3.Reflect(spawnAngle * Vector3.up, Vector3.right));
-        }
-
-        // Package the data
-        SegmentGrabData sgd = new SegmentGrabData();
-        sgd.cg = cg;
-        sgd.sg = currentSegmentGenotype;
-        sgd.pos = spawnPos;
-        sgd.rot = spawnAngle;
-        sgd.c = c;
-        sgd.parentScale = parentGlobalScale * myConnection.scale;
-        sgd.recursiveLimitValues = recursiveLimitValues;
-        sgd.connectionPath = connectionPath;
-        sgd.parentSegmentRigidbody = parentSegment.GetComponent<Rigidbody>();
-        sgd.isRoot = false;
-        sgd.otherReflectInt = otherReflectInt;
-
-        // Spawn the segment
-        InitialSegmentGrab(sgd, out Segment spawnedSegment, out GameObject spawnedSegmentGameObject, out bool runTerminalOnly);
-
-        // Check if self-intersecting TODO
-
-        // Trace outward
-        foreach (SegmentConnectionGenotype connection in currentSegmentGenotype.connections)
-        {
-            if (recursiveLimitValues[connection.destination] > 0)
-            {
-                if (!runTerminalOnly && connection.terminalOnly)
-                {
-                    continue;
-                }
-                var recursiveLimitClone = recursiveLimitValues.ToDictionary(entry => entry.Key, entry => entry.Value);
-                var connectionPathClone = connectionPath.Select(item => (byte)item).ToList();
-                connectionPathClone.Add(connection.id);
-                Segment childSegment = SpawnSegment(cg, c, recursiveLimitClone, connection, spawnedSegmentGameObject, parentGlobalScale * myConnection.scale, otherReflectBool, connectionPathClone);
-                childSegment.SetParent(connection.id, spawnedSegment);
-                spawnedSegment.AddChild(connection.id, childSegment);
-            }
-        }
-
-        return spawnedSegment;
-    }
-
-    // Root (ID 1)
-    [Obsolete]
-    void SpawnSegment(CreatureGenotype cg, Creature c, Dictionary<byte, byte> recursiveLimitValues, Vector3 position)
-    {
-        // Debug.Log("S: ROOT");
-
-        // Find SegmentGenotype
-        byte id = 1;
-        SegmentGenotype currentSegmentGenotype = cg.GetSegment(id);
-        if (currentSegmentGenotype == null) return;
-
-        cg.EulerToQuat(); // Debug, remove later (this changes internal rotation storage stuff to make inspector editing easier.)
-
-        // Calculate required transform properties
-        Quaternion spawnAngle = new Quaternion(cg.orientationX, cg.orientationY, cg.orientationZ, cg.orientationW);
-        List<byte> connectionPath = new List<byte>();
-
-        // Package the data
-        SegmentGrabData sgd = new SegmentGrabData();
-        sgd.cg = cg;
-        sgd.sg = currentSegmentGenotype;
-        sgd.pos = position;
-        sgd.rot = spawnAngle;
-        sgd.c = c;
-        sgd.parentScale = 1f;
-        sgd.recursiveLimitValues = recursiveLimitValues;
-        sgd.connectionPath = connectionPath;
-        sgd.parentSegmentRigidbody = null;
-        sgd.isRoot = true;
-        sgd.otherReflectInt = 1;
-
-        // Spawn the segment
-        if (segmentPool == null) InitializeSegmentObjectPool(); // Check object pool status
-        InitialSegmentGrab(sgd, out Segment spawnedSegment, out GameObject spawnedSegmentGameObject, out bool runTerminalOnly);
-
-        // Trace outward
-        foreach (SegmentConnectionGenotype connection in currentSegmentGenotype.connections)
-        {
-            if (recursiveLimitValues[connection.destination] > 0)
-            {
-                if (!runTerminalOnly && connection.terminalOnly)
-                {
-                    continue;
-                }
-                var recursiveLimitClone = recursiveLimitValues.ToDictionary(entry => entry.Key, entry => entry.Value);
-                Segment childSegment = SpawnSegment(cg, c, recursiveLimitClone, connection, spawnedSegmentGameObject, 1, false, new List<byte>() { connection.id });
-                childSegment.SetCreature(c);
-                childSegment.SetParent(connection.id, spawnedSegment);
-                spawnedSegment.AddChild(connection.id, childSegment);
-            }
-        }
     }
 
     void OnDrawGizmosSelected()
