@@ -143,6 +143,11 @@ public class SegmentConnectionGenotype
     public float orientationZ;
     [HideInInspector]
     public float orientationW;
+    public Quaternion orientation {
+        get {
+            return new Quaternion(orientationX, orientationY, orientationZ, orientationW);
+        }
+    }
 
     // This is only used for player design! Not for mutations...?
     public float eulerX;
@@ -353,6 +358,13 @@ public class CreatureGenotype
     public float orientationZ;
     [HideInInspector]
     public float orientationW;
+    public Quaternion orientation
+    {
+        get
+        {
+            return new Quaternion(orientationX, orientationY, orientationZ, orientationW);
+        }
+    }
 
     // this is only used for player design
     public float eulerX;

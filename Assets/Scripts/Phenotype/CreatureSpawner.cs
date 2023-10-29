@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,7 +117,15 @@ public class CreatureSpawner : MonoBehaviour
             }
         }
 
-        SpawnSegment(cg, c, recursiveLimitInitial, position);
+        SpawnSegmentData ssd = new SpawnSegmentData();
+        ssd.cg = cg;
+        ssd.c = c;
+        ssd.recursiveLimitValues = recursiveLimitInitial;
+        ssd.isRoot = true;
+        ssd.position = position;
+
+        SpawnSegment(ssd);
+        //SpawnSegment(cg, c, recursiveLimitInitial, position);
         c.InitializeCreature(fitness);
         return c;
     }
@@ -305,7 +314,129 @@ public class CreatureSpawner : MonoBehaviour
         sgd.c.segments.Add(spawnedSegment);
     }
 
+    private struct SpawnSegmentData
+    {
+        public CreatureGenotype cg;
+        public Creature c;
+        public Dictionary<byte, byte> recursiveLimitValues;
+        public bool isRoot;
+        public Vector3 position;
+        public SegmentConnectionGenotype myConnection;
+        public GameObject parentSegment;
+        public float? parentGlobalScale;
+        public bool? parentReflect;
+        public List<byte> connectionPath;
+    }
+    Segment SpawnSegment(SpawnSegmentData ssd)
+    {
+        // Debug.Log(counter);
+        if (ssd.isRoot) counter = 0;
+        if (counter++ == 80) ssd.cg.SaveDebug();
+
+        // Find SegmentGenotype
+        byte id = ssd.isRoot ? (byte)1 : ssd.myConnection.destination;
+        SegmentGenotype currentSegmentGenotype = ssd.cg.GetSegment(id);
+        if (currentSegmentGenotype == null) return null;
+
+        // Calculate required transform properties
+        SegmentGrabData sgd = new SegmentGrabData();
+        Vector3 spawnPos; Quaternion spawnAngle; int otherReflectInt;
+        float parentScale; bool otherReflectBool;
+        if (ssd.isRoot)
+        {
+            ssd.cg.EulerToQuat(); // Debug, remove later (this changes internal rotation storage stuff to make inspector editing easier.)
+            spawnPos = ssd.position;
+            spawnAngle = ssd.cg.orientation;
+            otherReflectInt = 1;
+            otherReflectBool = false;
+            List<byte> connectionPath = new List<byte>();
+
+            parentScale = 1f;
+        }
+        else
+        {
+            ssd.myConnection.EulerToQuat(); // Debug, remove later (this changes internal rotation storage stuff to make inspector editing easier.)
+
+            Transform parentTransform = ssd.parentSegment.transform;
+
+            int reflectInt = ssd.myConnection.reflected ? -1 : 1;
+            int parentReflectInt = ssd.parentReflect.Value ? -1 : 1;
+            otherReflectBool = ssd.myConnection.reflected ^ ssd.parentReflect.Value;
+            otherReflectInt = otherReflectBool ? -1 : 1;
+
+            spawnPos = parentTransform.position +
+                parentTransform.right * parentTransform.localScale.x * ssd.myConnection.anchorX * reflectInt * parentReflectInt +
+                parentTransform.up * parentTransform.localScale.y * (ssd.myConnection.anchorY + 0.5f) +
+                parentTransform.forward * parentTransform.localScale.z * ssd.myConnection.anchorZ;
+
+            spawnAngle = Quaternion.identity;
+            spawnAngle *= parentTransform.rotation;
+            spawnAngle *= ssd.myConnection.orientation;
+            if (otherReflectBool)
+            {
+                spawnAngle = Quaternion.LookRotation(Vector3.Reflect(spawnAngle * Vector3.forward, Vector3.right), Vector3.Reflect(spawnAngle * Vector3.up, Vector3.right));
+            }
+
+            parentScale = ssd.parentGlobalScale.Value * ssd.myConnection.scale;
+        }
+
+        // Package the data
+        
+        sgd.cg = ssd.cg;
+        sgd.sg = currentSegmentGenotype;
+        sgd.pos = spawnPos;
+        sgd.rot = spawnAngle;
+        sgd.c = ssd.c;
+        sgd.parentScale = parentScale;
+        sgd.recursiveLimitValues = ssd.recursiveLimitValues;
+        sgd.connectionPath = ssd.connectionPath;
+        sgd.parentSegmentRigidbody = ssd.parentSegment?.GetComponent<Rigidbody>();
+        sgd.isRoot = ssd.isRoot;
+        sgd.otherReflectInt = otherReflectInt;
+
+        // Spawn the segment
+        if (segmentPool == null) InitializeSegmentObjectPool();
+        InitialSegmentGrab(sgd, out Segment spawnedSegment, out GameObject spawnedSegmentGameObject, out bool runTerminalOnly);
+
+        // Check if self-intersecting TODO
+
+        // Trace outward
+        foreach (SegmentConnectionGenotype connection in currentSegmentGenotype.connections)
+        {
+            if (ssd.recursiveLimitValues[connection.destination] > 0)
+            {
+                if (!runTerminalOnly && connection.terminalOnly)
+                {
+                    continue;
+                }
+                var recursiveLimitClone = ssd.recursiveLimitValues.ToDictionary(entry => entry.Key, entry => entry.Value);
+                
+                var connectionPathClone = ssd.isRoot ? new List<byte>() : ssd.connectionPath.Select(item => item).ToList();
+                connectionPathClone.Add(connection.id);
+
+                SpawnSegmentData ssd2 = new SpawnSegmentData();
+                ssd2.cg = ssd.cg;
+                ssd2.c = ssd.c;
+                ssd2.recursiveLimitValues = recursiveLimitClone;
+                ssd2.myConnection = connection;
+                ssd2.parentSegment = spawnedSegmentGameObject;
+
+                ssd2.parentGlobalScale = parentScale;
+                ssd2.parentReflect = otherReflectBool;
+                ssd2.connectionPath = connectionPathClone;
+
+                Segment childSegment = SpawnSegment(ssd2);
+                // Segment childSegment = SpawnSegment(ssd.cg, ssd.c, recursiveLimitClone, connection, spawnedSegmentGameObject, ssd.parentGlobalScale * ssd.myConnection.scale, otherReflectBool, connectionPathClone);
+                childSegment.SetParent(connection.id, spawnedSegment);
+                spawnedSegment.AddChild(connection.id, childSegment);
+            }
+        }
+
+        return spawnedSegment;
+    }
+
     // Non-root (ID 2>)
+    [Obsolete]
     Segment SpawnSegment(CreatureGenotype cg, Creature c, Dictionary<byte, byte> recursiveLimitValues, SegmentConnectionGenotype myConnection, GameObject parentSegment, float parentGlobalScale, bool parentReflect, List<byte> connectionPath)
     {
         // Debug.Log(counter);
@@ -382,16 +513,17 @@ public class CreatureSpawner : MonoBehaviour
     }
 
     // Root (ID 1)
+    [Obsolete]
     void SpawnSegment(CreatureGenotype cg, Creature c, Dictionary<byte, byte> recursiveLimitValues, Vector3 position)
     {
-        //Debug.Log("S: ROOT");
+        // Debug.Log("S: ROOT");
 
         // Find SegmentGenotype
         byte id = 1;
         SegmentGenotype currentSegmentGenotype = cg.GetSegment(id);
         if (currentSegmentGenotype == null) return;
 
-        cg.EulerToQuat(); //Debug, remove later (this changes internal rotation storage stuff to make inspector editing easier.)
+        cg.EulerToQuat(); // Debug, remove later (this changes internal rotation storage stuff to make inspector editing easier.)
 
         // Calculate required transform properties
         Quaternion spawnAngle = new Quaternion(cg.orientationX, cg.orientationY, cg.orientationZ, cg.orientationW);
