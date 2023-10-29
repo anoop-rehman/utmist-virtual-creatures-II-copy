@@ -232,6 +232,12 @@ public class SegmentGenotype
     public byte r;
     public byte g;
     public byte b;
+    public Color color
+    {
+        get {
+            return new Color(r / 255f, g / 255f, b / 255f);
+        }
+    }
 
     public byte id; // 0-ghost, 1-root, 2>-else
     public List<SegmentConnectionGenotype> connections;
