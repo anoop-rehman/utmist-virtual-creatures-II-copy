@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 public class CreatureSpawner : MonoBehaviour
 {
@@ -17,6 +20,7 @@ public class CreatureSpawner : MonoBehaviour
     public CreatureGenotype creatureGenotype;
     public List<CreatureGenotype> creatureGenotypeHistory;
 
+    private static ObjectPool<Segment> segmentPool;
     public static CreatureSpawner instance;
 
     private void Awake()
@@ -117,18 +121,31 @@ public class CreatureSpawner : MonoBehaviour
         return c;
     }
 
-    public int counter = 0;
+    // Keeps track of segment count, used for auto-flagging strange creatures.
+    [SerializeField] private int counter = 0;
+
+    public void ReleaseCreature(Creature c){
+        Segment[] segments = c.transform.GetComponentsInChildren<Segment>();
+        if (segments != null)
+        {
+            foreach (Segment segment in segments)
+            {
+                segmentPool.Release(segment);
+            }
+        }
+        Destroy(c.gameObject);
+    }
 
     // Non-root (ID 2>)
     Segment SpawnSegment(CreatureGenotype cg, Creature c, Dictionary<byte, byte> recursiveLimitValues, SegmentConnectionGenotype myConnection, GameObject parentSegment, float parentGlobalScale, bool parentReflect, List<byte> connectionPath)
     {
         counter++;
-        //Debug.Log(counter);
+        // Debug.Log(counter);
         if (counter == 80){
             cg.SaveDebug();
         }
 
-        myConnection.EulerToQuat(); //Debug, remove later (this changes internal rotation storage stuff to make inspector editing easier.)
+        myConnection.EulerToQuat(); // Debug, remove later (this changes internal rotation storage stuff to make inspector editing easier.)
 
 
         byte id = myConnection.destination;
@@ -171,12 +188,18 @@ public class CreatureSpawner : MonoBehaviour
             //spawnAngle *= Quaternion.Euler(parentTransform.up * 180);
         }
         //spawnAngle *= parentTransform.rotation;
-        GameObject spawnedSegmentGameObject = Instantiate(segmentPrefab, spawnPos, spawnAngle);
+        // GameObject spawnedSegmentGameObject = Instantiate(segmentPrefab, spawnPos, spawnAngle);
+        // Segment spawnedSegment = spawnedSegmentGameObject.GetComponent<Segment>();
+
+        Segment spawnedSegment = segmentPool.Get();
+        GameObject spawnedSegmentGameObject = spawnedSegment.gameObject;
+        spawnedSegmentGameObject.transform.position = spawnPos;
+        spawnedSegmentGameObject.transform.rotation = spawnAngle;
 
         spawnedSegmentGameObject.transform.parent = c.transform;
         spawnedSegmentGameObject.name = $"Segment {currentSegmentGenotype.id}";
 
-        Segment spawnedSegment = spawnedSegmentGameObject.GetComponent<Segment>();
+        
         spawnedSegment.SetPath(connectionPath);
         spawnedSegment.SetId(id);
 
@@ -195,94 +218,36 @@ public class CreatureSpawner : MonoBehaviour
         Rigidbody rb = spawnedSegmentGameObject.GetComponent<Rigidbody>();
         rb.mass *= dimVector.x * dimVector.y * dimVector.z;
         
+        Rigidbody parentSegmentRigidbody = parentSegment.GetComponent<Rigidbody>();
         switch (currentSegmentGenotype.jointType)
         {
             case (JointType.Fixed):
                 {
-                    FixedJoint j = spawnedSegmentGameObject.AddComponent<FixedJoint>();
-                    j.connectedBody = parentSegment.GetComponent<Rigidbody>();
+                    spawnedSegment.AttachFixedJoint(parentSegmentRigidbody);
                 }
                 break;
 
             case (JointType.HingeX):
                 {
-                    HingeJoint j = spawnedSegmentGameObject.AddComponent<HingeJoint>();
-                    j.connectedBody = parentSegment.GetComponent<Rigidbody>();
-                    j.axis = new Vector3(1, 0, 0);
-                    j.useMotor = true;
-                    JointMotor motor = j.motor;
-                    motor.targetVelocity = 0;
-                    motor.force = 400;
-                    j.motor = motor;
-
-                    JointLimits limits = j.limits;
-                    limits.min = -60f;
-                    limits.bounciness = 0;
-                    limits.bounceMinVelocity = 0;
-                    limits.max = 60f;
-                    j.limits = limits;
-                    j.useLimits = true;
+                    spawnedSegment.AttachHingeJoint(new Vector3(1, 0, 0), parentSegmentRigidbody);
                 }
                 break;
 
             case (JointType.HingeY):
                 {
-                    HingeJoint j = spawnedSegmentGameObject.AddComponent<HingeJoint>();
-                    j.connectedBody = parentSegment.GetComponent<Rigidbody>();
-                    j.axis = new Vector3(0, 1 * otherReflectInt, 0);
-                    j.useMotor = true;
-                    JointMotor motor = j.motor;
-                    motor.targetVelocity = 0;
-                    motor.force = 400;
-                    j.motor = motor;
-
-                    JointLimits limits = j.limits;
-                    limits.min = -60f;
-                    limits.bounciness = 0;
-                    limits.bounceMinVelocity = 0;
-                    limits.max = 60f;
-                    j.limits = limits;
-                    j.useLimits = true;
+                    spawnedSegment.AttachHingeJoint(new Vector3(0, 1 * otherReflectInt, 0), parentSegmentRigidbody);
                 }
                 break;
 
             case (JointType.HingeZ):
                 {
-                    HingeJoint j = spawnedSegmentGameObject.AddComponent<HingeJoint>();
-                    j.connectedBody = parentSegment.GetComponent<Rigidbody>();
-                    j.axis = new Vector3(0, 0, 1 * otherReflectInt);
-                    j.useMotor = true;
-                    JointMotor motor = j.motor;
-                    motor.targetVelocity = 0;
-                    motor.force = 400;
-                    j.motor = motor;
-
-                    JointLimits limits = j.limits;
-                    limits.min = -60f;
-                    limits.bounciness = 0;
-                    limits.bounceMinVelocity = 0;
-                    limits.max = 60f;
-                    j.limits = limits;
-                    j.useLimits = true;
+                    spawnedSegment.AttachHingeJoint(new Vector3(0, 0, 1 * otherReflectInt), parentSegmentRigidbody);
                 }
                 break;
 
             case (JointType.Spherical):
                 {
-                    ConfigurableJoint j = spawnedSegmentGameObject.AddComponent<ConfigurableJoint>();
-                    j.connectedBody = parentSegment.GetComponent<Rigidbody>();
-                    j.xMotion = ConfigurableJointMotion.Locked;
-                    j.yMotion = ConfigurableJointMotion.Locked;
-                    j.zMotion = ConfigurableJointMotion.Locked;
-                    JointDrive jdx = j.angularXDrive;
-                    jdx.positionSpring = 99999;
-                    jdx.positionDamper = 99999;
-                    j.angularXDrive = jdx;
-                    JointDrive jdyz = j.angularYZDrive;
-                    jdyz.positionSpring = 99999;
-                    jdyz.positionDamper = 99999;
-                    j.angularYZDrive = jdyz;
-                    j.targetAngularVelocity = new Vector3(0, 0, 0);
+                    spawnedSegment.AttachSphericalJoint(parentSegmentRigidbody);
                 }
                 break;
 
@@ -365,11 +330,59 @@ public class CreatureSpawner : MonoBehaviour
         cg.EulerToQuat(); //Debug, remove later (this changes internal rotation storage stuff to make inspector editing easier.)
         Quaternion spawnAngle = new Quaternion(cg.orientationX, cg.orientationY, cg.orientationZ, cg.orientationW);
         //Debug.Log(spawnAngle);
-        GameObject spawnedSegmentGameObject = Instantiate(segmentPrefab, position, spawnAngle);
+
+        // Handle Object Pool for Segments
+        if (segmentPool == null)
+        {
+            Segment segmentPrefab = Resources.Load<Segment>("Pool Prefabs/Segment");
+
+            int maxSegments;
+            OptimizationSettings os = EvolutionSettingsPersist.instance.save.ts.optimizationSettings;
+            if (os.stage == TrainingStage.KSS){
+                KSSSettings kss = (KSSSettings)os;
+                maxSegments = kss.mp.maxSegments;
+            }
+            else
+            {
+                RLSettings rl = (RLSettings)os;
+                // maxSegments = rl.initialGenotype.GetSegmentCount(); // This method doesn't exist.
+                maxSegments = 20;
+            }
+            int envCount = os.numEnvs;
+
+            segmentPool = new ObjectPool<Segment>(() =>
+            {
+                Segment segment = Instantiate(segmentPrefab);
+                DontDestroyOnLoad(segment.gameObject);
+                return segment;
+            }, segment =>
+            {
+                SceneManager.MoveGameObjectToScene(segment.gameObject, SceneManager.GetActiveScene());
+                segment.Initialize();
+                segment.gameObject.SetActive(true);
+            }, segment =>
+            {
+                segment.gameObject.SetActive(false);
+                segment.transform.parent = null;
+                segment.Release();
+                DontDestroyOnLoad(segment.gameObject);
+            }, segment =>
+            {
+                Destroy(segment.gameObject);
+            }, true, envCount * Mathf.Min(5, maxSegments), maxSegments * envCount);
+        }
+
+        // GameObject spawnedSegmentGameObject = Instantiate(segmentPrefab, position, spawnAngle);
+        // Segment spawnedSegment = spawnedSegmentGameObject.GetComponent<Segment>();
+        Segment spawnedSegment = segmentPool.Get();
+        GameObject spawnedSegmentGameObject = spawnedSegment.gameObject;
+        spawnedSegmentGameObject.transform.position = position;
+        spawnedSegmentGameObject.transform.rotation = spawnAngle;
+
         spawnedSegmentGameObject.transform.parent = c.transform;
         spawnedSegmentGameObject.name = $"Segment {currentSegmentGenotype.id}";
 
-        Segment spawnedSegment = spawnedSegmentGameObject.GetComponent<Segment>();
+        
         spawnedSegment.SetId(1);
         spawnedSegment.SetCreature(c);
 

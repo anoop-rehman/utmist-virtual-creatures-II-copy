@@ -231,14 +231,15 @@ public class MenuManager : MonoBehaviour
     {
         // Compile data from settings window into TrainingSave
         KSSSettings optimizationSettings = new KSSSettings(populationSize, totalGenerations, ratioNumerator / ratioDenominator);
-        optimizationSettings.num_envs = envCount;
+        optimizationSettings.numEnvs = envCount;
         optimizationSettings.mp = new MutateGenotype.MutationPreferenceSetting();
         optimizationSettings.mp.mutateNeural = !lockNeuralMutations;
         optimizationSettings.mp.mutateMorphology = !lockPhysicalMutations;
         optimizationSettings.mp.maxSegments = maxSegments;
-        //optimizationSettings.initialGenotype = templateCGSO == null ? null : templateCGSO.cg;
+        // This line takes from a template creature genotype found in a Unity PropertyDrawer
+        optimizationSettings.initialGenotype = templateCGSO == null ? null : templateCGSO.cg;
         //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Leaper.creature", false); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
-        optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Users/anooprehman/Downloads/utmist-virtual-creatures/Creatures/aer-ignisflumen.creature", true); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
+        //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Users/anooprehman/Downloads/utmist-virtual-creatures/Creatures/aer-ignisflumen.creature", true); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
         //optimizationSettings.initialGenotype = null;
 
 
