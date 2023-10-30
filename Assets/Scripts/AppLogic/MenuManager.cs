@@ -87,8 +87,7 @@ public class MenuManager : MonoBehaviour
 
     public void ShowZoo()
     {
-        menus.ForEach(o => o.SetActive(false));
-        editEvolution.SetActive(true);
+        SceneManager.LoadScene("Zoo Menu");
     }
 
     public void ShowOptions()
