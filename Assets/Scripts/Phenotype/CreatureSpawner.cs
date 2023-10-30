@@ -337,7 +337,6 @@ public class CreatureSpawner : MonoBehaviour
         if (currentSegmentGenotype == null) return null;
 
         // Calculate required transform properties
-        SegmentGrabData sgd = new SegmentGrabData();
         Vector3 spawnPos; Quaternion spawnAngle; int otherReflectInt;
         float parentScale; bool otherReflectBool;
         if (ssd.isRoot)
@@ -379,7 +378,7 @@ public class CreatureSpawner : MonoBehaviour
         }
 
         // Package the data
-        
+        SegmentGrabData sgd = new SegmentGrabData();
         sgd.cg = ssd.cg;
         sgd.sg = currentSegmentGenotype;
         sgd.pos = spawnPos;
@@ -440,5 +439,4 @@ public class CreatureSpawner : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position + spawnPos, 0.1f);
     }
-
 }

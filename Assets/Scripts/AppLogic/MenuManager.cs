@@ -75,7 +75,7 @@ public class MenuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        menus = new List<GameObject>() { mainMenu, optionsMenu, creditsMenu, chooseEvolution, editEvolution, evolutionSettingsMenu };
+        menus = new List<GameObject>() { mainMenu, optionsMenu, creditsMenu, chooseEvolution, editEvolution, evolutionSettingsMenu, viewEvolution.gameObject };
         ShowMainMenu();
     }
 
@@ -122,17 +122,41 @@ public class MenuManager : MonoBehaviour
         string[] fileArray = Directory.GetFiles(OptionsPersist.instance.VCSaves, "*.save");
         chooseItems = new List<EvolutionChooseItem>();
 
-        float height = -10f;
+        float spacing = 10f;  // spacing between items
+        float itemHeight = 100f;  // height of each item, adjust as necessary
+        float totalHeight = fileArray.Length * (itemHeight + spacing);  // total height needed for all items
+
         RectTransform rt = evolutionSelectionContent.transform.GetComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(rt.sizeDelta.x, fileArray.Length * 110f);
+        rt.sizeDelta = new Vector2(rt.sizeDelta.x, totalHeight);
+
+        float currentYPosition = -spacing;  // start from the top with a little margin
+
+        foreach (Transform child in evolutionSelectionContent.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
         //evolutionSelectionContent.transform.localScale = scale;
         foreach (string filePath in fileArray)
         {
-            EvolutionChooseItem evi = Instantiate(evolutionChooseItemPrefab, new Vector3(evolutionSelectionContent.transform.position.x, height, 0f), Quaternion.identity);
-            evi.transform.SetParent(evolutionSelectionContent.transform);
+            EvolutionChooseItem evi = Instantiate(evolutionChooseItemPrefab, evolutionSelectionContent.transform);
+            evi.transform.SetParent(evolutionSelectionContent.transform, false);
+            evi.transform.localScale = Vector3.one;
+            // evi.transform.localPosition = new Vector3(0, currentYPosition, 0f);
+
+            // Set the anchor to top-middle
+            RectTransform eviRt = evi.GetComponent<RectTransform>();
+            eviRt.anchorMin = new Vector2(0.5f, 1);
+            eviRt.anchorMax = new Vector2(0.5f, 1);
+            eviRt.pivot = new Vector2(0.5f, 1);
+
+            eviRt.sizeDelta = new Vector2(eviRt.sizeDelta.x, itemHeight);  // ensure the item has the correct height
+            eviRt.anchoredPosition = new Vector2(0, currentYPosition);  // set anchored position
+
             evi.Setup(filePath);
             chooseItems.Add(evi);
-            height -= 100f;
+
+            currentYPosition -= (itemHeight + spacing);  // move the position downward for the next item
             Debug.Log(filePath);
         }
 
