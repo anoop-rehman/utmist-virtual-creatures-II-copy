@@ -65,10 +65,10 @@ public class WalkingFitness : Fitness
             Debug.Log("sus!!!");
         }
 
-        //reward += currSpeed;
+        reward += currSpeed;
         // TODO: currently this just fuckin uhhhh doesnt move and reward goes up
         // fix lmaoooo
-        reward += 1 / (currCom - targetPos).magnitude;
+        reward -= 0.1f * (currCom - targetPos).magnitude;
 
         // Continuing movement is rewarded over that from a single initial push, by giving the velocities during the final phase of the test period a stronger relative weight in the total fitness value
         // We do not implement this because I am lazy

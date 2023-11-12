@@ -12,7 +12,8 @@ public class FloorEnvSettings : EnvironmentSettings {
     public override float sizeX { get { return 5; } }
     public override float sizeZ { get { return 5; } }
     //public override float maxTime { get { return 8; } }
-    public override float maxTime { get { return 16; } }
+    // TODO: LET THE USER SET THIS IN THE CREATE ENV UI LMAOO
+    public override float maxTime { get { return 35; } }
 }
 
 public class FloorEnv : Environment
