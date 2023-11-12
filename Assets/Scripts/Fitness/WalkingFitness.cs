@@ -15,12 +15,17 @@ public class WalkingFitness : Fitness
     float currSpeed = 0f;
     Creature creature;
 
+    Vector3 targetPos;
+
     // Start is called before the first frame update
     void Start()
     {
-        //creature = myEnvironment.currentCreature;
-        //currCom = creature.GetCentreOfMass();
+        creature = myEnvironment.currentCreature;
+        if (creature == null)
+            return;
+        Vector3 firstCom = creature.GetCentreOfMass();
         Reset();
+        targetPos = firstCom + Vector3.forward * 3;
     }
 
     // Update is called once per frame
@@ -60,7 +65,10 @@ public class WalkingFitness : Fitness
             Debug.Log("sus!!!");
         }
 
-        reward += currSpeed;
+        //reward += currSpeed;
+        // TODO: currently this just fuckin uhhhh doesnt move and reward goes up
+        // fix lmaoooo
+        reward += 1 / (currCom - targetPos).magnitude;
 
         // Continuing movement is rewarded over that from a single initial push, by giving the velocities during the final phase of the test period a stronger relative weight in the total fitness value
         // We do not implement this because I am lazy
