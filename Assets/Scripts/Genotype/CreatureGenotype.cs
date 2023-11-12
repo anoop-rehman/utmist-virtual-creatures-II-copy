@@ -230,7 +230,7 @@ public class SegmentGenotype
 
     [Range(0.05f, 3f)]
     public float dimensionX; // Random.Range(0.05f, 3f);
-    [Range(0.05f, 3f)]
+    [Range(2f, 3f)]
     public float dimensionY; // Random.Range(0.05f, 3f);
     [Range(0.05f, 3f)]
     public float dimensionZ; // Random.Range(0.05f, 3f);

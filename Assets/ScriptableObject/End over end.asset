@@ -408,7 +408,7 @@ MonoBehaviour:
       dimensionX: 0.53729045
       dimensionY: 0.59719765
       dimensionZ: 1.1128123
-      jointType: 1
+      jointType: 5
     orientationX: 0
     orientationY: 0
     orientationZ: 0

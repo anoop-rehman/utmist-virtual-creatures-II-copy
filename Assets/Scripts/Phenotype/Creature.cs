@@ -55,6 +55,7 @@ public class Neuron
             //Debug.Log("Effector output" + a);
             if (effectorJoint is HingeJoint){
                 HingeJoint hj = (HingeJoint)effectorJoint;
+
                 JointMotor motor = hj.motor;
                 motor.targetVelocity = 10f * Mathf.Clamp(a, -40f, 40f);
                 hj.motor = motor;

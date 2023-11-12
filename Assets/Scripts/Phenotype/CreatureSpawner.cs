@@ -8,6 +8,7 @@ public class CreatureSpawner : MonoBehaviour
     [Header("Prefabs")]
     public Creature creaturePrefab;
     public GameObject segmentPrefab;
+    public GameObject jointPrefab;
 
     [Header("Settings")]
     [SerializeField]
@@ -150,9 +151,9 @@ public class CreatureSpawner : MonoBehaviour
 
 
         Vector3 spawnPos = parentTransform.position +
-            parentTransform.right * parentTransform.localScale.x * myConnection.anchorX * reflectInt * parentReflectInt +
-            parentTransform.up * parentTransform.localScale.y * (myConnection.anchorY + 0.5f) +
-            parentTransform.forward * parentTransform.localScale.z * myConnection.anchorZ;
+            parentTransform.right * parentTransform.localScale.x * myConnection.anchorX * reflectInt * parentReflectInt*1.5f +
+            parentTransform.up * parentTransform.localScale.y * (myConnection.anchorY + 0.5f)* 1.5f +
+            parentTransform.forward * parentTransform.localScale.z * myConnection.anchorZ* 1.5f;
 
 
         Quaternion spawnAngle = Quaternion.identity;
@@ -194,7 +195,7 @@ public class CreatureSpawner : MonoBehaviour
 
         Rigidbody rb = spawnedSegmentGameObject.GetComponent<Rigidbody>();
         rb.mass *= dimVector.x * dimVector.y * dimVector.z;
-        
+
         switch (currentSegmentGenotype.jointType)
         {
             case (JointType.Fixed):
@@ -216,10 +217,10 @@ public class CreatureSpawner : MonoBehaviour
                     j.motor = motor;
 
                     JointLimits limits = j.limits;
-                    limits.min = -60f;
+                    limits.min = 0f;
                     limits.bounciness = 0;
                     limits.bounceMinVelocity = 0;
-                    limits.max = 60f;
+                    limits.max = 90f;
                     j.limits = limits;
                     j.useLimits = true;
                 }
@@ -237,10 +238,10 @@ public class CreatureSpawner : MonoBehaviour
                     j.motor = motor;
 
                     JointLimits limits = j.limits;
-                    limits.min = -60f;
+                    limits.min = 0f;
                     limits.bounciness = 0;
                     limits.bounceMinVelocity = 0;
-                    limits.max = 60f;
+                    limits.max = 90f;
                     j.limits = limits;
                     j.useLimits = true;
                 }
@@ -258,16 +259,16 @@ public class CreatureSpawner : MonoBehaviour
                     j.motor = motor;
 
                     JointLimits limits = j.limits;
-                    limits.min = -60f;
+                    limits.min = 0f;
                     limits.bounciness = 0;
                     limits.bounceMinVelocity = 0;
-                    limits.max = 60f;
+                    limits.max = 90f;
                     j.limits = limits;
                     j.useLimits = true;
                 }
                 break;
 
-            case (JointType.Spherical):
+            case (JointType.Configurable):
                 {
                     ConfigurableJoint j = spawnedSegmentGameObject.AddComponent<ConfigurableJoint>();
                     j.connectedBody = parentSegment.GetComponent<Rigidbody>();
@@ -283,6 +284,23 @@ public class CreatureSpawner : MonoBehaviour
                     jdyz.positionDamper = 99999;
                     j.angularYZDrive = jdyz;
                     j.targetAngularVelocity = new Vector3(0, 0, 0);
+                }
+                break;
+
+            case (JointType.Spherical):
+				{
+                    /*
+                    GameObject spawnedJointGameObject = Instantiate(jointPrefab, spawnPos, spawnAngle);
+                    spawnedJointGameObject.transform.parent = c.transform;
+
+                    CharacterJoint j = spawnedJointGameObject.AddComponent<CharacterJoint>();
+                    j.connectedBody = parentSegment.GetComponent<Rigidbody>();
+
+                    FixedJoint j_parent = spawnedSegmentGameObject.AddComponent<FixedJoint>();
+                    j_parent.connectedBody = spawnedJointGameObject.GetComponent<Rigidbody>();
+                    */
+                    CharacterJoint j = spawnedSegmentGameObject.AddComponent<CharacterJoint>();
+                    j.connectedBody = parentSegment.GetComponent<Rigidbody>();
                 }
                 break;
 
