@@ -17,7 +17,6 @@ public class VisualizeGenotype
 
         if (!visualizeNeurons)
         {
-            //dotString = "digraph g { a -> b -> c; b -> d -> c; }"; // temporary, for testing purposes rn
 
             foreach (SegmentGenotype segment in cg.segments)
             {
@@ -42,7 +41,16 @@ public class VisualizeGenotype
             {
                 foreach (SegmentConnectionGenotype connection in segment.connections)
                 {
-                    dotString += segment.id.ToString() + " -> " + connection.destination.ToString() + "; ";
+                    dotString += segment.id.ToString() + " -> " + connection.destination.ToString();
+
+                    byte recursiveLimitOfConnection = cg.GetSegment(connection.destination).recursiveLimit;
+
+                    if (recursiveLimitOfConnection > 1)
+                    {
+                        dotString += " [label=" + recursiveLimitOfConnection.ToString() + "\"]";
+                    }
+
+                    dotString += "; ";
                 }
             }
 
