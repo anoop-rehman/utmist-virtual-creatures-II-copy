@@ -22,9 +22,10 @@ public class VisualizeGenotype
             foreach (SegmentGenotype segment in cg.segments)
             {
 
+                // list all the nodes
                 if (segment.id == 1)
                 {
-                    dotString += ("1 [label=\"segment 1(root)\", color=\"#"
+                    dotString += ("1 [label=\"segment 1 (root)\", color=\"#"
                         + $"{segment.r:X2}{segment.g:X2}{segment.b:X2}" + "\"]; ");
 
                 }
@@ -35,6 +36,16 @@ public class VisualizeGenotype
 
                 }
             }
+
+            // add all the connections for each node
+            foreach (SegmentGenotype segment in cg.segments)
+            {
+                foreach (SegmentConnectionGenotype connection in segment.connections)
+                {
+                    dotString += segment.id.ToString() + " -> " + connection.destination.ToString() + "; ";
+                }
+            }
+
 
             dotString += "}";
         }

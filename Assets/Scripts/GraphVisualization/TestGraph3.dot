@@ -1,4 +1,7 @@
 // digraph g {body -> head; body -> limb; body -> limb; body -> limb; body -> limb; limb -> limb;}
 // digraph g {1 [label="segment 1 (root)", color="#40e0d0"]; 2 [label="segment 2"]; 3 [label="segment 3"]; }
 
-digraph g {1 [label="segment 1(root)", color="#1BFFE9"]; 2 [label="segment 2", color ="#799D79"]; 3 [label="segment 3", color ="#C96ABF"]; }
+// digraph g {1 [label="segment 1 (root)", color="#1BFFE9"]; 2 [label="segment 2", color ="#799D79"]; 3 [label="segment 3", color ="#C96ABF"]; 1 -> 2; 1-> 2; 1-> 3;}
+
+//digraph g {1 [label="segment 1 (root)", color="#1BFFE9"]; 2 [label="segment 2", color ="#799D79"]; 3 [label="segment 3", color ="#8C6C9A"]; 1 -> 2; 1 -> 2; 2 -> 3; }
+digraph g {1 [label="segment 1 (root)", color="#1BFFE9"]; 2 [label="segment 2", color ="#799D79"]; 1 -> 2; 1 -> 2; 1 -> 2; }
