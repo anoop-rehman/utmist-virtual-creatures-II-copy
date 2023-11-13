@@ -47,7 +47,7 @@ public class VisualizeGenotype
 
                     if (recursiveLimitOfConnection > 1)
                     {
-                        dotString += " [label=" + recursiveLimitOfConnection.ToString() + "\"]";
+                        dotString += " [label=\"" + recursiveLimitOfConnection.ToString() + "\"]";
                     }
 
                     dotString += "; ";
