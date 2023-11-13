@@ -127,7 +127,10 @@ public class CreatureSpawner : MonoBehaviour
         SpawnSegment(ssd);
         //SpawnSegment(cg, c, recursiveLimitInitial, position);
         c.InitializeCreature(fitness);
+        VisualizeGenotype.cgToDotString(cg, false);
         return c;
+
+
     }
 
     // Keeps track of segment count, used for auto-flagging strange creatures.
