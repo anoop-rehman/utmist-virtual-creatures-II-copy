@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System;
 
 public class CreatureSpawner : MonoBehaviour
 {
@@ -151,9 +152,19 @@ public class CreatureSpawner : MonoBehaviour
 
 
         Vector3 spawnPos = parentTransform.position +
-            parentTransform.right * parentTransform.localScale.x * myConnection.anchorX * reflectInt * parentReflectInt*1.5f +
-            parentTransform.up * parentTransform.localScale.y * (myConnection.anchorY + 0.5f)* 1.5f +
-            parentTransform.forward * parentTransform.localScale.z * myConnection.anchorZ* 1.5f;
+            parentTransform.right * parentTransform.localScale.x * myConnection.anchorX * reflectInt * parentReflectInt*1f +
+            parentTransform.up * parentTransform.localScale.y * (myConnection.anchorY + 0.5f)* 1f +
+            parentTransform.forward * parentTransform.localScale.z * myConnection.anchorZ* 1f;
+
+        if(Math.Round(Math.Abs(myConnection.anchorX), 1) == 0.5f) {
+            Debug.Log("X");
+            spawnPos += parentTransform.right * currentSegmentGenotype.dimensionX * 0.5f * reflectInt * parentReflectInt * Math.Sign(myConnection.anchorX);
+        } else if (Math.Round(Math.Abs(myConnection.anchorY), 1) == 0.5f) {
+            spawnPos += parentTransform.up * currentSegmentGenotype.dimensionY * 0.5f * reflectInt * parentReflectInt * Math.Sign(myConnection.anchorY);
+        } else if (Math.Round(Math.Abs(myConnection.anchorY), 1) == 0.5f) {
+            spawnPos += parentTransform.forward * currentSegmentGenotype.dimensionZ * 0.5f * reflectInt * parentReflectInt * Math.Sign(myConnection.anchorZ);
+        }
+
 
 
         Quaternion spawnAngle = Quaternion.identity;
@@ -301,6 +312,7 @@ public class CreatureSpawner : MonoBehaviour
                     */
                     CharacterJoint j = spawnedSegmentGameObject.AddComponent<CharacterJoint>();
                     j.connectedBody = parentSegment.GetComponent<Rigidbody>();
+                    j.connectedAnchor = new Vector3(myConnection.anchorX, myConnection.anchorY, myConnection.anchorZ);
                 }
                 break;
 
