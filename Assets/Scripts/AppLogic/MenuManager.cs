@@ -79,7 +79,7 @@ public class MenuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        menus = new List<GameObject>() { mainMenu, optionsMenu, creditsMenu, chooseEvolution, editEvolution, evolutionSettingsMenu, viewEvolution.gameObject };
+        menus = new List<GameObject>() { mainMenu, optionsMenu, creditsMenu, chooseEvolution, editEvolution, evolutionSettingsMenu, genotypeMenu, viewEvolution.gameObject };
         ShowMainMenu();
     }
 
