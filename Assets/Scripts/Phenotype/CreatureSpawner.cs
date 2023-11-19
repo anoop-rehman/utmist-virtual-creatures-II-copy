@@ -9,7 +9,8 @@ public class CreatureSpawner : MonoBehaviour
     [Header("Prefabs")]
     public Creature creaturePrefab;
     public GameObject segmentPrefab;
-    public GameObject jointPrefab;
+    public GameObject characterJointPrefab;
+    public GameObject hingeJointPrefab;
 
     [Header("Settings")]
     [SerializeField]
@@ -98,7 +99,7 @@ public class CreatureSpawner : MonoBehaviour
             recursiveLimitInitial[segment.id] = segment.recursiveLimit;
         }
 
-        Creature c = Instantiate(creaturePrefab, Vector3.zero, Quaternion.identity);
+        Creature c = Instantiate(creaturePrefab, position, Quaternion.identity);
         c.name = $"Creature ({cg.name})";
         c.cg = cg.Clone();
         c.transform.parent = transform;
@@ -156,16 +157,20 @@ public class CreatureSpawner : MonoBehaviour
             parentTransform.up * parentTransform.localScale.y * (myConnection.anchorY + 0.5f)* 1f +
             parentTransform.forward * parentTransform.localScale.z * myConnection.anchorZ* 1f;
 
-        if(Math.Round(Math.Abs(myConnection.anchorX), 1) == 0.5f) {
-            Debug.Log("X");
-            spawnPos += parentTransform.right * currentSegmentGenotype.dimensionX * 0.5f * reflectInt * parentReflectInt * Math.Sign(myConnection.anchorX);
+        Vector3 dimVector = new Vector3(currentSegmentGenotype.dimensionX /* * otherReflectInt*/, currentSegmentGenotype.dimensionY, currentSegmentGenotype.dimensionZ);
+        dimVector *= parentGlobalScale * myConnection.scale;
+
+        Vector3 jointPosition = Vector3.zero;
+        if (Math.Round(Math.Abs(myConnection.anchorX), 1) == 0.5f) {
+            jointPosition += parentTransform.right * Math.Sign(myConnection.anchorX);
+          
         } else if (Math.Round(Math.Abs(myConnection.anchorY), 1) == 0.5f) {
-            spawnPos += parentTransform.up * currentSegmentGenotype.dimensionY * 0.5f * reflectInt * parentReflectInt * Math.Sign(myConnection.anchorY);
+            jointPosition += parentTransform.up * Math.Sign(myConnection.anchorY);
+
         } else if (Math.Round(Math.Abs(myConnection.anchorY), 1) == 0.5f) {
-            spawnPos += parentTransform.forward * currentSegmentGenotype.dimensionZ * 0.5f * reflectInt * parentReflectInt * Math.Sign(myConnection.anchorZ);
+            jointPosition += parentTransform.forward * Math.Sign(myConnection.anchorZ);
+
         }
-
-
 
         Quaternion spawnAngle = Quaternion.identity;
         spawnAngle *= parentTransform.rotation;
@@ -184,7 +189,6 @@ public class CreatureSpawner : MonoBehaviour
         }
         //spawnAngle *= parentTransform.rotation;
         GameObject spawnedSegmentGameObject = Instantiate(segmentPrefab, spawnPos, spawnAngle);
-
         spawnedSegmentGameObject.transform.parent = c.transform;
         spawnedSegmentGameObject.name = $"Segment {currentSegmentGenotype.id}";
 
@@ -196,8 +200,7 @@ public class CreatureSpawner : MonoBehaviour
         fluidDrag.negYCovered = true;
 
 
-        Vector3 dimVector = new Vector3(currentSegmentGenotype.dimensionX /* * otherReflectInt*/, currentSegmentGenotype.dimensionY, currentSegmentGenotype.dimensionZ);
-        dimVector *= parentGlobalScale * myConnection.scale;
+        
         spawnedSegmentGameObject.transform.localScale = dimVector;
         //spawnedSegment.GetComponent<BoxCollider>().size = dimVector;
         Transform spawnedGraphic = spawnedSegmentGameObject.transform.Find("Graphic");
@@ -213,15 +216,29 @@ public class CreatureSpawner : MonoBehaviour
                 {
                     FixedJoint j = spawnedSegmentGameObject.AddComponent<FixedJoint>();
                     j.connectedBody = parentSegment.GetComponent<Rigidbody>();
+                    j.autoConfigureConnectedAnchor = false;
+                    //j.anchor = jointPosition;
                 }
                 break;
 
             case (JointType.HingeX):
                 {
+                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position, spawnAngle);
+
+                    jointObject.transform.parent = c.transform;
+                    jointObject.transform.localPosition = Vector3.zero;
+                    FixedJoint jointObjectj = jointObject.AddComponent<FixedJoint>();
+                    jointObjectj.autoConfigureConnectedAnchor = false;
+                    jointObjectj.connectedBody = parentSegment.GetComponent<Rigidbody>();
+                    jointPosition.x *= -1;
+                    jointObjectj.anchor = jointPosition;
+                    jointObject.transform.localRotation = Quaternion.Euler(0, 0, 90);
+
                     HingeJoint j = spawnedSegmentGameObject.AddComponent<HingeJoint>();
-                    j.connectedBody = parentSegment.GetComponent<Rigidbody>();
-                    j.axis = new Vector3(1, 0, 0);
-                    j.useMotor = true;
+                    j.connectedBody = jointObject.GetComponent<Rigidbody>();
+                    j.axis = new Vector3(1 * otherReflectInt, 0, 0);
+                    j.anchor = jointObject.transform.forward * (0.5f + dimVector.z / 2) / dimVector.z;
+                    j.useMotor = false;
                     JointMotor motor = j.motor;
                     motor.targetVelocity = 0;
                     motor.force = 400;
@@ -231,18 +248,31 @@ public class CreatureSpawner : MonoBehaviour
                     limits.min = 0f;
                     limits.bounciness = 0;
                     limits.bounceMinVelocity = 0;
-                    limits.max = 90f;
+                    limits.max = 360f;
                     j.limits = limits;
                     j.useLimits = true;
+                    j.autoConfigureConnectedAnchor = false;
                 }
                 break;
 
             case (JointType.HingeY):
                 {
+
+                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position, spawnAngle);
+
+                    jointObject.transform.parent = c.transform;
+                    jointObject.transform.localPosition = Vector3.zero;
+                    FixedJoint jointObjectj = jointObject.AddComponent<FixedJoint>();
+                    jointObjectj.autoConfigureConnectedAnchor = false;
+                    jointObjectj.connectedBody = parentSegment.GetComponent<Rigidbody>();
+                    jointPosition.y *= -1;
+                    jointObjectj.anchor = jointPosition;
+
                     HingeJoint j = spawnedSegmentGameObject.AddComponent<HingeJoint>();
-                    j.connectedBody = parentSegment.GetComponent<Rigidbody>();
+                    j.connectedBody = jointObject.GetComponent<Rigidbody>();
                     j.axis = new Vector3(0, 1 * otherReflectInt, 0);
-                    j.useMotor = true;
+                    j.anchor = jointObject.transform.up * (0.5f + dimVector.y / 2) / dimVector.y;
+                    j.useMotor = false;
                     JointMotor motor = j.motor;
                     motor.targetVelocity = 0;
                     motor.force = 400;
@@ -252,18 +282,31 @@ public class CreatureSpawner : MonoBehaviour
                     limits.min = 0f;
                     limits.bounciness = 0;
                     limits.bounceMinVelocity = 0;
-                    limits.max = 90f;
+                    limits.max = 360f;
                     j.limits = limits;
                     j.useLimits = true;
+                    j.autoConfigureConnectedAnchor = false;
                 }
                 break;
 
             case (JointType.HingeZ):
                 {
+                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position, spawnAngle);
+
+                    jointObject.transform.parent = c.transform;
+                    jointObject.transform.localPosition = Vector3.zero;
+                    FixedJoint jointObjectj = jointObject.AddComponent<FixedJoint>();
+                    jointObjectj.autoConfigureConnectedAnchor = false;
+                    jointObjectj.connectedBody = parentSegment.GetComponent<Rigidbody>();
+                    jointPosition.z *= -1;
+                    jointObjectj.anchor = jointPosition;
+                    jointObject.transform.localRotation = Quaternion.Euler(90, 0, 0);
+
                     HingeJoint j = spawnedSegmentGameObject.AddComponent<HingeJoint>();
-                    j.connectedBody = parentSegment.GetComponent<Rigidbody>();
+                    j.connectedBody = jointObject.GetComponent<Rigidbody>();
                     j.axis = new Vector3(0, 0, 1 * otherReflectInt);
-                    j.useMotor = true;
+                    j.anchor = jointObject.transform.right * (0.5f + dimVector.x / 2) / dimVector.x;
+                    j.useMotor = false;
                     JointMotor motor = j.motor;
                     motor.targetVelocity = 0;
                     motor.force = 400;
@@ -273,9 +316,10 @@ public class CreatureSpawner : MonoBehaviour
                     limits.min = 0f;
                     limits.bounciness = 0;
                     limits.bounceMinVelocity = 0;
-                    limits.max = 90f;
+                    limits.max = 360f;
                     j.limits = limits;
                     j.useLimits = true;
+                    j.autoConfigureConnectedAnchor = false;
                 }
                 break;
 
@@ -312,7 +356,9 @@ public class CreatureSpawner : MonoBehaviour
                     */
                     CharacterJoint j = spawnedSegmentGameObject.AddComponent<CharacterJoint>();
                     j.connectedBody = parentSegment.GetComponent<Rigidbody>();
-                    j.connectedAnchor = new Vector3(myConnection.anchorX, myConnection.anchorY, myConnection.anchorZ);
+                    j.autoConfigureConnectedAnchor = false;
+                    j.anchor = new Vector3(myConnection.anchorX, myConnection.anchorY, myConnection.anchorZ);
+
                 }
                 break;
 
@@ -397,6 +443,7 @@ public class CreatureSpawner : MonoBehaviour
         //Debug.Log(spawnAngle);
         GameObject spawnedSegmentGameObject = Instantiate(segmentPrefab, position, spawnAngle);
         spawnedSegmentGameObject.transform.parent = c.transform;
+        spawnedSegmentGameObject.transform.localPosition = new Vector3(0, 2, 0);
         spawnedSegmentGameObject.name = $"Segment {currentSegmentGenotype.id}";
 
         Segment spawnedSegment = spawnedSegmentGameObject.GetComponent<Segment>();

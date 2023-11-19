@@ -108,7 +108,7 @@ GameObject:
   - component: {fileID: 700551458104696674}
   - component: {fileID: -5980927747347263059}
   m_Layer: 0
-  m_Name: Joint
+  m_Name: SphereJoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
