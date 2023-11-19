@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using System.IO;
@@ -7,8 +8,8 @@ using System.IO;
 [System.Serializable]
 public class VisualizeGenotype
 {
-    //public static string cgToDotString(CreatureGenotype cg, bool visualizeNeurons)
-    public static void cgToDotString(CreatureGenotype cg, bool visualizeNeurons)
+    public static string cgToDotString(CreatureGenotype cg, bool visualizeNeurons)
+    //public static void cgToDotString(CreatureGenotype cg, bool visualizeNeurons)
 
     {
 
@@ -62,9 +63,55 @@ public class VisualizeGenotype
             {}
         }
 
-        //return dotString;
-        Debug.Log(dotString);
+        return dotString;
+        //CreatePngFromDot(dotString, "output.png");
+        //UnityEngine.Debug.Log(dotString);
 
+    }
+
+    public static string getCmdFromDotString(string dotString)
+    {
+        string argument = "echo \'" + dotString + "\' | dot -Tpng > output.png";
+        string command = " -c \"" + argument + " \"";
+        return argument;
+    }
+
+    public static void CreatePngFromDot(string dotString, string outputPath)
+    {
+
+        // echo 'digraph { a -> b }' | dot -Tpng > output.png is the command to output the graph without a .dot file
+        //string command = "echo \'" + dotString + "\' | dot -Tpng > output.png";
+
+        //UnityEngine.Debug.Log(dotString);
+        //Process process = new Process();
+
+        // Start a new process
+        ProcessStartInfo startInfo = new ProcessStartInfo()
+            {
+                // CMD.exe is a Windows terminal thing, for Mac -> /bin/bash
+                FileName = "/bin/bash",
+                WorkingDirectory = Application.persistentDataPath,
+                UseShellExecute = false,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true,
+                Arguments = getCmdFromDotString(dotString)
+
+                // "-c \"" + "echo 'digraph { b -> a }' | dot -Tpng > output.png" + " \""
+        };
+
+        Process process = new Process
+        {
+            StartInfo = startInfo
+        };
+
+        process.Start();
+        //process.BeginOutputReadLine();
+        UnityEngine.Debug.Log(process.StartInfo.Arguments);
+        process.WaitForExit();
+
+        var output = process.StandardOutput.ReadToEnd();
+        UnityEngine.Debug.Log(output);
     }
 
 
@@ -93,4 +140,18 @@ public class VisualizeGenotype
 
     //    process.WaitForExit();
     //}
+
+    /* using System.Diagnostics;
+    ...
+    Process process = new Process();
+        // Configure the process using the StartInfo properties.
+        process.StartInfo.FileName = "process.exe";
+    process.StartInfo.Arguments = "-n";
+    process.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
+    process.Start();
+    process.WaitForExit();// Waits here for the process to exit.
+     
+     */
+
+
 }
