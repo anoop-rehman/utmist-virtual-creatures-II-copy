@@ -21,6 +21,10 @@ public class MenuManager : MonoBehaviour
     public GameObject editEvolution;
     public GameObject evolutionSettingsMenu;
     public EvolutionViewMenu viewEvolution;
+
+    // for GenotypeVis
+    public GameObject genotypeMenu;
+
     // TEMP
     [Header("Temporary References")]
     public CreatureGenotypeScriptableObject templateCGSO;
@@ -75,7 +79,7 @@ public class MenuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        menus = new List<GameObject>() { mainMenu, optionsMenu, creditsMenu, chooseEvolution, editEvolution, evolutionSettingsMenu };
+        menus = new List<GameObject>() { mainMenu, optionsMenu, creditsMenu, chooseEvolution, editEvolution, evolutionSettingsMenu, genotypeMenu };
         ShowMainMenu();
     }
 
@@ -164,7 +168,13 @@ public class MenuManager : MonoBehaviour
         lockPhysicalMutations = lockPhysicalMutationsToggle.isOn;
 
         evolutionSettingsMenu.SetActive(true);
-}
+    }
+
+    public void ShowGenotypeMenu()
+    {
+        menus.ForEach(o => o.SetActive(false));
+        genotypeMenu.SetActive(true);
+    }
 
 
     public void EditSaveName()
@@ -238,7 +248,7 @@ public class MenuManager : MonoBehaviour
         optimizationSettings.mp.maxSegments = maxSegments;
         //optimizationSettings.initialGenotype = templateCGSO == null ? null : templateCGSO.cg;
         //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Leaper.creature", false); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
-        optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Users/anooprehman/Downloads/utmist-virtual-creatures/Creatures/aer-ignisflumen.creature", true); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
+        optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Users/hannahlila04/Downloads/Creatures/arv-vesperferox.creature", true); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
         //optimizationSettings.initialGenotype = null;
 
 
