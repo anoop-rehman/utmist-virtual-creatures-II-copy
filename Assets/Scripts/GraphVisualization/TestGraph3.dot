@@ -1,0 +1,1 @@
+digraph g {1 [label="segment 1 (root)", color="#1BFFE9"]; 2 [label="segment 2", color ="#789D79"]; 3 [label="segment 3", color ="#EA5660"]; 4 [label="segment 4", color ="#179C01"]; 1 -> 2 [label="2"]; 2 -> 3; 3 -> 4; 3 -> 4; 3 -> 4; }

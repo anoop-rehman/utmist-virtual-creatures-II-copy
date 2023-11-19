@@ -3630,129 +3630,30 @@ MonoBehaviour:
   segmentPrefab: {fileID: 6837624401485191407, guid: 56ac4567187132f4f921d8ae50078f2e, type: 3}
   spawnPos: {x: 0, y: 0, z: 0}
   creatureGenotype:
-    name: mag-bellusavium
+    name: arv-vesperferox
     stage: 0
     segments:
-    - r: 1
-      g: 1
-      b: 1
+    - r: 2
+      g: 0
+      b: 4
       id: 0
       connections: []
-      neurons:
-      - type: 10
-        inputs:
-        - relativityNullable:
-            v: 3
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 0000
-          id: 15
-        - relativityNullable:
-            v: 3
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 00
-          id: 13
-        - relativityNullable:
-            v: 3
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 
-          id: 15
-        weights:
-        - -9.866653
-        - -9.467064
-        - -6.9744625
-        nr:
-          relativityNullable:
-            v: 0
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 
-          id: 13
-      - type: 8
-        inputs:
-        - relativityNullable:
-            v: 3
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 
-          id: 5
-        weights:
-        - -6.8351326
-        nr:
-          relativityNullable:
-            v: 0
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 
-          id: 14
-      - type: 21
-        inputs:
-        - relativityNullable:
-            v: 3
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 
-          id: 0
-        - relativityNullable:
-            v: 3
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 0000
-          id: 5
-        - relativityNullable:
-            v: 0
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 
-          id: 14
-        weights:
-        - -10.144794
-        - 0.9620495
-        - -14.017038
-        nr:
-          relativityNullable:
-            v: 0
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 
-          id: 15
+      neurons: []
       recursiveLimit: 1
-      dimensionX: 0.95580167
-      dimensionY: 0.7912781
-      dimensionZ: 0.69243497
+      dimensionX: 0.9209754
+      dimensionY: 1.1353081
+      dimensionZ: 1.0394915
       jointType: 0
-    - r: 141
-      g: 35
-      b: 112
+    - r: 27
+      g: 255
+      b: 233
       id: 1
       connections:
-      - id: 0
+      - id: 2
         destination: 2
-        anchorX: -0.4105909
-        anchorY: -0.5
-        anchorZ: 0.15443073
+        anchorX: -0.4771632
+        anchorY: 0.5
+        anchorZ: 0.15904652
         orientationX: 0
         orientationY: 0
         orientationZ: 0
@@ -3760,7 +3661,37 @@ MonoBehaviour:
         eulerX: 0
         eulerY: 0
         eulerZ: 0
-        scale: 0.8832125
+        scale: 0.6607762
+        reflected: 0
+        terminalOnly: 0
+      - id: 0
+        destination: 2
+        anchorX: 0.02053529
+        anchorY: -0.5
+        anchorZ: -0.22918802
+        orientationX: 0
+        orientationY: 0
+        orientationZ: 0
+        orientationW: 1
+        eulerX: 0
+        eulerY: 0
+        eulerZ: 0
+        scale: 0.5635941
+        reflected: 1
+        terminalOnly: 0
+      - id: 4
+        destination: 2
+        anchorX: 0.5
+        anchorY: -0.38336146
+        anchorZ: -0.14462501
+        orientationX: 0
+        orientationY: 0
+        orientationZ: 0
+        orientationW: 1
+        eulerX: 0
+        eulerY: 0
+        eulerZ: 0
+        scale: 0.4362279
         reflected: 1
         terminalOnly: 0
       neurons:
@@ -3769,183 +3700,96 @@ MonoBehaviour:
         weights: []
         nr:
           relativityNullable:
-            v: 4
-            hasValue: 1
+            v: 0
+            hasValue: 0
           relativeLevelNullable:
             v: 0
             hasValue: 0
-          connectionPath: 0000
+          connectionPath: 
           id: 0
       - type: 0
         inputs: []
         weights: []
         nr:
           relativityNullable:
-            v: 4
-            hasValue: 1
+            v: 0
+            hasValue: 0
           relativeLevelNullable:
             v: 0
             hasValue: 0
-          connectionPath: 0000
+          connectionPath: 
           id: 1
       - type: 0
         inputs: []
         weights: []
         nr:
           relativityNullable:
-            v: 4
-            hasValue: 1
+            v: 0
+            hasValue: 0
           relativeLevelNullable:
             v: 0
             hasValue: 0
-          connectionPath: 0000
+          connectionPath: 
           id: 2
       - type: 0
         inputs: []
         weights: []
         nr:
           relativityNullable:
-            v: 4
-            hasValue: 1
+            v: 0
+            hasValue: 0
           relativeLevelNullable:
             v: 0
             hasValue: 0
-          connectionPath: 0000
+          connectionPath: 
           id: 3
       - type: 0
         inputs: []
         weights: []
         nr:
           relativityNullable:
-            v: 4
-            hasValue: 1
+            v: 0
+            hasValue: 0
           relativeLevelNullable:
             v: 0
             hasValue: 0
-          connectionPath: 0000
+          connectionPath: 
           id: 4
       - type: 0
         inputs: []
         weights: []
         nr:
           relativityNullable:
-            v: 4
-            hasValue: 1
+            v: 0
+            hasValue: 0
           relativeLevelNullable:
             v: 0
             hasValue: 0
-          connectionPath: 0000
+          connectionPath: 
           id: 5
-      - type: 16
-        inputs:
-        - relativityNullable:
-            v: 2
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 
-          id: 3
-        weights:
-        - -6.061873
-        nr:
-          relativityNullable:
-            v: 4
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 0000
-          id: 13
-      - type: 6
-        inputs:
-        - relativityNullable:
-            v: 2
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 
-          id: 1
-        - relativityNullable:
-            v: 3
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 00
-          id: 14
-        weights:
-        - -4.9041595
-        - -14.623553
-        nr:
-          relativityNullable:
-            v: 4
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 0000
-          id: 14
-      - type: 16
-        inputs:
-        - relativityNullable:
-            v: 0
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 
-          id: 14
-        weights:
-        - -10.992671
-        nr:
-          relativityNullable:
-            v: 4
-            hasValue: 1
-          relativeLevelNullable:
-            v: 0
-            hasValue: 0
-          connectionPath: 0000
-          id: 15
-      recursiveLimit: 2
-      dimensionX: 0.74226403
-      dimensionY: 0.671633
-      dimensionZ: 0.4818324
+      recursiveLimit: 1
+      dimensionX: 0.30163372
+      dimensionY: 1.1621106
+      dimensionZ: 0.5667956
       jointType: 3
-    - r: 56
-      g: 194
-      b: 130
+    - r: 121
+      g: 157
+      b: 121
       id: 2
-      connections:
-      - id: 0
-        destination: 1
-        anchorX: 0.4724363
-        anchorY: -0.24206167
-        anchorZ: -0.5
-        orientationX: 0
-        orientationY: 0
-        orientationZ: 0
-        orientationW: 1
-        eulerX: 0
-        eulerY: 0
-        eulerZ: 0
-        scale: 0.35370016
-        reflected: 1
-        terminalOnly: 0
+      connections: []
       neurons:
       - type: 0
         inputs:
         - relativityNullable:
-            v: 3
+            v: 2
             hasValue: 1
           relativeLevelNullable:
             v: 0
             hasValue: 0
-          connectionPath: 00
-          id: 2
+          connectionPath: 
+          id: 13
         weights:
-        - 10.107773
+        - -3.2542353
         nr:
           relativityNullable:
             v: 4
@@ -3953,31 +3797,26 @@ MonoBehaviour:
           relativeLevelNullable:
             v: 0
             hasValue: 0
-          connectionPath: 00
+          connectionPath: 04
           id: 12
-      - type: 13
+      - type: 21
         inputs:
         - relativityNullable:
-            v: 3
+            v: 2
             hasValue: 1
           relativeLevelNullable:
             v: 0
             hasValue: 0
-          connectionPath: 00
+          connectionPath: 
           id: 13
-        weights:
-        - 4.613764
-        nr:
-          relativityNullable:
-            v: 4
+        - relativityNullable:
+            v: 2
             hasValue: 1
           relativeLevelNullable:
             v: 0
             hasValue: 0
-          connectionPath: 00
+          connectionPath: 
           id: 13
-      - type: 11
-        inputs:
         - relativityNullable:
             v: 1
             hasValue: 1
@@ -3985,9 +3824,11 @@ MonoBehaviour:
             v: 1
             hasValue: 1
           connectionPath: 
-          id: 14
+          id: 1
         weights:
-        - 0.090242386
+        - -9.439518
+        - -8.0948715
+        - 4.152837
         nr:
           relativityNullable:
             v: 4
@@ -3995,13 +3836,13 @@ MonoBehaviour:
           relativeLevelNullable:
             v: 0
             hasValue: 0
-          connectionPath: 00
-          id: 14
-      recursiveLimit: 1
-      dimensionX: 0.7091836
-      dimensionY: 0.6497069
-      dimensionZ: 1.0235119
-      jointType: 1
+          connectionPath: 04
+          id: 13
+      recursiveLimit: 2
+      dimensionX: 0.3139272
+      dimensionY: 1.4091246
+      dimensionZ: 1.1052315
+      jointType: 3
     orientationX: 0
     orientationY: 0
     orientationZ: 0
@@ -4013,7 +3854,7 @@ MonoBehaviour:
     obsDim: 0
     actDim: 0
   creatureGenotypeHistory: []
-  counter: 2
+  counter: 1
 --- !u!4 &1608879593
 Transform:
   m_ObjectHideFlags: 0
