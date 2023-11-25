@@ -1550,4 +1550,27 @@ public class MutateGenotype
 
         return cg;
     }
+
+
+    public static double SizeOfCreature(CreatureGenotype cg)
+    {
+        double totalVolume = 0f;
+        foreach (SegmentGenotype segment in cg.segments)
+        {
+
+            if (segment.id != 0)
+            {
+                totalVolume += segment.dimensionX * segment.dimensionY * segment.dimensionZ;
+
+                Debug.Log(segment.dimensionX);
+                Debug.Log(segment.dimensionY);
+                Debug.Log(segment.dimensionZ);
+            }
+            
+
+        }
+
+
+        return totalVolume;
+    }
 }

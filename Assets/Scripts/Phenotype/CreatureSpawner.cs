@@ -103,6 +103,7 @@ public class CreatureSpawner : MonoBehaviour
 
         Creature c = Instantiate(creaturePrefab, Vector3.zero, Quaternion.identity);
         c.name = $"Creature ({cg.name})";
+
         c.cg = cg.Clone();
         c.transform.parent = transform;
         
@@ -127,6 +128,10 @@ public class CreatureSpawner : MonoBehaviour
         SpawnSegment(ssd);
         //SpawnSegment(cg, c, recursiveLimitInitial, position);
         c.InitializeCreature(fitness);
+        Debug.Log("spawned creature " + c.name);
+
+        Debug.Log("its size is: " + MutateGenotype.SizeOfCreature(c.cg).ToString());
+
         return c;
     }
 
