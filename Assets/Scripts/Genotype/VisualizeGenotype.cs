@@ -69,35 +69,29 @@ public class VisualizeGenotype
 
     }
 
-    public static string getCmdFromDotString(string dotString)
-    {
-        string argument = "echo \'" + dotString + "\' | dot -Tpng > output.png";
-        string command = " -c \"" + argument + " \"";
-        return argument;
-    }
-
     public static void CreatePngFromDot(string dotString, string outputPath)
     {
+        // run which dot and replace this string with the output
+        // TODO: Could replace with a new process
+        string dotPath = "/opt/homebrew/bin/dot";
 
-        // echo 'digraph { a -> b }' | dot -Tpng > output.png is the command to output the graph without a .dot file
-        //string command = "echo \'" + dotString + "\' | dot -Tpng > output.png";
+        // Create a temporary DOT file
+        UnityEngine.Debug.Log(dotString);
+        string dotFilePath = Path.Combine(Application.persistentDataPath, "temp.dot");
+        File.WriteAllText(dotFilePath, dotString);
 
-        //UnityEngine.Debug.Log(dotString);
-        //Process process = new Process();
-
-        // Start a new process
+        // Start a new process to run the 'dot' command
         ProcessStartInfo startInfo = new ProcessStartInfo()
-            {
-                // CMD.exe is a Windows terminal thing, for Mac -> /bin/bash
-                FileName = "/bin/bash",
-                WorkingDirectory = Application.persistentDataPath,
-                UseShellExecute = false,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                CreateNoWindow = true,
-                Arguments = getCmdFromDotString(dotString)
-
-                // "-c \"" + "echo 'digraph { b -> a }' | dot -Tpng > output.png" + " \""
+        {
+            // Replace with CMD.exe for Windows, for Mac -> /bin/bash
+            FileName = "/bin/bash",
+            WorkingDirectory = Application.persistentDataPath,
+            UseShellExecute = false,
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            CreateNoWindow = true,
+            // This is the command we are running in terminal
+            Arguments = "-c \"" + dotPath + " -Tpng \"temp.dot\" -o \"output.png\"" + "\""
         };
 
         Process process = new Process
@@ -105,53 +99,27 @@ public class VisualizeGenotype
             StartInfo = startInfo
         };
 
+        // Execute our process
         process.Start();
         //process.BeginOutputReadLine();
-        UnityEngine.Debug.Log(process.StartInfo.Arguments);
+
+        // This is a sanity check, print our command to the log to check it's correct
+        //UnityEngine.Debug.Log(process.StartInfo.Arguments);
         process.WaitForExit();
 
-        var output = process.StandardOutput.ReadToEnd();
-        UnityEngine.Debug.Log(output);
+        // Error Checking
+        if (process.ExitCode != 0)
+        {
+            UnityEngine.Debug.LogError($"Error: 'dot' command failed with exit code {process.ExitCode}");
+        }
+
+
+        // If we run hello world, uncomment these lines to read the standard output
+        //string output = process.StandardOutput.ReadToEnd();
+        //UnityEngine.Debug.Log(output);
+
+        // Clean up: Delete the temporary DOT file
+        File.Delete(dotFilePath);
+
     }
-
-
-    //public void CreatePngFromDot(string dotString, string outputPath)
-    //{
-    //    // Command to run Graphviz
-    //    string command = "dot";
-
-    //    // Arguments for the command
-    //    string args = "-Tpng -o \"" + outputPath + "\"";
-
-    //    // Start a new process
-    //    ProcessStartInfo startInfo = new ProcessStartInfo(command, args)
-    //    {
-    //        RedirectStandardInput = true,
-    //        UseShellExecute = false
-    //    };
-
-    //    Process process = Process.Start(startInfo);
-
-    //    // Write the DOT string to the standard input of the process
-    //    using (StreamWriter writer = process.StandardInput)
-    //    {
-    //        writer.WriteLine(dotString);
-    //    }
-
-    //    process.WaitForExit();
-    //}
-
-    /* using System.Diagnostics;
-    ...
-    Process process = new Process();
-        // Configure the process using the StartInfo properties.
-        process.StartInfo.FileName = "process.exe";
-    process.StartInfo.Arguments = "-n";
-    process.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
-    process.Start();
-    process.WaitForExit();// Waits here for the process to exit.
-     
-     */
-
-
 }
