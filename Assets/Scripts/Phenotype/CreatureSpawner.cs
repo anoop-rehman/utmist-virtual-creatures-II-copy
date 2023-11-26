@@ -223,22 +223,20 @@ public class CreatureSpawner : MonoBehaviour
 
             case (JointType.HingeX):
                 {
-                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position, spawnAngle);
+                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position + parentTransform.forward * (0.5f + parentTransform.localScale.z / 2), spawnAngle);
 
                     jointObject.transform.parent = c.transform;
-                    jointObject.transform.localPosition = Vector3.zero;
                     FixedJoint jointObjectj = jointObject.AddComponent<FixedJoint>();
-                    jointObjectj.autoConfigureConnectedAnchor = false;
+                    jointObjectj.autoConfigureConnectedAnchor = true;
                     jointObjectj.connectedBody = parentSegment.GetComponent<Rigidbody>();
-                    jointPosition.x *= -1;
-                    jointObjectj.anchor = jointPosition;
+                    
                     jointObject.transform.localRotation = Quaternion.Euler(0, 0, 90);
 
                     HingeJoint j = spawnedSegmentGameObject.AddComponent<HingeJoint>();
                     j.connectedBody = jointObject.GetComponent<Rigidbody>();
                     j.axis = new Vector3(1 * otherReflectInt, 0, 0);
                     j.anchor = jointObject.transform.forward * (0.5f + dimVector.z / 2) / dimVector.z;
-                    j.useMotor = true;
+                    j.useMotor = false;
                     JointMotor motor = j.motor;
                     motor.targetVelocity = 0;
                     motor.force = 400;
@@ -258,21 +256,18 @@ public class CreatureSpawner : MonoBehaviour
             case (JointType.HingeY):
                 {
 
-                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position, spawnAngle);
+                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position + parentTransform.forward * (0.5f + parentTransform.localScale.z / 2), spawnAngle);
 
                     jointObject.transform.parent = c.transform;
-                    jointObject.transform.localPosition = Vector3.zero;
                     FixedJoint jointObjectj = jointObject.AddComponent<FixedJoint>();
-                    jointObjectj.autoConfigureConnectedAnchor = false;
+                    jointObjectj.autoConfigureConnectedAnchor = true;
                     jointObjectj.connectedBody = parentSegment.GetComponent<Rigidbody>();
-                    jointPosition.x *= -1;
-                    jointObjectj.anchor = jointPosition;
 
                     HingeJoint j = spawnedSegmentGameObject.AddComponent<HingeJoint>();
                     j.connectedBody = jointObject.GetComponent<Rigidbody>();
                     j.axis = new Vector3(0, 1 * otherReflectInt, 0);
                     j.anchor = jointObject.transform.forward * (0.5f + dimVector.z / 2) / dimVector.z;
-                    j.useMotor = true;
+                    j.useMotor = false;
                     JointMotor motor = j.motor;
                     motor.targetVelocity = 0;
                     motor.force = 400;
@@ -291,22 +286,19 @@ public class CreatureSpawner : MonoBehaviour
 
             case (JointType.HingeZ):
                 {
-                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position, spawnAngle);
+                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position + parentTransform.right * (0.5f + parentTransform.localScale.x / 2), spawnAngle);
 
                     jointObject.transform.parent = c.transform;
-                    jointObject.transform.localPosition = Vector3.zero;
                     FixedJoint jointObjectj = jointObject.AddComponent<FixedJoint>();
-                    jointObjectj.autoConfigureConnectedAnchor = false;
+                    jointObjectj.autoConfigureConnectedAnchor = true;
                     jointObjectj.connectedBody = parentSegment.GetComponent<Rigidbody>();
-                    jointPosition.z *= -1;
-                    jointObjectj.anchor = jointPosition;
                     jointObject.transform.localRotation = Quaternion.Euler(90, 0, 0);
 
                     HingeJoint j = spawnedSegmentGameObject.AddComponent<HingeJoint>();
                     j.connectedBody = jointObject.GetComponent<Rigidbody>();
                     j.axis = new Vector3(0, 0, 1 * otherReflectInt);
                     j.anchor = jointObject.transform.right * (0.5f + dimVector.x / 2) / dimVector.x;
-                    j.useMotor = true;
+                    j.useMotor = false;
                     JointMotor motor = j.motor;
                     motor.targetVelocity = 0;
                     motor.force = 400;
