@@ -143,8 +143,13 @@ public class SegmentConnectionGenotype
     public float orientationZ;
     [HideInInspector]
     public float orientationW;
+    public Quaternion orientation {
+        get {
+            return new Quaternion(orientationX, orientationY, orientationZ, orientationW);
+        }
+    }
 
-    // this is only used for player design
+    // This is only used for player design! Not for mutations...?
     public float eulerX;
     public float eulerY;
     public float eulerZ;
@@ -154,6 +159,10 @@ public class SegmentConnectionGenotype
     public bool reflected;
     public bool terminalOnly;
 
+    /// <summary>
+    /// Updates internal Quaternion using the given Euler Angles.
+    /// </summary>
+    /// <param name="eulerAngles"></param>
     public void SetOrientation(Vector3 eulerAngles)
     {
         Quaternion q = Quaternion.Euler(eulerAngles);
@@ -163,6 +172,9 @@ public class SegmentConnectionGenotype
         orientationW = q.w;
     }
 
+    /// <summary>
+    /// Updates internal Quaternion using the stored Euler Angle variables.
+    /// </summary>
     public void EulerToQuat()
     {
         Quaternion q = Quaternion.Euler(eulerX, eulerY, eulerZ);
@@ -172,6 +184,10 @@ public class SegmentConnectionGenotype
         orientationW = q.w;
     }
 
+    /// <summary>
+    /// Returns a cloned SegmentConnectionGenotype.
+    /// </summary>
+    /// <returns></returns>
     public SegmentConnectionGenotype Clone()
     {
         SegmentConnectionGenotype scg = new SegmentConnectionGenotype();
@@ -221,6 +237,12 @@ public class SegmentGenotype
     public byte r;
     public byte g;
     public byte b;
+    public Color color
+    {
+        get {
+            return new Color(r / 255f, g / 255f, b / 255f);
+        }
+    }
 
     public byte id; // 0-ghost, 1-root, 2>-else
     public List<SegmentConnectionGenotype> connections;
@@ -237,6 +259,10 @@ public class SegmentGenotype
 
     public JointType jointType;
 
+    /// <summary>
+    /// Returns a newly-made ghost SegmentGenotype.
+    /// Used when repairing a CreatureGenotype by adding an empty ghost node.
+    /// </summary>
     public static SegmentGenotype ghost
     {
         get
@@ -259,6 +285,11 @@ public class SegmentGenotype
         b = 1;
     }
 
+    /// <summary>
+    /// Returns the neuron (if any) of that id.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public NeuronGenotype GetNeuron(byte id)
     {
         foreach (NeuronGenotype nm in neurons)
@@ -272,7 +303,7 @@ public class SegmentGenotype
     }
 
     /// <summary>
-    /// Returns the first connection (if any) of that id
+    /// Returns the first connection (if any) of that id.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -288,6 +319,10 @@ public class SegmentGenotype
         return null;
     }
 
+    /// <summary>
+    /// Returns a deep-clones of this class.
+    /// </summary>
+    /// <returns></returns>
     public SegmentGenotype Clone()
     {
         SegmentGenotype sg = new SegmentGenotype();
@@ -323,6 +358,13 @@ public class CreatureGenotype
     public float orientationZ;
     [HideInInspector]
     public float orientationW;
+    public Quaternion orientation
+    {
+        get
+        {
+            return new Quaternion(orientationX, orientationY, orientationZ, orientationW);
+        }
+    }
 
     // this is only used for player design
     public float eulerX;
@@ -336,6 +378,11 @@ public class CreatureGenotype
 
     public int actDim;
 
+    /// <summary>
+    /// Returns the segment of the given id (if any).
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public SegmentGenotype GetSegment(byte id)
     {
         foreach (SegmentGenotype segment in segments)
@@ -348,6 +395,9 @@ public class CreatureGenotype
         return null;
     }
 
+    /// <summary>
+    /// Updates internal Quaternion using the stored Euler Angle variables.
+    /// </summary>
     public void EulerToQuat()
     {
         Quaternion q = Quaternion.Euler(eulerX, eulerY, eulerZ);
@@ -357,6 +407,9 @@ public class CreatureGenotype
         orientationW = q.w;
     }
 
+    /// <summary>
+    /// Stores random latin word parts for name generation.
+    /// </summary>
     private static readonly List<string> LatinWordParts = new List<string>
     {
         "aero", "albus", "ama", "ambi", "angui", "aqua", "ardea", "arvo", "aurum", "avium",
@@ -367,6 +420,11 @@ public class CreatureGenotype
         "silva", "sol", "stellis", "terra", "umbra", "ventus", "vermis", "vesper", "vita"
     };
 
+    /// <summary>
+    /// Returns a randomly made latin name based on an optional parentName.
+    /// </summary>
+    /// <param name="parentName"></param>
+    /// <returns></returns>
     public static string GenerateName(string parentName)
     {
         // Select two random Latin word parts
@@ -400,7 +458,7 @@ public class CreatureGenotype
     }
 
     /// <summary>
-    /// Returns a dictionary of <child, parents></child>
+    /// Returns a dictionary of (childId, parentsId).
     /// </summary>
     /// <returns></returns>
     public Dictionary<byte, byte> GetParentsDict(){
@@ -424,10 +482,10 @@ public class CreatureGenotype
     }
 
     /// <summary>
-    /// Traces through the creature genotype, returning a list of all the connections to a certain segment genotype
+    /// Returns a list of all the connections to a certain segment genotype.
     /// </summary>
     /// <param name="isFull"></param>
-    /// <param name="isRecursive"></param>
+    /// <param name="isRecursive">If we should include potential self connections in the result.</param>
     /// <returns></returns>
     public Dictionary<byte, List<SegmentConnectionGenotype>> GetSegmentConnections(bool isFull, bool isRecursive){
         Dictionary<byte, List<SegmentConnectionGenotype>> segmentConnectionsByDest = new Dictionary<byte, List<SegmentConnectionGenotype>>();

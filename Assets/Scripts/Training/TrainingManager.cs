@@ -62,7 +62,7 @@ public class TrainingSettings {
 
 [System.Serializable]
 public abstract class OptimizationSettings {
-    public int num_envs = 1;
+    public int numEnvs = 1;
     public CreatureGenotype initialGenotype;
     public abstract TrainingStage stage { get; }
 }
@@ -157,7 +157,7 @@ public class TrainingManager : MonoBehaviour
 
         if (ts.envSettings.envArrangeType == EnvArrangeType.LINEAR){
             float sizeX = ts.envSettings.sizeX;
-            int l = ts.optimizationSettings.num_envs;
+            int l = ts.optimizationSettings.numEnvs;
             for (int i = 0; i < l; i++)
             {
                 Environment instantiatedEnv = Instantiate(envPrefab, Vector3.right * i * sizeX, envPrefab.transform.rotation).GetComponent<Environment>();

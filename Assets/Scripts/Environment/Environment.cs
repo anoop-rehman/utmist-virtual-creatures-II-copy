@@ -181,7 +181,7 @@ public abstract class Environment : MonoBehaviour
         tas = new List<TrainingAlgorithm>();
 
         if (busy) {
-            Destroy(currentCreature.gameObject);
+            cs.ReleaseCreature(currentCreature);
             currentCreature = null;
         }
 
