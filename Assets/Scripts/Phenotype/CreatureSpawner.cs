@@ -238,17 +238,17 @@ public class CreatureSpawner : MonoBehaviour
                     j.connectedBody = jointObject.GetComponent<Rigidbody>();
                     j.axis = new Vector3(1 * otherReflectInt, 0, 0);
                     j.anchor = jointObject.transform.forward * (0.5f + dimVector.z / 2) / dimVector.z;
-                    j.useMotor = false;
+                    j.useMotor = true;
                     JointMotor motor = j.motor;
                     motor.targetVelocity = 0;
                     motor.force = 400;
                     j.motor = motor;
 
                     JointLimits limits = j.limits;
-                    limits.min = 0f;
+                    limits.min = -180f;
                     limits.bounciness = 0;
                     limits.bounceMinVelocity = 0;
-                    limits.max = 360f;
+                    limits.max = 180f;
                     j.limits = limits;
                     j.useLimits = true;
                     j.autoConfigureConnectedAnchor = false;
@@ -265,24 +265,24 @@ public class CreatureSpawner : MonoBehaviour
                     FixedJoint jointObjectj = jointObject.AddComponent<FixedJoint>();
                     jointObjectj.autoConfigureConnectedAnchor = false;
                     jointObjectj.connectedBody = parentSegment.GetComponent<Rigidbody>();
-                    jointPosition.y *= -1;
+                    jointPosition.x *= -1;
                     jointObjectj.anchor = jointPosition;
 
                     HingeJoint j = spawnedSegmentGameObject.AddComponent<HingeJoint>();
                     j.connectedBody = jointObject.GetComponent<Rigidbody>();
                     j.axis = new Vector3(0, 1 * otherReflectInt, 0);
-                    j.anchor = jointObject.transform.up * (0.5f + dimVector.y / 2) / dimVector.y;
-                    j.useMotor = false;
+                    j.anchor = jointObject.transform.forward * (0.5f + dimVector.z / 2) / dimVector.z;
+                    j.useMotor = true;
                     JointMotor motor = j.motor;
                     motor.targetVelocity = 0;
                     motor.force = 400;
                     j.motor = motor;
 
                     JointLimits limits = j.limits;
-                    limits.min = 0f;
+                    limits.min = -180f;
                     limits.bounciness = 0;
                     limits.bounceMinVelocity = 0;
-                    limits.max = 360f;
+                    limits.max = 180f;
                     j.limits = limits;
                     j.useLimits = true;
                     j.autoConfigureConnectedAnchor = false;
@@ -306,17 +306,17 @@ public class CreatureSpawner : MonoBehaviour
                     j.connectedBody = jointObject.GetComponent<Rigidbody>();
                     j.axis = new Vector3(0, 0, 1 * otherReflectInt);
                     j.anchor = jointObject.transform.right * (0.5f + dimVector.x / 2) / dimVector.x;
-                    j.useMotor = false;
+                    j.useMotor = true;
                     JointMotor motor = j.motor;
                     motor.targetVelocity = 0;
                     motor.force = 400;
                     j.motor = motor;
 
                     JointLimits limits = j.limits;
-                    limits.min = 0f;
+                    limits.min = -180f;
                     limits.bounciness = 0;
                     limits.bounceMinVelocity = 0;
-                    limits.max = 360f;
+                    limits.max = 180f;
                     j.limits = limits;
                     j.useLimits = true;
                     j.autoConfigureConnectedAnchor = false;

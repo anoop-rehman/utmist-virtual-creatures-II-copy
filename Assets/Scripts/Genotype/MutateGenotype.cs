@@ -722,7 +722,7 @@ public class MutateGenotype
                 generatedSegmentGenotype.dimensionX = mp.GetRandomFloat("s_dx");
                 generatedSegmentGenotype.dimensionY = mp.GetRandomFloat("s_dy");
                 generatedSegmentGenotype.dimensionZ = mp.GetRandomFloat("s_dz");
-                generatedSegmentGenotype.jointType = JointType.Spherical; //(JointType)Random.Range(0, 4);
+                generatedSegmentGenotype.jointType = (JointType)Random.Range(1, 4);
 
                 cg.segments.Add(generatedSegmentGenotype);
                 return generatedSegmentGenotype;
