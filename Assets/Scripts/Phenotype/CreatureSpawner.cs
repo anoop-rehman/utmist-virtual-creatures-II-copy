@@ -223,8 +223,9 @@ public class CreatureSpawner : MonoBehaviour
 
             case (JointType.HingeX):
                 {
-                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position + parentTransform.forward * (0.5f + parentTransform.localScale.z / 2), spawnAngle);
-
+                    float scale = spawnedSegmentGameObject.transform.localScale.x;
+                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position + parentTransform.forward * (scale / 2 + parentTransform.localScale.z / 2), spawnAngle);
+                    jointObject.transform.localScale = new Vector3(scale, scale/2, scale);
                     jointObject.transform.parent = c.transform;
                     FixedJoint jointObjectj = jointObject.AddComponent<FixedJoint>();
                     jointObjectj.autoConfigureConnectedAnchor = true;
@@ -235,7 +236,7 @@ public class CreatureSpawner : MonoBehaviour
                     HingeJoint j = spawnedSegmentGameObject.AddComponent<HingeJoint>();
                     j.connectedBody = jointObject.GetComponent<Rigidbody>();
                     j.axis = new Vector3(1 * otherReflectInt, 0, 0);
-                    j.anchor = jointObject.transform.forward * (0.5f + dimVector.z / 2) / dimVector.z;
+                    j.anchor = jointObject.transform.forward * (scale / 2 + dimVector.z / 2) / dimVector.z;
                     j.useMotor = false;
                     JointMotor motor = j.motor;
                     motor.targetVelocity = 0;
@@ -255,8 +256,10 @@ public class CreatureSpawner : MonoBehaviour
 
             case (JointType.HingeY):
                 {
+                    float scale = spawnedSegmentGameObject.transform.localScale.y;
 
-                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position + parentTransform.forward * (0.5f + parentTransform.localScale.z / 2), spawnAngle);
+                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position + parentTransform.forward * (scale / 2 + parentTransform.localScale.z / 2), spawnAngle);
+                    jointObject.transform.localScale = new Vector3(scale, scale / 2, scale);
 
                     jointObject.transform.parent = c.transform;
                     FixedJoint jointObjectj = jointObject.AddComponent<FixedJoint>();
@@ -266,7 +269,7 @@ public class CreatureSpawner : MonoBehaviour
                     HingeJoint j = spawnedSegmentGameObject.AddComponent<HingeJoint>();
                     j.connectedBody = jointObject.GetComponent<Rigidbody>();
                     j.axis = new Vector3(0, 1 * otherReflectInt, 0);
-                    j.anchor = jointObject.transform.forward * (0.5f + dimVector.z / 2) / dimVector.z;
+                    j.anchor = jointObject.transform.forward * (scale / 2 + dimVector.z / 2) / dimVector.z;
                     j.useMotor = false;
                     JointMotor motor = j.motor;
                     motor.targetVelocity = 0;
@@ -286,7 +289,10 @@ public class CreatureSpawner : MonoBehaviour
 
             case (JointType.HingeZ):
                 {
-                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position + parentTransform.right * (0.5f + parentTransform.localScale.x / 2), spawnAngle);
+                    float scale = spawnedSegmentGameObject.transform.localScale.z;
+
+                    GameObject jointObject = Instantiate(hingeJointPrefab, parentTransform.position + parentTransform.right * (scale/2 + parentTransform.localScale.x / 2), spawnAngle);
+                    jointObject.transform.localScale = new Vector3(scale, scale / 2, scale);
 
                     jointObject.transform.parent = c.transform;
                     FixedJoint jointObjectj = jointObject.AddComponent<FixedJoint>();
@@ -297,7 +303,7 @@ public class CreatureSpawner : MonoBehaviour
                     HingeJoint j = spawnedSegmentGameObject.AddComponent<HingeJoint>();
                     j.connectedBody = jointObject.GetComponent<Rigidbody>();
                     j.axis = new Vector3(0, 0, 1 * otherReflectInt);
-                    j.anchor = jointObject.transform.right * (0.5f + dimVector.x / 2) / dimVector.x;
+                    j.anchor = jointObject.transform.right * (scale / 2 + dimVector.x / 2) / dimVector.x;
                     j.useMotor = false;
                     JointMotor motor = j.motor;
                     motor.targetVelocity = 0;
