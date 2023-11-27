@@ -1,3 +1,4 @@
+<!--
 # UTMIST Virtual Creatures
 [![UTMIST - Virtual Creatures](https://img.shields.io/badge/UTMIST-Virtual%20Creatures-cyan)](https://utmist.gitlab.io/projects/virtual-creatures/)
 [![HitCount](https://hits.dwyl.com/ajwm8103/utmist-virtual-creatures.svg?style=flat-square)](http://hits.dwyl.com/ajwm8103/utmist-virtual-creatures)
@@ -53,3 +54,10 @@ Andrew Magnuson - ajwmagnuson@gmail.com
 - [Carol Meng](https://github.com/Caspian-9)
 - [Ryan Wei](https://github.com/AC-W)
 - [Efe Tascioglu](https://github.com/efetascioglu)
+
+-->
+
+# UTMIST Virtual Creatures Part II
+The greatest utmist project of all time
+
+<img width="856" alt="Screen Shot 2023-11-27 at 7 08 06 AM" src="https://github.com/anoop-rehman/utmist-virtual-creatures-II/assets/93463679/4059b40f-7772-42b4-bfba-92474be8db6b">
