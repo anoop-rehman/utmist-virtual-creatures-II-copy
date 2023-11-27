@@ -766,5 +766,31 @@ public class CreatureGenotype
         actDim = segmentCount - 1;
         obsDim = segmentCount * 12;
     }
+
+
+    public float SizeOfCreature()
+    {
+        float totalVolume = 0f;
+        foreach (SegmentGenotype segment in segments)
+        {
+
+            // TODO: add tracing to this to account for recursion
+
+            if (segment.id != 0)
+            {
+                totalVolume += segment.dimensionX * segment.dimensionY * segment.dimensionZ;
+
+                Debug.Log(segment.dimensionX);
+                Debug.Log(segment.dimensionY);
+                Debug.Log(segment.dimensionZ);
+            }
+
+
+        }
+
+
+        return totalVolume;
+    }
+
 }
 

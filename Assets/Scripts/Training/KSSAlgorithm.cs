@@ -12,6 +12,19 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace KSS
 {
+    public struct GenerationProperty<T>
+    {
+        public T best;
+        public T median;
+        public T worst;
+
+        public string GetDataString()
+        {
+            return string.Format("{0},{1},{2}", best, median, worst);
+        }
+    }
+
+
     [System.Serializable]
     public class KSSSave : TrainingSave
     {
@@ -70,6 +83,9 @@ namespace KSS
         public float medianReward;
         public float bestReward;
 
+        public GenerationProperty<float> rewardProperty; 
+
+
         public void Cull(int populationSize, float survivalRatio)
         {
             if (cgEvals != null && complete && !culled) {
@@ -77,9 +93,10 @@ namespace KSS
                 cleanedEvals.RemoveAll(x => x.evalStatus == EvalStatus.DISQUALIFIED);
                 cleanedEvals.RemoveAll(x => x.fitness.HasValue == false);
                 cleanedEvals = cleanedEvals.OrderByDescending(cgEval => cgEval.fitness.Value).ToList();
-                bestReward = SelectBestEval().fitness.Value;
-                medianReward = cleanedEvals[cleanedEvals.Count / 2].fitness.Value;
-                worstReward = cleanedEvals.Last().fitness.Value;
+
+                rewardProperty.best = SelectBestEval().fitness.Value;
+                rewardProperty.median = cleanedEvals[cleanedEvals.Count / 2].fitness.Value;
+                rewardProperty.worst = cleanedEvals.Last().fitness.Value;
 
                 cgEvals = new List<CreatureGenotypeEval>(SelectTopEvals(populationSize, survivalRatio));
                 culled = true;
@@ -87,6 +104,7 @@ namespace KSS
         }
 
         public string GetDataString(){
+            return rewardProperty.GenerateDataString
             return string.Format("{0},{1},{2}", bestReward, medianReward, worstReward);
         }
 
@@ -136,6 +154,7 @@ namespace KSS
             cgEvals = new List<CreatureGenotypeEval>();
             culled = false;
             complete = false;
+            rewardProperty = new GenerationProperty<float>();
         }
 
         public void Complete(){
@@ -256,6 +275,7 @@ namespace KSS
     public class CreatureGenotypeEval {
         public CreatureGenotype cg;
         public SN<float> fitness; // total reward
+
         public EvalStatus evalStatus = EvalStatus.NOT_EVALUATED;
 
         public CreatureGenotypeEval(CreatureGenotype cg){
@@ -264,7 +284,7 @@ namespace KSS
             evalStatus = EvalStatus.NOT_EVALUATED;
         }
 
-        public CreatureGenotypeEval(CreatureGenotype cg, float fitness)
+        public CreatureGenotypeEval(CreatureGenotype cg, float fitness, float size)
         {
             this.cg = cg;
             this.fitness = fitness;
