@@ -104,8 +104,8 @@ namespace KSS
         }
 
         public string GetDataString(){
-            return rewardProperty.GenerateDataString
-            return string.Format("{0},{1},{2}", bestReward, medianReward, worstReward);
+            return rewardProperty.GetDataString();
+            // return string.Format("{0},{1},{2}", bestReward, medianReward, worstReward);
         }
 
         public CreatureGenotypeEval SelectBestEval()
@@ -284,7 +284,7 @@ namespace KSS
             evalStatus = EvalStatus.NOT_EVALUATED;
         }
 
-        public CreatureGenotypeEval(CreatureGenotype cg, float fitness, float size)
+        public CreatureGenotypeEval(CreatureGenotype cg, float fitness)
         {
             this.cg = cg;
             this.fitness = fitness;
