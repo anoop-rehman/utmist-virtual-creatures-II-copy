@@ -1534,13 +1534,7 @@ public class MutateGenotype
         // 5. Unconnected elements are garbage collected / simplified
         SimplifyCreatureGenotype(ref cg);
 
-        Dictionary<byte, byte> recursiveLimitInitial = new Dictionary<byte, byte>();
-        foreach (SegmentGenotype segment in cg.segments) recursiveLimitInitial[segment.id] = segment.recursiveLimit;
-
-        int segmentCount = 0;
-
-        // Iterate
-        cg.IterateSegment(recursiveLimitInitial, null, new List<byte>(), ref segmentCount);
+        int segmentCount = cg.GetSegmentCount();
 
         if (segmentCount > mp.maxSegments)
         {

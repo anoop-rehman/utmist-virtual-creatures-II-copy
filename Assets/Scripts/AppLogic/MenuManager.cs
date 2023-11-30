@@ -118,7 +118,7 @@ public class MenuManager : MonoBehaviour
     {
         menus.ForEach(o => o.SetActive(false));
 
-        string[] fileArray = Directory.GetFiles(OptionsPersist.instance.VCSaves, "*.save");
+        string[] fileArray = Directory.GetFiles(OptionsPersist.VCSaves, "*.save");
         chooseItems = new List<EvolutionChooseItem>();
 
         float spacing = 10f;  // spacing between items
@@ -262,7 +262,7 @@ public class MenuManager : MonoBehaviour
         // This line takes from a template creature genotype found in a Unity PropertyDrawer
         //optimizationSettings.initialGenotype = templateCGSO == null ? null : templateCGSO.cg;
         //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Leaper.creature", false); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
-        optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Users/Carol/Virtual Creatures/Creatures/arv-vesperferox.creature", true); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
+        optimizationSettings.initialGenotype = CreatureGenotype.LoadData(OptionsPersist.VCCreatures + "arv-vesperferox.creature", false); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
         //optimizationSettings.initialGenotype = null;
 
 

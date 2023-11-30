@@ -59,7 +59,7 @@ public class SelectedCreaturePanel : MonoBehaviour
         saveButton.interactable = false;
         saveButton.GetComponentInChildren<Text>().text = "Saved!";
 
-        string path = Path.Combine(OptionsPersist.instance.VCCreatures, currentCreatureClone.cg.name + ".creature");
+        string path = Path.Combine(OptionsPersist.VCCreatures, currentCreatureClone.cg.name + ".creature");
         currentCreatureClone.cg.SaveData(path, true, false);
         Debug.Log(string.Format("Saved {0} to {1}", currentCreatureClone.cg.name, path));
     }

@@ -256,6 +256,13 @@ public class SegmentGenotype
     public float dimensionY; // Random.Range(0.05f, 3f);
     [Range(0.05f, 3f)]
     public float dimensionZ; // Random.Range(0.05f, 3f);
+    public float size
+    {
+        get
+        {
+            return dimensionX * dimensionY * dimensionZ;
+        }
+    }
 
     public JointType jointType;
 
@@ -348,6 +355,7 @@ public class CreatureGenotype
     public string name;
     public TrainingStage stage;
     public List<SegmentGenotype> segments;
+    public delegate void SegmentAction(SegmentGenotype segment, SegmentConnectionGenotype connection, List<byte> connectionPath);
 
     // Orientation four vars maybe...check Joint component vars.
     [HideInInspector]
@@ -684,6 +692,7 @@ public class CreatureGenotype
 
     public static CreatureGenotype LoadData(string path, bool isFullPath)
     {
+        Debug.Log(Application.persistentDataPath);
         string fullPath = isFullPath ? path : Application.persistentDataPath + path;
 
         if (File.Exists(fullPath))
@@ -704,13 +713,15 @@ public class CreatureGenotype
         }
     }
 
+    
+
     /// <summary>
     /// Runs through entire creature genotype and counts the number of segments
     /// </summary>
     /// <param name="recursiveLimitValues"></param>
     /// <param name="myConnection"></param>
     /// <param name="connectionPath"></param>
-    public void IterateSegment(Dictionary<byte, byte> recursiveLimitValues,
+    /*public void IterateSegment(Dictionary<byte, byte> recursiveLimitValues,
             SegmentConnectionGenotype myConnection, List<byte> connectionPath, ref int segmentCount)
     {
         segmentCount++;
@@ -746,21 +757,80 @@ public class CreatureGenotype
                 IterateSegment(recursiveLimitClone, connection, connectionPathClone, ref segmentCount);
             }
         }
+    }*/
+
+    public void IterateSegment(
+        Dictionary<byte, byte> recursiveLimitValues,
+        SegmentConnectionGenotype myConnection,
+        List<byte> connectionPath,
+        SegmentAction action)
+    {
+        // Find SegmentGenotype
+        byte id = myConnection == null ? (byte)1 : myConnection.destination;
+        SegmentGenotype currentSegmentGenotype = GetSegment(id);
+
+        if (currentSegmentGenotype == null) return;
+
+        // Perform the action on the current segment
+        action(currentSegmentGenotype, myConnection, connectionPath);
+
+        // Change recursiveLimit stuff
+        bool runTerminalOnly = false;
+        recursiveLimitValues[id]--;
+        if (recursiveLimitValues[id] == 0)
+        {
+            runTerminalOnly = true;
+        }
+
+        foreach (SegmentConnectionGenotype connection in currentSegmentGenotype.connections)
+        {
+            if (recursiveLimitValues[connection.destination] > 0)
+            {
+                if (!runTerminalOnly && connection.terminalOnly)
+                {
+                    continue;
+                }
+                Dictionary<byte, byte> recursiveLimitClone = recursiveLimitValues.ToDictionary(entry => entry.Key, entry => entry.Value);
+                List<byte> connectionPathClone = connectionPath.Select(item => item).ToList();
+                connectionPathClone.Add(connection.id);
+                IterateSegment(recursiveLimitClone, connection, connectionPathClone, action);
+            }
+        }
     }
+
+    public void IterateSegmentInitial(SegmentAction action)
+    {
+        Dictionary<byte, byte> recursiveLimitInitial = new Dictionary<byte, byte>();
+        foreach (SegmentGenotype segment in segments) recursiveLimitInitial[segment.id] = segment.recursiveLimit;
+
+        IterateSegment(recursiveLimitInitial, null, new List<byte>(), action);
+    }
+
+    public int GetSegmentCount()
+    {
+        int segmentCount = 0;
+        SegmentAction countSegments = (segment, connection, path) => { segmentCount++; };
+
+        IterateSegmentInitial(countSegments);
+        return segmentCount;
+    }
+
+    public float GetSize()
+    {
+        float size = 0f;
+        SegmentAction countSize = (segment, connection, path) => { size += segment.size; };
+
+        IterateSegmentInitial(countSize);
+        return size;
+    }
+
 
     /// <summary>
     /// Calculates dimensions of observation and action vectors
     /// </summary>
     void CalculateDims()
     {
-        // Initialize recurisve limit tracker
-        Dictionary<byte, byte> recursiveLimitInitial = new Dictionary<byte, byte>();
-        foreach (SegmentGenotype segment in segments) recursiveLimitInitial[segment.id] = segment.recursiveLimit;
-
-        int segmentCount = 0;
-
-        // Iterate
-        IterateSegment(recursiveLimitInitial, null, new List<byte>(), ref segmentCount);
+        int segmentCount = GetSegmentCount();
 
         // Set resultant dims
         actDim = segmentCount - 1;

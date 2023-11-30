@@ -48,7 +48,7 @@ namespace KSS
 
             // The target file path e.g.
 
-            var filePath = Path.Combine(OptionsPersist.instance.VCData, saveName + ".csv");
+            var filePath = Path.Combine(OptionsPersist.VCData, saveName + ".csv");
 
             using (var writer = new StreamWriter(filePath, false))
             {
@@ -65,11 +65,8 @@ namespace KSS
             KSSSettings optimizationSettings = (KSSSettings)ts.optimizationSettings;
             CreatureGenotype initialGenotype = optimizationSettings.initialGenotype;
             if (initialGenotype == null) return true;
-            Dictionary<byte, byte> recursiveLimitInitial = new Dictionary<byte, byte>();
-            foreach (SegmentGenotype segment in initialGenotype.segments) recursiveLimitInitial[segment.id] = segment.recursiveLimit;
+            int segmentCount = initialGenotype.GetSegmentCount();
 
-            int segmentCount = 0;
-            initialGenotype.IterateSegment(recursiveLimitInitial, null, new List<byte>(), ref segmentCount);
             return segmentCount <= optimizationSettings.mp.maxSegments;
         }
     }
@@ -475,7 +472,7 @@ namespace KSS
 
             // bestEval.cg.SaveData("C:\\Users\\ajwm8\\Documents\\Programming\\Unity\\UTMIST Virtual Creatures\\Creatures\\longtest\\" + currentGenerationIndex + "," + bestEval.cg.name + ".creature", true);
 
-            string path = Path.Combine(OptionsPersist.instance.VCSaves, save.saveName + ".save");
+            string path = Path.Combine(OptionsPersist.VCSaves, save.saveName + ".save");
             save.SaveData(path, true, true);
             //saveK.SaveData("C:\\Users\\ajwm8\\Documents\\Programming\\Unity\\UTMIST Virtual Creatures\\Creatures\\longtest\\MAINSAVE.save", true);
             return topEvals;
