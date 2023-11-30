@@ -349,6 +349,7 @@ public class SegmentGenotype
 
 }
 
+public enum SaveLocation { FULL_PATH, CREATURES, PERSISTENT };
 [System.Serializable]
 public class CreatureGenotype
 {
@@ -690,10 +691,25 @@ public class CreatureGenotype
         stream.Close();
     }
 
-    public static CreatureGenotype LoadData(string path, bool isFullPath)
+    
+    public static CreatureGenotype LoadData(string path, SaveLocation saveLocation)
     {
-        Debug.Log(Application.persistentDataPath);
-        string fullPath = isFullPath ? path : Application.persistentDataPath + path;
+        string fullPath;
+        switch (saveLocation)
+        {
+            case SaveLocation.FULL_PATH:
+                fullPath = path;
+                break;
+            case SaveLocation.CREATURES:
+                fullPath = OptionsPersist.VCCreatures + path;
+                break;
+            case SaveLocation.PERSISTENT:
+                fullPath = Application.persistentDataPath + path;
+                break;
+            default:
+                fullPath = path;
+                break;
+        }
 
         if (File.Exists(fullPath))
         {

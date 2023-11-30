@@ -22,7 +22,7 @@ public class CreatureGenotypeScriptableObjectEditor : Editor
         {
             Debug.Log("Loading Creature");
             string path = EditorUtility.OpenFilePanel("Creature.creature", "C:", "creature");
-            CreatureGenotype cg = CreatureGenotype.LoadData(path, true);
+            CreatureGenotype cg = CreatureGenotype.LoadData(path, SaveLocation.FULL_PATH);
             so.cg = cg;
         }
         DrawDefaultInspector();
