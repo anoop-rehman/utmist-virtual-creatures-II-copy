@@ -130,7 +130,7 @@ public class CreatureSpawner : MonoBehaviour
         c.InitializeCreature(fitness);
         Debug.Log("Spawned creature " + c.name);
 
-        Debug.Log("Its size is: " + c.cg.SizeOfCreature().ToString());
+        Debug.Log("Its size is: " + c.cg.GetSize().ToString());
 
         return c;
     }

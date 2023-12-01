@@ -101,8 +101,8 @@ namespace KSS
         }
 
         public string GetDataString(){
-            return rewardProperty.GetDataString();
-            // return string.Format("{0},{1},{2}", bestReward, medianReward, worstReward);
+            // return rewardProperty.GetDataString();
+            return string.Format("{0},{1},{2}", rewardProperty.GetDataString(), cgEvals[0].cg.GetSize());
         }
 
         public CreatureGenotypeEval SelectBestEval()
