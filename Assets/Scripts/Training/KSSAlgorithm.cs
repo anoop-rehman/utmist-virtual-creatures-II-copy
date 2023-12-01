@@ -7,11 +7,13 @@ using UnityEditor;
 using System.Text;
 using System.Linq;
 using System.IO;
+using System;
 using System.Runtime.Serialization.Formatters.Binary;
 
 
 namespace KSS
 {
+    [Serializable]
     public struct GenerationProperty<T>
     {
         public T best;
