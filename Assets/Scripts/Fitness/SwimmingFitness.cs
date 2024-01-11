@@ -65,6 +65,7 @@ public class SwimmingFitness : Fitness
 
     public override void Reset()
     {
+        base.Reset();
         creature = myEnvironment.currentCreature;
         if (creature == null) return;
         currCom = creature.GetCentreOfMass();
