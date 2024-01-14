@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class WalkingFitness : Fitness
 {
-    //public float pushThreshold = 2f;
     public float pushThreshold = 2f;
     //public float pushPenaltyDiscount = 0.9f;
     public float pushPenaltyDiscount = 0.2f;
@@ -14,18 +13,27 @@ public class WalkingFitness : Fitness
     float distance, prevSpeed;
     float currSpeed = 0f;
     Creature creature;
+    public GameObject targetSphere; // Assign this in the inspector
+    List<Vector3> localTargetPositions = new List<Vector3>
+    {
+    new Vector3(0f, -5.5f, 3f),
+    new Vector3(1.7f, -5.5f, 6f),
+    new Vector3(-2.02f, -5.5f, 9.48f),
+    new Vector3(2.25f, -5.5f, 15.73f),
+    };
+    List<Vector3> worldTargetPositions = new List<Vector3>();
 
-    //Vector3 targetPos = new Vector3(0, 0, 3);
-    Vector3 targetPos = new Vector3(0, 0, 3);
 
     // Start is called before the first frame update
     void Start()
     {
-        creature = myEnvironment.currentCreature;
-        Debug.Log("creature is null = " + (creature == null));
-        if (creature == null)
-            return;
-        Reset();
+        //creature = myEnvironment.currentCreature;
+        //currCom = creature.GetCentreOfMass();
+
+        //Debug.Log("creature is null = " + (creature == null));
+        //if (creature == null)
+        //    return;
+        //Reset();
     }
 
     // Update is called once per frame
@@ -68,8 +76,8 @@ public class WalkingFitness : Fitness
         //reward += currSpeed;
         // TODO: currently this just fuckin uhhhh doesnt move and reward goes up
         // fix lmaoooo
-        reward = 1 / (0.1f * (currCom - targetPos).magnitude);
-        Debug.Log("targetPos = " + targetPos + ", currCom = " + currCom + ", reward = " + reward);
+        reward = 1 / (0.1f * Mathf.Pow((currCom - worldTargetPositions[0]).magnitude, 2)) ;
+        Debug.Log("targetPos = " + worldTargetPositions[0] + ", currCom = " + currCom + ", reward = " + reward); ;
 
         // Continuing movement is rewarded over that from a single initial push, by giving the velocities during the final phase of the test period a stronger relative weight in the total fitness value
         // We do not implement this because I am lazy
@@ -94,13 +102,22 @@ public class WalkingFitness : Fitness
 
     public override void Reset()
     {
-        Debug.Log("RESET RUNNING AAAAA");
         //throw new System.NotImplementedException();
         creature = myEnvironment.currentCreature;
         if (creature == null) return;
         currCom = creature.GetCentreOfMass();
-        //Vector3 firstCom = creature.GetCentreOfMass();
-        //Debug.Log("firstCom = " + firstCom);
-        targetPos = currCom + Vector3.forward * 3;
+        targetSphere = Resources.Load<GameObject>("Prefabs/TargetSphere");
+        //Instantiate(targetSphere, transform.position, transform.rotation);
+
+        foreach (Vector3 localTargetPosition in localTargetPositions)
+        {
+            worldTargetPositions.Add(localTargetPosition + transform.position);
+        }
+
+        foreach (Vector3 worldTargetPosition in worldTargetPositions)
+        {
+            Instantiate(targetSphere, worldTargetPosition, transform.rotation);
+        }
+        Debug.Log("spawned target at" + targetSphere.transform.position);
     }
 }
