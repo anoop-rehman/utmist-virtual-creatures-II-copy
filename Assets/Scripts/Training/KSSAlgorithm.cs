@@ -13,15 +13,15 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace KSS
 {
     [System.Serializable]
-    public struct GenerationProperty<T>
+    public struct GenerationProperty<T> // generic type so that we can accomomdate not just floats like fitness, but also integer counts of things, strings, etc 
     {
-        public T best;
+        public T best; // this can be of any type!!!
         public T median;
         public T worst;
 
         public string GetDataString()
         {
-            return string.Format("{0},{1},{2}", best, median, worst);
+            return string.Format("{0},{1},{2}", best, median, worst); 
         }
     }
 
