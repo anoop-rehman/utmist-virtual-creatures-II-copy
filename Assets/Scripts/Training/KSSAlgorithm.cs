@@ -25,7 +25,6 @@ namespace KSS
         }
     }
 
-
     [System.Serializable]
     public class KSSSave : TrainingSave
     {
@@ -34,30 +33,32 @@ namespace KSS
 
         public CreatureGenotypeEval best;
 
-        // Data on creatures goes here TODO
-
+        /// <summary>
+        /// Exports the entire save's data to a CSV file located at VCData.
+        /// </summary>
         public void ExportCSV(){
             StringBuilder sb = new StringBuilder("Generation,Best,Median,Worst");
             for (int i = 0; i < generations.Count; i++)
             {
                 Generation g = generations[i];
-                sb.Append('\n').Append(i.ToString()).Append(',').Append(g.GetDataString());
+
+                // Append newline and generation num
+                sb.Append('\n').Append(i.ToString()).Append(',');
+
+                // Append generation's datastring
+                sb.Append(g.GetDataString());
             }
 
             // Use the CSV generation from before
             var content = sb.ToString();
 
             // The target file path e.g.
-
             var filePath = Path.Combine(OptionsPersist.VCData, saveName + ".csv");
 
             using (var writer = new StreamWriter(filePath, false))
             {
                 writer.Write(content);
             }
-
-            // Or just
-            //File.WriteAllText(content);
 
             Debug.Log($"CSV file written to \"{filePath}\"");
         }
@@ -83,7 +84,6 @@ namespace KSS
 
         public GenerationProperty<float> rewardProperty; 
 
-
         public void Cull(int populationSize, float survivalRatio)
         {
             if (cgEvals != null && complete && !culled) {
@@ -102,7 +102,6 @@ namespace KSS
         }
 
         public string GetDataString(){
-            // return rewardProperty.GetDataString();
             return string.Format("{0},{1},{2}", rewardProperty.GetDataString(), cgEvals[0].cg.GetSize());
         }
 
@@ -192,21 +191,18 @@ namespace KSS
 
         public static Generation FromMutation(int size, List<CreatureGenotypeEval> topEvals, MutateGenotype.MutationPreferenceSetting mp)
         {
-            Generation g = new Generation();
-
+            Generation g = new();
             int topCount = topEvals.Count;
             int remainingCount = size - topEvals.Count;
 
-            List<CreatureGenotypeEval> topSoftmaxEvals = new List<CreatureGenotypeEval>();
+            List<CreatureGenotypeEval> topSoftmaxEvals = new();
 
             float minFitness = topEvals.Min(x => (float)x.fitness.Value);
             float maxFitness = topEvals.Max(x => (float)x.fitness.Value);
             float scalingFactor = (maxFitness != minFitness) ? 1.0f / (maxFitness - minFitness) : 1.0f;
 
-            // float exponent = 0.5f;
             float temperature = 0.1f; // You can adjust this value to find the right balance
             float denom = topEvals.Select(x => Mathf.Pow((float)(x.fitness.Value - minFitness) * scalingFactor, 1 / temperature)).Sum();
-            //float denom = topEvals.Select(x => Mathf.Exp((float)x.fitness.Value - maxFitness)).Sum();
             topEvals = topEvals.OrderByDescending(x => x.fitness.Value).ToList();
 
             //Debug.Log(string.Format("[{0}, {1}], scaling factor {2}, denom {3}", maxFitness, minFitness, scalingFactor, denom));
@@ -214,15 +210,13 @@ namespace KSS
             {
                 g.cgEvals.Add(new CreatureGenotypeEval(topEval.cg));
                 CreatureGenotypeEval topSoftmaxEval = topEval.ShallowCopy();
-                //topSoftmaxEval.fitness = Mathf.Exp((float)topSoftmaxEval.fitness.Value - maxFitness);
-                //topSoftmaxEval.fitness = Mathf.Pow((float)topSoftmaxEval.fitness.Value, exponent);
                 topSoftmaxEval.fitness = Mathf.Pow((float)(topSoftmaxEval.fitness.Value - minFitness) * scalingFactor, 1 / temperature);
                 topSoftmaxEvals.Add(topSoftmaxEval);
             }
 
             topSoftmaxEvals = topSoftmaxEvals.OrderByDescending(x => x.fitness.Value).ToList();
 
-            List<int> intValues = new List<int>();
+            List<int> intValues = new();
 
             // Calculate the integer values for each percentage
             int sizeChildren = size - topEvals.Count;
@@ -421,8 +415,7 @@ namespace KSS
             if (first) {
                 currentGenerationIndex = 0;
                 currentGeneration = Generation.FromInitial(optimizationSettings.populationSize, optimizationSettings.initialGenotype, optimizationSettings.mp);
-                saveK.generations = new List<Generation>();
-                saveK.generations.Add(currentGeneration);
+                saveK.generations = new() { currentGeneration };
             } else {
                 currentGeneration.Complete();
 
@@ -437,7 +430,7 @@ namespace KSS
                 if (saveK.generations.Count != 2){
                     //CreatureGenotypeEval bestEval = saveK.generations[saveK.generations.Count - 2].SelectBestEval();
                     //saveK.generations[saveK.generations.Count - 2].cgEvals = new List<CreatureGenotypeEval>() { bestEval } ;
-                    saveK.generations[saveK.generations.Count - 2].Cull(optimizationSettings.populationSize, optimizationSettings.survivalRatio);
+                    saveK.generations[^2].Cull(optimizationSettings.populationSize, optimizationSettings.survivalRatio);
                 }
             }
         }
@@ -460,7 +453,7 @@ namespace KSS
                     topEvals.Add(eval);
                     positiveCount++;
                 } else {
-                    CreatureGenotypeEval cgEval = new CreatureGenotypeEval(optimizationSettings.initialGenotype.Clone());
+                    CreatureGenotypeEval cgEval = new(optimizationSettings.initialGenotype.Clone());
                     //CreatureGenotypeEval cgEval = new CreatureGenotypeEval(MutateGenotype.GenerateRandomCreatureGenotype());
                     topEvals.Add(cgEval);
                 }
