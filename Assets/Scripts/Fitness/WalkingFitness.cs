@@ -16,10 +16,10 @@ public class WalkingFitness : Fitness
     public GameObject targetSphere; // Assign this in the inspector
     List<Vector3> localTargetPositions = new List<Vector3>
     {
-    new Vector3(0f, -5.5f, 3f),
-    new Vector3(1.7f, -5.5f, 6f),
-    new Vector3(-2.02f, -5.5f, 9.48f),
-    new Vector3(2.25f, -5.5f, 15.73f),
+    new Vector3(0f, -5.5f, 5f + 3f),
+    //new Vector3(1.7f, -5.5f, 5f + 6f),
+    //new Vector3(-2.02f, -5.5f, 5f + 9.48f),
+    //new Vector3(2.25f, -5.5f, 5f + 15.73f),
     };
     List<Vector3> worldTargetPositions = new List<Vector3>();
 
@@ -76,7 +76,7 @@ public class WalkingFitness : Fitness
         //reward += currSpeed;
         // TODO: currently this just fuckin uhhhh doesnt move and reward goes up
         // fix lmaoooo
-        reward = 1 / (0.1f * Mathf.Pow((currCom - worldTargetPositions[0]).magnitude, 2)) ;
+        reward = 1 / (0.1f * Mathf.Pow((currCom - worldTargetPositions[0]).magnitude, 2) + 0.01f) ;
         Debug.Log("targetPos = " + worldTargetPositions[0] + ", currCom = " + currCom + ", reward = " + reward); ;
 
         // Continuing movement is rewarded over that from a single initial push, by giving the velocities during the final phase of the test period a stronger relative weight in the total fitness value
