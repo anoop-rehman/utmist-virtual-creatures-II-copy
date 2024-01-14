@@ -92,7 +92,7 @@ public class Segment : MonoBehaviour
 
     public FixedJoint fixedJoint;
     public new HingeJoint hingeJoint;
-    public ConfigurableJoint sphericalJoint;
+    public CharacterJoint sphericalJoint;
     public Rigidbody myRigidbody;
     public float jointAxisX;
     public float jointAxisY;
@@ -163,7 +163,7 @@ public class Segment : MonoBehaviour
         fixedJoint.connectedBody = parentRigidbody;
     }
 
-    public void AttachHingeJoint(Vector3 axis, Rigidbody parentRigidbody, GameObject cylinderPrefab)
+    public void AttachHingeJoint(Vector3 axis, Rigidbody parentRigidbody, GameObject cylinderPrefab, Vector3 jointPosition, Vector3 dimVector)
     {
         if (hingeJoint != null) Destroy(hingeJoint);
 
@@ -172,11 +172,14 @@ public class Segment : MonoBehaviour
         jointObjectj.connectedBody = parentRigidbody;
         jointObjectj.autoConfigureConnectedAnchor = false;
         jointObject.transform.localRotation = Quaternion.Euler(axis.z != 0 ? 90 : 0, 0, axis.x != 0 ? 90 : 0);
-
+        jointObjectj.anchor = jointPosition;
 
         hingeJoint = gameObject.AddComponent<HingeJoint>();
         hingeJoint.connectedBody = jointObject.GetComponent<Rigidbody>();
         hingeJoint.axis = axis;
+        hingeJoint.anchor = axis.z == 0 ? 
+            jointObject.transform.forward * (0.5f + dimVector.z / 2) / dimVector.z : 
+            jointObject.transform.right * (0.5f + dimVector.x / 2) / dimVector.x;
         hingeJoint.useMotor = true;
         JointMotor motor = hingeJoint.motor;
         motor.targetVelocity = 0;
@@ -197,8 +200,8 @@ public class Segment : MonoBehaviour
 
         GameObject spawnedJointGameObject = Instantiate(spherePrefab, Vector3.zero, Quaternion.identity);
 
-        CharacterJoint j = spawnedJointGameObject.AddComponent<CharacterJoint>();
-        j.connectedBody = parentRigidbody;
+        sphericalJoint = spawnedJointGameObject.AddComponent<CharacterJoint>();
+        sphericalJoint.connectedBody = parentRigidbody;
         /*
         sphericalJoint = gameObject.AddComponent<ConfigurableJoint>();
         sphericalJoint.connectedBody = parentRigidbody;
