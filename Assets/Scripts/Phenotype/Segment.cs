@@ -163,11 +163,19 @@ public class Segment : MonoBehaviour
         fixedJoint.connectedBody = parentRigidbody;
     }
 
-    public void AttachHingeJoint(Vector3 axis, Rigidbody parentRigidbody)
+    public void AttachHingeJoint(Vector3 axis, Rigidbody parentRigidbody, GameObject cylinderPrefab)
     {
         if (hingeJoint != null) Destroy(hingeJoint);
+
+        GameObject jointObject = Instantiate(cylinderPrefab, Vector3.zero, Quaternion.identity);
+        FixedJoint jointObjectj = jointObject.AddComponent<FixedJoint>();
+        jointObjectj.connectedBody = parentRigidbody;
+        jointObjectj.autoConfigureConnectedAnchor = false;
+        jointObject.transform.localRotation = Quaternion.Euler(axis.z != 0 ? 90 : 0, 0, axis.x != 0 ? 90 : 0);
+
+
         hingeJoint = gameObject.AddComponent<HingeJoint>();
-        hingeJoint.connectedBody = parentRigidbody;
+        hingeJoint.connectedBody = jointObject.GetComponent<Rigidbody>();
         hingeJoint.axis = axis;
         hingeJoint.useMotor = true;
         JointMotor motor = hingeJoint.motor;
@@ -184,8 +192,14 @@ public class Segment : MonoBehaviour
         hingeJoint.useLimits = true;
     }
 
-    public void AttachSphericalJoint(Rigidbody parentRigidbody)
+    public void AttachSphericalJoint(Rigidbody parentRigidbody, GameObject spherePrefab)
     {
+
+        GameObject spawnedJointGameObject = Instantiate(spherePrefab, Vector3.zero, Quaternion.identity);
+
+        CharacterJoint j = spawnedJointGameObject.AddComponent<CharacterJoint>();
+        j.connectedBody = parentRigidbody;
+        /*
         sphericalJoint = gameObject.AddComponent<ConfigurableJoint>();
         sphericalJoint.connectedBody = parentRigidbody;
         sphericalJoint.xMotion = ConfigurableJointMotion.Locked;
@@ -200,6 +214,7 @@ public class Segment : MonoBehaviour
         jdyz.positionDamper = 99999;
         sphericalJoint.angularYZDrive = jdyz;
         sphericalJoint.targetAngularVelocity = new Vector3(0, 0, 0);
+        */
     }
 
     private void FixedUpdate()

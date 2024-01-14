@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657815, g: 0.49641192, b: 0.57481617, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3628,6 +3628,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   creaturePrefab: {fileID: 5168623450832129693, guid: f57b33118f5715c428887d11a1b04801, type: 3}
   segmentPrefab: {fileID: 6837624401485191407, guid: 56ac4567187132f4f921d8ae50078f2e, type: 3}
+  spherePrefab: {fileID: 6798246498680058710, guid: cb2f0d3c5959a724abc8c3ad4d4005a8, type: 3}
+  hingePrefab: {fileID: 4883267896745123935, guid: 36010466c3f945b468b6b3bffd2104ca, type: 3}
   spawnPos: {x: 0, y: 0, z: 0}
   creatureGenotype:
     name: mag-bellusavium

@@ -12,6 +12,8 @@ public class CreatureSpawner : MonoBehaviour
     [Header("Prefabs")]
     public Creature creaturePrefab;
     public GameObject segmentPrefab;
+    public GameObject spherePrefab;
+    public GameObject hingePrefab;
 
     [Header("Settings")]
     [SerializeField]
@@ -212,7 +214,7 @@ public class CreatureSpawner : MonoBehaviour
         // Pull Segment from pool
         spawnedSegment = segmentPool.Get();
         spawnedSegmentGameObject = spawnedSegment.gameObject;
-        
+
         // Initialize transform, name, and data
         spawnedSegmentGameObject.transform.position = sgd.pos;
         spawnedSegmentGameObject.transform.rotation = sgd.rot;
@@ -259,25 +261,25 @@ public class CreatureSpawner : MonoBehaviour
 
                 case (JointType.HingeX):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(1, 0, 0), sgd.parentSegmentRigidbody);
+                        spawnedSegment.AttachHingeJoint(new Vector3(1, 0, 0), sgd.parentSegmentRigidbody, hingePrefab);
                     }
                     break;
 
                 case (JointType.HingeY):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(0, 1 * sgd.otherReflectInt, 0), sgd.parentSegmentRigidbody);
+                        spawnedSegment.AttachHingeJoint(new Vector3(0, 1 * sgd.otherReflectInt, 0), sgd.parentSegmentRigidbody, hingePrefab);
                     }
                     break;
 
                 case (JointType.HingeZ):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(0, 0, 1 * sgd.otherReflectInt), sgd.parentSegmentRigidbody);
+                        spawnedSegment.AttachHingeJoint(new Vector3(0, 0, 1 * sgd.otherReflectInt), sgd.parentSegmentRigidbody, hingePrefab);
                     }
                     break;
 
                 case (JointType.Spherical):
                     {
-                        spawnedSegment.AttachSphericalJoint(sgd.parentSegmentRigidbody);
+                        spawnedSegment.AttachSphericalJoint(sgd.parentSegmentRigidbody, spherePrefab);
                     }
                     break;
 
