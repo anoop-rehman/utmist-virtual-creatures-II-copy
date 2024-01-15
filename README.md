@@ -57,7 +57,12 @@ Andrew Magnuson - ajwmagnuson@gmail.com
 
 -->
 
-# UTMIST Virtual Creatures Part II
-THE GREATEST UTMIST PROJECT OF ALL TIME
+# UTMIST Virtual Creatures Part II COPY
+duplicate repo so that everyone can contribute to THE GREATEST UTMIST PROJECT OF ALL TIME
 
-<img width="856" alt="Screen Shot 2023-11-27 at 7 08 06 AM" src="https://github.com/anoop-rehman/utmist-virtual-creatures-II/assets/93463679/4059b40f-7772-42b4-bfba-92474be8db6b">
+
+https://github.com/anoop-rehman/utmist-virtual-creatures-II-copy/assets/93463679/e7183dde-8027-4780-9b4a-3d2e4e5ee73d
+
+https://github.com/anoop-rehman/utmist-virtual-creatures-II-copy/assets/93463679/9da29ff7-14a8-4066-a889-b261fccfaaf5
+
+
