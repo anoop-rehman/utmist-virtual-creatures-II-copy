@@ -58,7 +58,7 @@ Andrew Magnuson - ajwmagnuson@gmail.com
 -->
 
 # UTMIST Virtual Creatures Part II COPY
-duplicate repo so that everyone can contribute to THE GREATEST UTMIST PROJECT OF ALL TIME
+duplicate repo so that everyone can contribute to THE GREATEST UTMIST PROJECT OF ALL TIME ‼️‼️💯
 
 
 https://github.com/anoop-rehman/utmist-virtual-creatures-II-copy/assets/93463679/e7183dde-8027-4780-9b4a-3d2e4e5ee73d
