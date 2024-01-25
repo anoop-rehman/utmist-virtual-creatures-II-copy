@@ -262,8 +262,8 @@ public class MenuManager : MonoBehaviour
         // This line takes from a template creature genotype found in a Unity PropertyDrawer
         //optimizationSettings.initialGenotype = templateCGSO == null ? null : templateCGSO.cg;
         //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Leaper.creature", false); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
-        optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/2-legged-shlawg.creature", SaveLocation.CREATURES); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
-        //optimizationSettings.initialGenotype = null;
+        //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/2-legged-shlawg.creature", SaveLocation.CREATURES); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
+        optimizationSettings.initialGenotype = null;
 
 
 

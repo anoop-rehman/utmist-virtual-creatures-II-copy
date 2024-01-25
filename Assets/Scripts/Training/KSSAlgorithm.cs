@@ -102,7 +102,7 @@ namespace KSS
         }
 
         public string GetDataString(){
-            return string.Format("{0},{1},{2}", rewardProperty.GetDataString(), cgEvals[0].cg.GetSize());
+            return string.Format("{0},{1}", rewardProperty.GetDataString(), cgEvals[0].cg.GetSize());
         }
 
         public CreatureGenotypeEval SelectBestEval()
@@ -117,6 +117,8 @@ namespace KSS
 
         public List<CreatureGenotypeEval> SelectTopEvals(int populationSize, float survivalRatio)
         {
+            Debug.Log("Sizes:");
+            Debug.Log(string.Format("{0},{1}", rewardProperty.GetDataString(), cgEvals[0].cg.GetSize()));
             List<CreatureGenotypeEval> cleanedEvals = new List<CreatureGenotypeEval>(cgEvals);
             List<CreatureGenotypeEval> topEvals = new List<CreatureGenotypeEval>();
             cleanedEvals.RemoveAll(x => x.evalStatus == EvalStatus.DISQUALIFIED);
