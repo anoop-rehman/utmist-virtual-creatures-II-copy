@@ -10,6 +10,8 @@ public class NeuronGenotype
 {
     [Tooltip("0:Sum,1:Product,2:Divide,3:Sum-threshold,4:Greater-than")]
     public byte type; // 0,1,2,3..22
+    // only makes sense if its a mathematical neuron like ng.nr.id >= 13. Here it doesn't matter if its any other type of neuron since only
+    // if its ng.nr.id >=13, only then we step into to see what the ng.type is and go find the mathematical function
 
     public NeuronReference[] inputs;
     [Range(-15f, 15f)]
@@ -84,7 +86,7 @@ public struct NeuronReference
 {
     //[Tooltip("-3:ghost\n-2:parent\n-1:self\n0>:child connection id")]
     //public int ownerSegment;
-
+    // SN = Serializable Nullable and it can be 0 or null. Same applies for variables named nullable
     public SN<NeuronReferenceRelativity> relativityNullable;
     public NeuronReferenceRelativity relativity
     {
@@ -112,9 +114,11 @@ public struct NeuronReference
     [Tooltip(
     "0-5:collider\n6-8:joint angle\n9-11:photosensors\n12:joint effector\n13>:other neurons"
     )]
-    public byte id;
+    public byte id; // ng.nr.id determines the type of the neuron as described below
+    // 0-12 are specific neurons. 13 after are special like wave, sin, add functions
 
-    // 0-5 - colliders
+    // These ids are not root or ghost. Segment.id 0 = ghost, 1 = root
+    // 0-5 - collision sensors
     // 6-8 - joint angle
     // 9-11 - photosensors
     // 12 - joint effector

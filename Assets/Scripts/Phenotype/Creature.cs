@@ -11,6 +11,8 @@ using Unity.MLAgents.Sensors;
 [System.Serializable]
 public class Neuron
 {
+    // Input to math neurons and some math neurons need 3 inputs. These neuranA,B,C can be from any neuron.
+    // Eg: fOOT CAN take input from ear or hand and see what action it would take
     public Neuron neuronA, neuronB, neuronC;
     public float a, b, c; // temp variables
     public float outValue;
@@ -38,9 +40,18 @@ public class Neuron
     public void GetInputs()
     {
         // Debug.Log(neuronA);
-        if (neuronA != null) a = neuronA.outValue * ng.weights[0];
-        if (neuronB != null) b = neuronB.outValue * ng.weights[1];
-        if (neuronC != null) c = neuronC.outValue * ng.weights[2];
+        if (neuronA != null)
+        {
+            a = neuronA.outValue * ng.weights[0];
+        }
+        if (neuronB != null)
+        {
+            b = neuronB.outValue * ng.weights[1];
+        }
+        if (neuronC != null)
+        {
+            c = neuronC.outValue * ng.weights[2];
+        }
         if (float.IsNaN(a) || float.IsNaN(b) || float.IsNaN(c)){
             if (segment != null){
                 Debug.Log("trolling " + segment.transform.parent.parent.parent.name);
@@ -56,7 +67,8 @@ public class Neuron
             if (effectorJoint is HingeJoint){
                 HingeJoint hj = (HingeJoint)effectorJoint;
                 JointMotor motor = hj.motor;
-                motor.targetVelocity = 10f * Mathf.Clamp(a, -40f, 40f);
+                float res = a + b + c;
+                motor.targetVelocity = 10f * Mathf.Clamp(res, -40f, 40f);
                 hj.motor = motor;
             }
         }
@@ -86,6 +98,9 @@ public class Neuron
 
     public void SetOutput()
     {
+        // The value to effector goes through each of these one by one before getting final value ot feed to effect and take the action. Look at the graph anoop sent
+        // and think the J1 arrow going out from J0 instead and does everything and then finally wave spits to > and the greater of J0 or this neural networks massive calculations
+        //
         outValue = ng.type switch
         {
             0 => a + b, // sum
@@ -109,7 +124,7 @@ public class Neuron
             18 => (a - dummy1) / Time.deltaTime, // differentiate
             19 => outValue + (a - outValue) * 0.5f, // smooth
             20 => a, // memory
-            21 => b * Mathf.Sin(Time.time * a) + c, // oscillate-wave
+            21 => b * Mathf.Sin(Time.time * a) + c, // oscillate-wave. This neuron could be useful for movement since movement is oscillatory kind of motion to move segment in and out. THis is why carol's creature learned ot walk and the agent uses that neuron always to move.
             22 => b * (Time.time * a - Mathf.Floor(Time.time * a)) + c, // oscillate-saw
             _ => 0
         };
@@ -192,8 +207,6 @@ public class Creature : MonoBehaviour
     public List<HingeJoint> actionMotors = new List<HingeJoint>();
     public List<Segment> segments = new List<Segment>();
 
-   
-
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -204,14 +217,18 @@ public class Creature : MonoBehaviour
         FeedForward();
 
         if (fitness != null && !isAgent){
-            totalReward += fitness.UpdateFrameReward();
+            // Initialize the creature so the fitness creature variable is populated for reward calculation.
+            // Without this, I (Aakash) was getting error where reward at every timestep was 0 but maybe I fucked up my code :)
+            fitness.SetCreatureObject(this);
+            float reward = fitness.UpdateFrameReward();
+            totalReward += reward;
         }
     }
 
     public void InitializeCreature(Fitness fitness)
     {
         // Debug.Log("----INITIALIZING CREATURE----");
-        this.isAlive = true;
+        isAlive = true;
         this.fitness = fitness;
         ConnectNeurons(neurons);
         ConnectNeurons(effectors);

@@ -434,8 +434,14 @@ namespace KSS
 
             int topCount = Mathf.RoundToInt(optimizationSettings.populationSize * optimizationSettings.survivalRatio);
             int positiveCount = 0;
-            for (int i = 0; i < topCount; i++)
+            // topCount is sometimes > size of list so to avoid this, added fix.
+            int loopCount = Mathf.Min(topCount, sortedEvals.Count);
+            for (int i = 0; i < loopCount; i++)
             {
+                if (sortedEvals[i] == null)
+                {
+                    break;
+                }
                 CreatureGenotypeEval eval = sortedEvals[i];
                 // TEMPORARY FIX: Setting lower boudn to -8 instead of 0. TODO lol
                 if (eval.evalStatus == EvalStatus.EVALUATED && eval.fitness != null && eval.fitness.Value >= -8) {
@@ -453,7 +459,8 @@ namespace KSS
             Debug.Log("Best: " + topEvals.Max(x => x.fitness.Value));
             saveK.best = bestEval;
 
-            // bestEval.cg.SaveData("C:\\Users\\ajwm8\\Documents\\Programming\\Unity\\UTMIST Virtual Creatures\\Creatures\\longtest\\" + currentGenerationIndex + "," + bestEval.cg.name + ".creature", true);
+            bestEval.cg.SaveData("BestCreatures/" + "Gen-" + currentGenerationIndex + " reward= " + bestEval.fitness.Value + ".creature",
+                true, true); ;
 
             string path = Path.Combine(OptionsPersist.instance.VCSaves, save.saveName + ".save");
             save.SaveData(path, true, true);

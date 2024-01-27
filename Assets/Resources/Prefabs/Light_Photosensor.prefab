@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 6396203147471335406}
   - component: {fileID: 1086685777982096042}
   m_Layer: 0
-  m_Name: TargetSphere
-  m_TagString: Untagged
+  m_Name: Light_Photosensor
+  m_TagString: Photosensor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -44,8 +44,8 @@ Light:
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
+  m_Color: {r: 0, g: 1, b: 0.11449838, a: 1}
+  m_Intensity: 5
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208

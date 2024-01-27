@@ -218,11 +218,27 @@ public class CreatureSpawner : MonoBehaviour
         spawnedSegmentGameObject.transform.rotation = sgd.rot;
         spawnedSegmentGameObject.transform.localScale = dimVector;
         spawnedSegmentGameObject.transform.parent = sgd.c.transform;
-        spawnedSegmentGameObject.name = $"Segment {id}";
+        spawnedSegmentGameObject.name = $"Segment Added of Segment Type ID = {id}";
         spawnedSegment.SetId(id);
         spawnedSegment.SetCreature(sgd.c);
         sgd.c.segments.Add(spawnedSegment);
 
+        if (sgd.isRoot)
+        {
+            // Adding a mandatory photosensor neuron to the root segment of the creature
+
+            // Consider adding 1 more neurons with type = 11  for lightsource z position
+            NeuronReference X_photosensorNR = new NeuronReference();
+            X_photosensorNR.id = 9;   // Give it an ID of a X AXIS POS photosensor neuron
+            NeuronGenotype X_photosensorNG = new NeuronGenotype(X_photosensorNR);
+            Neuron X_photosensorNeuron = sgd.c.AddNeuron(X_photosensorNG, null, spawnedSegment, id);
+            spawnedSegment.AddNeuron(X_photosensorNeuron);
+            NeuronReference Z_photosensorNR = new NeuronReference();
+            Z_photosensorNR.id = 11;   // Give it an ID of a photosensor neuron
+            NeuronGenotype Z_photosensorNG = new NeuronGenotype(Z_photosensorNR);
+            Neuron Z_photosensorNeuron = sgd.c.AddNeuron(Z_photosensorNG, null, spawnedSegment, id);
+            spawnedSegment.AddNeuron(Z_photosensorNeuron);
+        }
         if (!sgd.isRoot)
         {
             spawnedSegment.SetPath(sgd.connectionPath);
@@ -290,22 +306,22 @@ public class CreatureSpawner : MonoBehaviour
         if (sgd.cg.stage == TrainingStage.KSS)
         {
             // Add neurons
-            foreach (NeuronGenotype nm in sgd.sg.neurons)
+            foreach (NeuronGenotype ng in sgd.sg.neurons)
             {
-                nm.nr.connectionPath = sgd.connectionPath;
-                nm.nr.relativityNullable = NeuronReferenceRelativity.TRACED;
+                ng.nr.connectionPath = sgd.connectionPath;
+                ng.nr.relativityNullable = NeuronReferenceRelativity.TRACED;
                 Neuron addedNeuron;
-                if (nm.nr.id == 12)
+                if (ng.nr.id == 12)
                 {
-                    addedNeuron = sgd.c.AddNeuron(nm, spawnedSegmentGameObject.GetComponent<Joint>(), spawnedSegment, id);
+                    addedNeuron = sgd.c.AddNeuron(ng, spawnedSegmentGameObject.GetComponent<Joint>(), spawnedSegment, id);
                 }
-                else if (nm.nr.id <= 11)
+                else if (ng.nr.id <= 11)
                 {
-                    addedNeuron = sgd.c.AddNeuron(nm, null, spawnedSegment, id);
+                    addedNeuron = sgd.c.AddNeuron(ng, null, spawnedSegment, id);
                 }
                 else
                 {
-                    addedNeuron = sgd.c.AddNeuron(nm, null, spawnedSegment, id);
+                    addedNeuron = sgd.c.AddNeuron(ng, null, spawnedSegment, id);
                 }
                 spawnedSegment.AddNeuron(addedNeuron);
             }

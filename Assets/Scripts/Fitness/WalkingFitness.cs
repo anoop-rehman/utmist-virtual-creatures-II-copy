@@ -12,21 +12,30 @@ public class WalkingFitness : Fitness
     Vector3 prevCom;
     float distance, prevSpeed;
     float currSpeed = 0f;
-    Creature creature;
-    public GameObject targetSphere; // Assign this in the inspector
+    public Creature creature;
+    // Keep track of old position of the agent.
+    // If its current position and old position is the same => It isn't moving so don't reward it for staying still
+    public Vector3 oldCOM = Vector3.zero;
+    //--------------------
+    ////// Photosensor Spawn code moved to Environment.cs where we spawn individual creature.
+    ////// Idea is to spawn a lightsource associated with each creature so its easy to delete and create new one every generation
+
+    //public GameObject lightPhotosensor; // Assign this in the inspector
+    //-------------
     List<Vector3> localTargetPositions = new List<Vector3>
     {
-    new Vector3(0f, -5.5f, 5f + 3f),
+    new Vector3(0f, -5.5f, 8f),
     //new Vector3(1.7f, -5.5f, 5f + 6f),
     //new Vector3(-2.02f, -5.5f, 5f + 9.48f),
     //new Vector3(2.25f, -5.5f, 5f + 15.73f),
     };
     List<Vector3> worldTargetPositions = new List<Vector3>();
 
-
     // Start is called before the first frame update
     void Start()
     {
+        creature = myEnvironment.currentCreature;
+        //lightPhotosensor = Resources.Load<GameObject>("Prefabs/Light_Photosensor");
         //creature = myEnvironment.currentCreature;
         //currCom = creature.GetCentreOfMass();
 
@@ -42,6 +51,11 @@ public class WalkingFitness : Fitness
 
     }
 
+    public override void SetCreatureObject(Creature creature)
+    {
+        this.creature = creature;
+    }
+
     public override float UpdateFrameReward()
     {
         //Creature creature = myEnvironment.currentCreature;
@@ -49,11 +63,17 @@ public class WalkingFitness : Fitness
 	
 	    prevCom = currCom;
        	currCom = creature.GetCentreOfMass();
+
         if (firstFrame)
         {
             firstFrame = false;
             return 0f;
         }
+        float distanceMoved = Vector3.Distance(oldCOM, currCom);
+        //if (distanceMoved < 1.01f)
+        //{
+        //    return 0f;
+        //}
 
         prevSpeed = currSpeed;
         //distance = Vector3.Distance(currCom,prevCom);
@@ -72,12 +92,28 @@ public class WalkingFitness : Fitness
         {
             Debug.Log("sus!!!");
         }
-
+        // Photosensor is the goal for the target as the creature should aim to reach it
+        string tagName = "Photosensor";
+        GameObject photosensor = null;
+        foreach (Transform childTransform in this.gameObject.transform)
+        {
+            GameObject childObj = childTransform.gameObject;
+            if (childObj.CompareTag(tagName))
+            {
+                photosensor = childObj;
+            }
+        }
+        if (photosensor == null)
+        { 
+            return 0f;
+        }
+        
+        Vector3 photosensorWorldPos = photosensor.transform.TransformVector(photosensor.transform.position);
+        Vector2 distance_away = (new Vector2(currCom.x, currCom.z)) - (new Vector2(photosensorWorldPos.x, photosensorWorldPos.z));
         //reward += currSpeed;
-        // TODO: currently this just fuckin uhhhh doesnt move and reward goes up
-        // fix lmaoooo
-        reward = 1 / (0.1f * Mathf.Pow((currCom - worldTargetPositions[0]).magnitude, 2) + 0.01f) ;
-        Debug.Log("targetPos = " + worldTargetPositions[0] + ", currCom = " + currCom + ", reward = " + reward); ;
+        reward = 1 / (Mathf.Pow((distance_away).magnitude, 2)) ;
+        oldCOM = currCom;
+        //Debug.Log("photosensorWorldPos = " + photosensorWorldPos + ", Center of Mass = " + currCom + ", reward = " + reward);
 
         // Continuing movement is rewarded over that from a single initial push, by giving the velocities during the final phase of the test period a stronger relative weight in the total fitness value
         // We do not implement this because I am lazy
@@ -102,11 +138,9 @@ public class WalkingFitness : Fitness
 
     public override void Reset()
     {
-        //throw new System.NotImplementedException();
         creature = myEnvironment.currentCreature;
         if (creature == null) return;
         currCom = creature.GetCentreOfMass();
-        targetSphere = Resources.Load<GameObject>("Prefabs/TargetSphere");
         //Instantiate(targetSphere, transform.position, transform.rotation);
 
         foreach (Vector3 localTargetPosition in localTargetPositions)
@@ -114,10 +148,11 @@ public class WalkingFitness : Fitness
             worldTargetPositions.Add(localTargetPosition + transform.position);
         }
 
-        foreach (Vector3 worldTargetPosition in worldTargetPositions)
-        {
-            Instantiate(targetSphere, worldTargetPosition, transform.rotation);
-        }
-        Debug.Log("spawned target at" + targetSphere.transform.position);
+        //foreach (Vector3 worldTargetPosition in worldTargetPositions)
+        //{
+        //    // Create a lightsource at each designated posiiton for creatures during training
+        //    Instantiate(lightPhotosensor, worldTargetPosition, transform.rotation);
+        //}
+        //Debug.Log("spawned target at" + lightPhotosensor.transform.position);
     }
 }

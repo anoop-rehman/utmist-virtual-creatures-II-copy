@@ -381,7 +381,7 @@ Transform:
   m_GameObject: {fileID: 6837624401485191407}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 0.2, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6837624399542574069}
@@ -414,6 +414,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cb8f5bfbc8d7234793121507c018ecc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoCorrectDensity: 0
+  posXCovered: 0
+  negXCovered: 0
+  posYCovered: 0
+  negYCovered: 0
+  posZCovered: 0
+  negZCovered: 0
 --- !u!54 &6837624401485191402
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -449,7 +456,9 @@ MonoBehaviour:
   isLeftEmpty: 0
   isFrontEmpty: 0
   isBackEmpty: 0
-  joint: {fileID: 0}
+  fixedJoint: {fileID: 0}
+  hingeJoint: {fileID: 0}
+  sphericalJoint: {fileID: 0}
   myRigidbody: {fileID: 0}
   jointAxisX: 0
   jointAxisY: 0
