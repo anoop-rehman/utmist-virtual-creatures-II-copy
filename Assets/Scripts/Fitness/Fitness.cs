@@ -9,6 +9,7 @@ public abstract class Fitness : MonoBehaviour
     public bool firstFrame = true;
     public Environment myEnvironment;
     public abstract float UpdateFrameReward();
+    public abstract void SetCreatureObject(Creature creature);
     public virtual void Reset(){
         firstFrame = true;
     }

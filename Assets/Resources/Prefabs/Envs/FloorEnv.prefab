@@ -176,7 +176,7 @@ Transform:
   m_GameObject: {fileID: 6472731533670679720}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: -6.42, z: 0}
-  m_LocalScale: {x: 1600, y: 400, z: 1}
+  m_LocalScale: {x: 6000, y: 400, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 535851296851451833}
@@ -298,10 +298,11 @@ MonoBehaviour:
   currentCreature: {fileID: 0}
   fitness: {fileID: 0}
   tm: {fileID: 0}
-  cs: {fileID: 0}
+  creatureSpawner: {fileID: 0}
   spawnTransform: {fileID: 0}
   creatureHolder: {fileID: 0}
   tas: []
+  lightPhotosensor: {fileID: 0}
 --- !u!1 &6472731534607262250
 GameObject:
   m_ObjectHideFlags: 0
@@ -342,7 +343,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6472731534607262250}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
@@ -428,7 +429,7 @@ GameObject:
   - component: {fileID: 4375403167716207816}
   m_Layer: 0
   m_Name: Platform
-  m_TagString: Untagged
+  m_TagString: CreatureSpawnPlatform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -477,7 +478,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1301861478903421944}
   m_Father: {fileID: 6472731533979250899}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -564,6 +566,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &7950096725096088938
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1301861478903421944}
+  m_Layer: 0
+  m_Name: CreatureForward
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1301861478903421944
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7950096725096088938}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7946495691420735638}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8854125627623541470
 GameObject:
   m_ObjectHideFlags: 0

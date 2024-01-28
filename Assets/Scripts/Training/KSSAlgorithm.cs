@@ -187,7 +187,7 @@ namespace KSS
             float scalingFactor = (maxFitness != minFitness) ? 1.0f / (maxFitness - minFitness) : 1.0f;
 
             // float exponent = 0.5f;
-            float temperature = 0.1f; // You can adjust this value to find the right balance
+            float temperature = 0.35f; // You can adjust this value to find the right balance
             float denom = topEvals.Select(x => Mathf.Pow((float)(x.fitness.Value - minFitness) * scalingFactor, 1 / temperature)).Sum();
             //float denom = topEvals.Select(x => Mathf.Exp((float)x.fitness.Value - maxFitness)).Sum();
             topEvals = topEvals.OrderByDescending(x => x.fitness.Value).ToList();
@@ -199,6 +199,7 @@ namespace KSS
                 CreatureGenotypeEval topSoftmaxEval = topEval.ShallowCopy();
                 //topSoftmaxEval.fitness = Mathf.Exp((float)topSoftmaxEval.fitness.Value - maxFitness);
                 //topSoftmaxEval.fitness = Mathf.Pow((float)topSoftmaxEval.fitness.Value, exponent);
+                float fitnessProbability = Mathf.Pow((float)(topSoftmaxEval.fitness.Value - minFitness) * scalingFactor, 1 / temperature);
                 topSoftmaxEval.fitness = Mathf.Pow((float)(topSoftmaxEval.fitness.Value - minFitness) * scalingFactor, 1 / temperature);
                 topSoftmaxEvals.Add(topSoftmaxEval);
             }
@@ -434,8 +435,14 @@ namespace KSS
 
             int topCount = Mathf.RoundToInt(optimizationSettings.populationSize * optimizationSettings.survivalRatio);
             int positiveCount = 0;
-            for (int i = 0; i < topCount; i++)
+            // topCount is sometimes > size of list so to avoid this, added fix.
+            int loopCount = Mathf.Min(topCount, sortedEvals.Count);
+            for (int i = 0; i < loopCount; i++)
             {
+                if (sortedEvals[i] == null)
+                {
+                    break;
+                }
                 CreatureGenotypeEval eval = sortedEvals[i];
                 // TEMPORARY FIX: Setting lower boudn to -8 instead of 0. TODO lol
                 if (eval.evalStatus == EvalStatus.EVALUATED && eval.fitness != null && eval.fitness.Value >= -8) {
@@ -453,7 +460,8 @@ namespace KSS
             Debug.Log("Best: " + topEvals.Max(x => x.fitness.Value));
             saveK.best = bestEval;
 
-            // bestEval.cg.SaveData("C:\\Users\\ajwm8\\Documents\\Programming\\Unity\\UTMIST Virtual Creatures\\Creatures\\longtest\\" + currentGenerationIndex + "," + bestEval.cg.name + ".creature", true);
+            //bestEval.cg.SaveData("BestCreatures/" + "Gen-" + currentGenerationIndex + " reward= " + bestEval.fitness.Value + ".creature",
+            //    true, true); ;
 
             string path = Path.Combine(OptionsPersist.instance.VCSaves, save.saveName + ".save");
             save.SaveData(path, true, true);

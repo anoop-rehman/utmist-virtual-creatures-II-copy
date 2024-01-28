@@ -91,12 +91,12 @@ public class MutateGenotype
             {"s_addc", new MutationPreference(0.08f, 0.25f)}, // Add connection
             {"s_removec", new MutationPreference(0.08f, 0.25f)}, // Remove connection
             {"n_t", new MutationPreference(0.1f, 0.25f)}, // Type (byte, 0:22)
-            {"n_w1", new MutationPreference(0.2f, 0.25f)}, // Weight 1 (float, -15:15)
-            {"n_w2", new MutationPreference(0.2f, 0.25f)}, // Weight 2 (float, -15:15)
-            {"n_w3", new MutationPreference(0.2f, 0.25f)}, // Weight 3 (float, -15:15)
+            {"n_w1", new MutationPreference(0.9f, 0.25f)}, // Weight 1 (float, -15:15)
+            {"n_w2", new MutationPreference(0.9f, 0.25f)}, // Weight 2 (float, -15:15)
+            {"n_w3", new MutationPreference(0.9f, 0.25f)}, // Weight 3 (float, -15:15)
             {"n_relocateinput", new MutationPreference(0.1f, 0.25f)}, // Relocate Input
-            {"n_e", new MutationPreference(0.5f, 0.25f)}, // Effector generate
-            {"n_s", new MutationPreference(0.5f, 0.25f)}, // Sensor generate
+            {"n_e", new MutationPreference(0.9f, 0.35f)}, // Effector generate
+            {"n_s", new MutationPreference(0.9f, 0.35f)}, // Sensor generate
         };
 
         public Dictionary<string, float[]> floatClamps = new Dictionary<string, float[]>() {
@@ -712,17 +712,17 @@ public class MutateGenotype
             {
                 // Found unused id, add node here
                 SegmentGenotype generatedSegmentGenotype = new SegmentGenotype();
-                generatedSegmentGenotype.r = (byte)Random.Range(0, 256);
-                generatedSegmentGenotype.g = (byte)Random.Range(0, 256);
-                generatedSegmentGenotype.b = (byte)Random.Range(0, 256);
+                generatedSegmentGenotype.r = (byte)0;    // for testing, the new segment spawned is black
+                generatedSegmentGenotype.g = (byte)0;
+                generatedSegmentGenotype.b = (byte)0;
                 generatedSegmentGenotype.id = i;
                 generatedSegmentGenotype.connections = new List<SegmentConnectionGenotype>();
                 generatedSegmentGenotype.neurons = new List<NeuronGenotype>();
                 generatedSegmentGenotype.recursiveLimit = mp.GetRandomByte("s_rl");
-                generatedSegmentGenotype.dimensionX = mp.GetRandomFloat("s_dx");
-                generatedSegmentGenotype.dimensionY = mp.GetRandomFloat("s_dy");
-                generatedSegmentGenotype.dimensionZ = mp.GetRandomFloat("s_dz");
-                generatedSegmentGenotype.jointType = (JointType)Random.Range(0, 4);
+                generatedSegmentGenotype.dimensionX = 0.5f; // mp.GetRandomFloat("s_dx")
+                generatedSegmentGenotype.dimensionY = 0.3f; // mp.GetRandomFloat("s_dy")
+                generatedSegmentGenotype.dimensionZ = 1.5f; // mp.GetRandomFloat("s_dz")
+                generatedSegmentGenotype.jointType = (JointType)Random.Range(1, 3);
 
                 cg.segments.Add(generatedSegmentGenotype);
                 return generatedSegmentGenotype;
@@ -1456,6 +1456,12 @@ public class MutateGenotype
             {
                 foreach (NeuronGenotype ng in sg.neurons)
                 {
+                    // Maybe the mutation should not be fully RNG. Look at which creatures had best reward and use their weights and pertuabte?
+                    // FOr carol walker one of the hinge Z joints has 6 segment neurons each with no weights. The other hingeZ joint
+                    /// has 2 neurons. One of neuron type 13 (mathematical) and 1 weight and the other has 3 neurons (neuronA,B,C) with 3 weights one for each of these neurons
+                    /// The neuron type is 21 => oscillatory hence the periodic motion from that neuron
+                    ///
+                    // so maybe use the best creatures reward to optimize the weights to follow that weights
                     if (mp.CoinFlip("n_t")) // Change type, updating inputs accordingly
                     {
                         // Mutate LOL

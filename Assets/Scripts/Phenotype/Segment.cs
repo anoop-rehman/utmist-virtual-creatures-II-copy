@@ -176,10 +176,10 @@ public class Segment : MonoBehaviour
         hingeJoint.motor = motor;
 
         JointLimits limits = hingeJoint.limits;
-        limits.min = -60f;
+        limits.min = -75f;
         limits.bounciness = 0;
         limits.bounceMinVelocity = 0;
-        limits.max = 60f;
+        limits.max = 75f;
         hingeJoint.limits = limits;
         hingeJoint.useLimits = true;
     }
@@ -290,15 +290,34 @@ public class Segment : MonoBehaviour
 
     public float GetPhotosensor(int varNumber)
     {
-        LightSource lightsource = FindObjectOfType<LightSource>();
+        
+        string name = creature.gameObject.transform.parent.parent.gameObject.name;
+        GameObject environmentObj = creature.gameObject.transform.parent.parent.gameObject;
+        GameObject photosensorObj = null;
+        foreach (Transform childTransform in environmentObj.transform)
+        {
+            GameObject childObj = childTransform.gameObject;
+            if (childObj.CompareTag("Photosensor"))
+            {
+                photosensorObj = childObj;
+            }
+        }
+
+        Light lightsource = null;
+
+        if (photosensorObj)
+        {
+            lightsource = photosensorObj.GetComponent<Light>();
+        }
+        
         if (lightsource == null)
         {
             return 0;
         }
         else
         {
-            Vector3 lspos = lightsource.transform.position;
-            Vector3 normalVector = (lspos - transform.position).normalized;
+            Vector3 position = lightsource.transform.position;
+            Vector3 normalVector = (position - transform.position).normalized;
             return varNumber switch
             {
                 0 => normalVector.x,

@@ -9,10 +9,11 @@ using Unity.MLAgents.Actuators;
 public class FloorEnvSettings : EnvironmentSettings {
     public override EnvCode envCode { get {return EnvCode.FLOOR; }}
     public override EnvArrangeType envArrangeType { get {return EnvArrangeType.LINEAR; } }
-    public override float sizeX { get { return 5; } }
+    public override float sizeX { get { return 30; } }
     public override float sizeZ { get { return 5; } }
     //public override float maxTime { get { return 8; } }
-    public override float maxTime { get { return 16; } }
+    // HOLY MOTHER OF GOD I FINALLY FOUND WHY SIMULATIONS ARE ONLY 35 SECONDS
+    public override float maxTime { get { return 35; } }   // x seconds
 }
 
 public class FloorEnv : Environment

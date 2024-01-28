@@ -60,7 +60,7 @@ public abstract class Environment : MonoBehaviour
     [SerializeField]
     private TrainingManager tm;
     [SerializeField]
-    private CreatureSpawner cs;
+    private CreatureSpawner creatureSpawner;
     [SerializeField]
     private Transform spawnTransform;
     [SerializeField]
@@ -68,6 +68,16 @@ public abstract class Environment : MonoBehaviour
 
     private EnvironmentSettings es;
     public List<TrainingAlgorithm> tas;
+
+    // Photosensor Related Variables
+    public GameObject lightPhotosensor;
+    private List<Vector3> photosensorSpawnLocations = new List<Vector3>
+    {
+    //new Vector3(0f, -5.5f, 8f),
+    //new Vector3(1.7f, -5.5f, 5f + 6f),
+    //new Vector3(-2.02f, -5.5f, 5f + 9.48f),
+    //new Vector3(2.25f, -5.5f, 5f + 15.73f),
+    };
 
     public void Start()
     {
@@ -84,7 +94,7 @@ public abstract class Environment : MonoBehaviour
         fitness = GetComponent<Fitness>();
         //fitness.firstFrame = true;
         tm = TrainingManager.instance;
-        cs = CreatureSpawner.instance;
+        creatureSpawner = CreatureSpawner.instance;
         hasDoneKillCheck = false;
         spawnTransform = transform.Find("SpawnTransform");
         creatureHolder = transform.Find("CreatureHolder");
@@ -155,6 +165,14 @@ public abstract class Environment : MonoBehaviour
         lastCom = currentCom;
     }
 
+    // Create a photosensor gameobject for the environment (i.e the creature since each creature part of 1 floorEnv object)
+    public void SpawnPhotosensorObject(Vector3 spawnLocation)
+    {
+        lightPhotosensor = Resources.Load<GameObject>("Prefabs/Light_Photosensor");
+        // 4th param transform makes it so the new gameobject created spawns as a child of the FloorEnv.
+        // This way each creature effectively has its own photosensor.
+        Instantiate(lightPhotosensor, spawnLocation, transform.rotation, transform);
+    }
     // Spawn creature by passing transform params to Scene CreatureSpawner
     public virtual void StartEnv(CreatureGenotype cg)
     {
@@ -162,11 +180,27 @@ public abstract class Environment : MonoBehaviour
         {
             ResetEnv();
         }
-        currentCreature = cs.SpawnCreature(cg, spawnTransform.position, fitness);
+        // Destory existing photsensor gameobjects before creating a new one for new scene.
+        // This solves the issue of multiple photosensor per agent when infact only 1 should ever exist
+        //DestroyExistingPhotosensors();
+        fitness.Reset();
+        currentCreature = creatureSpawner.SpawnCreature(cg, spawnTransform.position, fitness);
         currentCreature.transform.parent = creatureHolder;
 
-        fitness.Reset();
     }
+
+    public void DestroyExistingPhotosensors()
+    {
+        GameObject[] existingPhotosensors = GameObject.FindGameObjectsWithTag("Photosensor");
+        foreach (GameObject photosensor in existingPhotosensors)
+        {
+            if (null != photosensor)
+            {
+                Destroy(photosensor);
+            }
+        }
+    }
+
     public virtual void ResetEnv()
     {
         if (tas != null){
@@ -180,8 +214,9 @@ public abstract class Environment : MonoBehaviour
 
         tas = new List<TrainingAlgorithm>();
 
-        if (busy) {
-            cs.ReleaseCreature(currentCreature);
+        if (busy)
+        {
+            creatureSpawner.ReleaseCreature(currentCreature);
             currentCreature = null;
         }
 

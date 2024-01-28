@@ -38,9 +38,18 @@ public class Neuron
     public void GetInputs()
     {
         // Debug.Log(neuronA);
-        if (neuronA != null) a = neuronA.outValue * ng.weights[0];
-        if (neuronB != null) b = neuronB.outValue * ng.weights[1];
-        if (neuronC != null) c = neuronC.outValue * ng.weights[2];
+        if (neuronA != null)
+        {
+            a = neuronA.outValue * ng.weights[0];
+        }
+        if (neuronB != null)
+        {
+            b = neuronB.outValue * ng.weights[1];
+        }
+        if (neuronC != null)
+        {
+            c = neuronC.outValue * ng.weights[2];
+        }
         if (float.IsNaN(a) || float.IsNaN(b) || float.IsNaN(c)){
             if (segment != null){
                 Debug.Log("trolling " + segment.transform.parent.parent.parent.name);
@@ -56,7 +65,15 @@ public class Neuron
             if (effectorJoint is HingeJoint){
                 HingeJoint hj = (HingeJoint)effectorJoint;
                 JointMotor motor = hj.motor;
-                motor.targetVelocity = 10f * Mathf.Clamp(a, -40f, 40f);
+                float res = a + b + c;
+                // Without this, it won't have enought targetVelocity to rotate the limbs/creature.
+                if (res <= 15)
+                {
+                    res += 10;
+                }
+               
+                motor.targetVelocity = 10f * Mathf.Clamp(res, -40f, 40f);
+                //Debug.Log("Target Velocity I'm trying to hit = " + motor.targetVelocity);
                 hj.motor = motor;
             }
         }
@@ -66,6 +83,7 @@ public class Neuron
 
     public void SetSensorOutputs()
     {
+        // Get the input from the world and put it in the outValue
         outValue = ng.nr.id switch
         {
             0 => segment.GetContact("Right"),
@@ -86,6 +104,9 @@ public class Neuron
 
     public void SetOutput()
     {
+        // The value to effector goes through each of these one by one before getting final value ot feed to effect and take the action. Look at the graph anoop sent
+        // and think the J1 arrow going out from J0 instead and does everything and then finally wave spits to > and the greater of J0 or this neural networks massive calculations
+        //
         outValue = ng.type switch
         {
             0 => a + b, // sum
@@ -109,7 +130,7 @@ public class Neuron
             18 => (a - dummy1) / Time.deltaTime, // differentiate
             19 => outValue + (a - outValue) * 0.5f, // smooth
             20 => a, // memory
-            21 => b * Mathf.Sin(Time.time * a) + c, // oscillate-wave
+            21 => b * Mathf.Sin(Time.time * a) + c, // oscillate-wave. This neuron could be useful for movement since movement is oscillatory kind of motion to move segment in and out. THis is why carol's creature learned ot walk and the agent uses that neuron always to move.
             22 => b * (Time.time * a - Mathf.Floor(Time.time * a)) + c, // oscillate-saw
             _ => 0
         };
@@ -128,18 +149,21 @@ public class Neuron
 
     public void SetInputNeurons(List<Neuron> inputNeurons)
     {
-        if (inputNeurons.Count >= 1)
+        if (inputNeurons.Count == 1)
         {
             neuronA = inputNeurons[0];
         }
 
-        if (inputNeurons.Count >= 2)
+        if (inputNeurons.Count == 2)
         {
+            neuronA = inputNeurons[0];
             neuronB = inputNeurons[1];
         }
 
-        if (inputNeurons.Count >= 3)
+        if (inputNeurons.Count == 3)
         {
+            neuronA = inputNeurons[0];
+            neuronB = inputNeurons[1];
             neuronC = inputNeurons[2];
         }
         if (inputNeurons.Count > 3)
@@ -192,8 +216,6 @@ public class Creature : MonoBehaviour
     public List<HingeJoint> actionMotors = new List<HingeJoint>();
     public List<Segment> segments = new List<Segment>();
 
-   
-
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -204,14 +226,18 @@ public class Creature : MonoBehaviour
         FeedForward();
 
         if (fitness != null && !isAgent){
-            totalReward += fitness.UpdateFrameReward();
+            // Initialize the creature so the fitness creature variable is populated for reward calculation.
+            // Without this, I (Aakash) was getting error where reward at every timestep was 0 but maybe I fucked up my code :)
+            fitness.SetCreatureObject(this);
+            float reward = fitness.UpdateFrameReward();
+            totalReward += reward;
         }
     }
 
     public void InitializeCreature(Fitness fitness)
     {
         // Debug.Log("----INITIALIZING CREATURE----");
-        this.isAlive = true;
+        isAlive = true;
         this.fitness = fitness;
         ConnectNeurons(neurons);
         ConnectNeurons(effectors);
@@ -239,22 +265,28 @@ public class Creature : MonoBehaviour
     {
         foreach (Neuron n in sensors)
         {
-            // Get sensor STUFF
+            // Sets the value for the sensor neurons. This would mean getting information from the world and keeping it in n.outValue
+            // An example of this is photosensor neuron
             n.SetSensorOutputs();
         }
 
         foreach (Neuron n in neurons)
         {
+            // Take action from the neurons
             n.GetInputs();
         }
 
         foreach (Neuron n in neurons)
         {
+            // Post action, get the new information from the world (like taking information from sensors and maube seeing if hey should be activated or not
+            // An idea could be: If certain photosensor is very close to a neuron, don't activate it as you'd much rather optimize a differnt axes one to align the creature
+            // in that direction? Idk I'm just rambling at this point
             n.SetOutput();
         }
 
         foreach (Neuron n in effectors)
         {
+            // Takes action
             n.GetInputs();
         }
     }

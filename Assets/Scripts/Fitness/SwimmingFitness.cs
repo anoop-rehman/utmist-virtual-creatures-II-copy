@@ -17,6 +17,11 @@ public class SwimmingFitness : Fitness
         Reset();
     }
 
+    public override void SetCreatureObject(Creature creature)
+    {
+        this.creature = creature;
+    }
+
     public override float UpdateFrameReward()
     {
         //Creature creature = myEnvironment.currentCreature;

@@ -260,9 +260,9 @@ public class MenuManager : MonoBehaviour
         optimizationSettings.mp.mutateMorphology = !lockPhysicalMutations;
         optimizationSettings.mp.maxSegments = maxSegments;
         // This line takes from a template creature genotype found in a Unity PropertyDrawer
-        optimizationSettings.initialGenotype = templateCGSO == null ? null : templateCGSO.cg;
+        //optimizationSettings.initialGenotype = templateCGSO == null ? null : templateCGSO.cg;
         //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Leaper.creature", false); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
-        //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Users/anooprehman/Downloads/utmist-virtual-creatures/Creatures/aer-ignisflumen.creature", true); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
+        optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Users/anooprehman/Virtual Creatures/Creatures/carolgen5walker.creature", true); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
         //optimizationSettings.initialGenotype = null;
 
 
