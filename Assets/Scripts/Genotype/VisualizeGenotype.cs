@@ -70,7 +70,7 @@ public class VisualizeGenotype
 
     {
 
-        string dotString = "digraph g {";
+        string dotString = "digraph \"" + cg.name + "\" {";
 
 
         if (!visualizeNeurons)
@@ -125,13 +125,15 @@ public class VisualizeGenotype
 
             int count = 0;
 
+            // this list holds what #label neuron is the first neuron in a segment
+            List<int> firstNeur = new List<int>(); 
+
             // declare all the subgraphs and nodes 
 
             foreach (SegmentGenotype segment in cg.segments)
             {
 
                 // list all the subgraphs
-
                 dotString += "subgraph cluster" + segment.id.ToString() + " {\n";
 
                 if (segment.id == 0)
@@ -139,18 +141,48 @@ public class VisualizeGenotype
                     dotString += "graph [style=dashed];\n";
                 }
 
-                    foreach (NeuronGenotype neuron in segment.neurons)
+                firstNeur.Add(count);
+
+                if (segment.neurons.Count() == 0)
+                {
+                    dotString += count.ToString() + " [label=\"\", color=\"#FFFFFF\"];\n";
+                    count++;
+                }
+
+                foreach (NeuronGenotype neuron in segment.neurons)
                 {
                     // list all the neurons within each segment
-
                     string label = ngTypeToString(neuron);
-                    dotString += count + " [label=\"" + label + "\"];\n";
+                    dotString += count.ToString() + " [label=\"" + label + "\"];\n";
                     count++;
                 }
 
                 dotString += "}\n";
             }
 
+            int recCount = count + 1;
+
+            foreach (SegmentGenotype segment in cg.segments)
+            {
+                foreach (SegmentConnectionGenotype connection in segment.connections)
+                {
+                    if (segment.id == connection.destination)
+                    {
+                        dotString += recCount.ToString() + "[shape = \"point\"];\n";
+                        dotString += firstNeur[segment.id].ToString() + " -> " + recCount.ToString();
+                        dotString += " [ltail=cluster" + connection.destination + "];\n";
+                        dotString += recCount.ToString() + " -> " + firstNeur[connection.destination].ToString();
+                        dotString += " [lhead=cluster" + connection.destination + "];\n";
+                        recCount++;
+
+                        //continue;
+                    } else
+                    {
+                        dotString += firstNeur[segment.id].ToString() + " -> " + firstNeur[connection.destination].ToString();
+                        dotString += " [ltail=cluster" + segment.id + ",lhead=cluster" + connection.destination + "];\n";
+                    }
+                }
+            }
         }
 
         dotString += "}";
