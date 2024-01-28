@@ -11,15 +11,13 @@ using Unity.MLAgents.Sensors;
 [System.Serializable]
 public class Neuron
 {
-    // Input to math neurons and some math neurons need 3 inputs. These neuranA,B,C can be from any neuron.
-    // Eg: fOOT CAN take input from ear or hand and see what action it would take
-    public Neuron neuronA, neuronB, neuronC;
-    public float a, b, c; // temp variables
-    public float outValue;
-    public float dummy1;
-    public NeuronGenotype ng;
-    public Joint effectorJoint;
-    public Segment segment;
+    public Neuron neuronA, neuronB, neuronC; //input Neurons (these are the Neurons that are fed into this Neuron)   
+    public float a, b, c; // variables to store the outValues of the input Neurons (neuronA, neuronB, and neuronC)
+    public float outValue; // the value the Neuron is returning
+    public float dummy1; // state variable to store a value temporarily during computation of the outValue
+    public NeuronGenotype ng; // 
+    public Joint effectorJoint; //
+    public Segment segment; //
     public byte segmentId { get; private set; }
 
     public Neuron(NeuronGenotype ng, byte segmentId)
