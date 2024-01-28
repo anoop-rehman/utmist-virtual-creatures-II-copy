@@ -8,6 +8,63 @@ using System.IO;
 [System.Serializable]
 public class VisualizeGenotype
 {
+    public static string ngTypeToString(NeuronGenotype neuron)
+    {
+        /*0 => a + b, // sum
+            1 => a* b, // product
+            2 => a / b, // divide
+            3 => Mathf.Min(a + b, c), // sum-threshold
+            4 => a > b ? 1 : -1, // greater-than
+            5 => Mathf.Sign(a), //sign-of
+            6 => Mathf.Min(a, b), // min
+            7 => Mathf.Max(a, b), // max
+            8 => Mathf.Abs(a), // abs
+            9 => a > 0 ? b : c, // if
+            10 => a + (b - a) * c, // interpolate
+            11 => Mathf.Sin(a), // sin
+            12 => Mathf.Cos(a), // cos
+            13 => Mathf.Atan(a), // atan
+            14 => Mathf.Log10(Mathf.Abs(a)), // log
+            15 => Mathf.Exp(a), // expt
+            16 => 1 / (1 + Mathf.Exp(-a)), // sigmoid
+            17 => outValue + Time.deltaTime * ((a + dummy1) * 0.5f), // integrate
+            18 => (a - dummy1) / Time.deltaTime, // differentiate
+            19 => outValue + (a - outValue) * 0.5f, // smooth
+            20 => a, // memory
+            21 => b* Mathf.Sin(Time.time * a) + c, // oscillate-wave
+            22 => b * (Time.time * a - Mathf.Floor(Time.time * a)) + c, // oscillate-saw
+            _ => 0
+        */
+
+        switch (neuron.type)
+        {
+            case 0: return "sum";
+            case 1: return "prod";
+            case 2: return "div";
+            case 3: return "sumt";
+            case 4: return ">";
+            case 5: return "sign";
+            case 6: return "min";
+            case 7: return "max";
+            case 8: return "abs";
+            case 9: return "if";
+            case 10: return "itplt";
+            case 11: return "sin";
+            case 12: return "cos";
+            case 13: return "atan";
+            case 14: return "log";
+            case 15: return "expt";
+            case 16: return "sigm";
+            case 17: return "intgrl";
+            case 18: return "d/dx";
+            case 19: return "smooth";
+            case 20: return "mem";
+            case 21: return "wav";
+            case 22: return "saw";
+            default: return "";
+        }
+    }
+
     public static string cgToDotString(CreatureGenotype cg, bool visualizeNeurons)
     //public static void cgToDotString(CreatureGenotype cg, bool visualizeNeurons)
 
@@ -60,8 +117,43 @@ public class VisualizeGenotype
         }
         else
         {
-            {}
+            // graph definitions 
+            dotString += "compound = true;"
+                      + "splines = \"polyline\";"
+                      + "rankdir = \"LR\";\n";
+                      //+ "1[shape = \"point\"];";
+
+            int count = 0;
+
+            // declare all the subgraphs and nodes 
+
+            foreach (SegmentGenotype segment in cg.segments)
+            {
+
+                // list all the subgraphs
+
+                dotString += "subgraph cluster" + segment.id.ToString() + " {\n";
+
+                if (segment.id == 0)
+                {
+                    dotString += "graph [style=dashed];\n";
+                }
+
+                    foreach (NeuronGenotype neuron in segment.neurons)
+                {
+                    // list all the neurons within each segment
+
+                    string label = ngTypeToString(neuron);
+                    dotString += count + " [label=\"" + label + "\"];\n";
+                    count++;
+                }
+
+                dotString += "}\n";
+            }
+
         }
+
+        dotString += "}";
 
         return dotString;
         //CreatePngFromDot(dotString, "output.png");
