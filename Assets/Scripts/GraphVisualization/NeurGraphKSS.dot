@@ -1,0 +1,59 @@
+digraph G {
+  compound=true;
+  splines=polyline;
+  rankdir="LR";
+  1 [shape="point"];
+  subgraph cluster0 {
+    saw;
+    wav0 [label="wav"];
+    itp;
+    
+    saw -> wav0 [dir=both];
+    wav0 -> itp [dir=both];
+    saw -> wav0;
+    saw -> itp;
+    
+    graph [style=dashed];
+  }
+  subgraph cluster1 {
+    wav1 [label="wav"];
+    mem;
+    abs;
+    
+    mem -> wav1 [dir = both];
+    mem -> wav1;
+    abs -> abs;
+  }
+
+  subgraph cluster2 {
+    J0;
+    ">";
+    E0;
+    J1;
+    "+";
+    E1;
+    
+    J0 -> ">";
+    J1 -> E0;
+    "+" -> "+";
+    ">" -> E1;
+  } 
+  wav0 -> ">";
+  J0 -> wav0;
+  J1 -> itp;
+  "+" -> wav1;
+  
+  mem -> J0 [ltail=cluster1,lhead=cluster2];
+  mem -> J0 [ltail=cluster1,lhead=cluster2];
+  abs -> 1 [ltail=cluster1, dir=none];
+  1 -> abs [lhead=cluster1];
+  
+  saw -> abs [dir=both];
+  saw -> mem;
+  wav1 -> saw;
+  saw -> wav1;
+  wav1 -> wav0;
+  mem -> itp;
+  wav0 -> wav1 [dir=both];
+  
+}
