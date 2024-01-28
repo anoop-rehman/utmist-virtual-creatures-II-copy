@@ -712,17 +712,17 @@ public class MutateGenotype
             {
                 // Found unused id, add node here
                 SegmentGenotype generatedSegmentGenotype = new SegmentGenotype();
-                generatedSegmentGenotype.r = (byte)0;    // for testing, the new segment spawned is black
-                generatedSegmentGenotype.g = (byte)0;
-                generatedSegmentGenotype.b = (byte)0;
+                generatedSegmentGenotype.r = (byte)UnityEngine.Random.Range(0, 256);
+                generatedSegmentGenotype.g = (byte)UnityEngine.Random.Range(0, 256);
+                generatedSegmentGenotype.b = (byte)UnityEngine.Random.Range(0, 256);
                 generatedSegmentGenotype.id = i;
                 generatedSegmentGenotype.connections = new List<SegmentConnectionGenotype>();
                 generatedSegmentGenotype.neurons = new List<NeuronGenotype>();
                 generatedSegmentGenotype.recursiveLimit = mp.GetRandomByte("s_rl");
-                generatedSegmentGenotype.dimensionX = 0.5f; // mp.GetRandomFloat("s_dx")
-                generatedSegmentGenotype.dimensionY = 0.3f; // mp.GetRandomFloat("s_dy")
-                generatedSegmentGenotype.dimensionZ = 1.5f; // mp.GetRandomFloat("s_dz")
-                generatedSegmentGenotype.jointType = (JointType)Random.Range(1, 3);
+                generatedSegmentGenotype.dimensionX = mp.GetRandomFloat("s_dx"); 
+                generatedSegmentGenotype.dimensionY = mp.GetRandomFloat("s_dy"); 
+                generatedSegmentGenotype.dimensionZ = mp.GetRandomFloat("s_dz"); 
+                generatedSegmentGenotype.jointType = (JointType)Random.Range(0, 4);
 
                 cg.segments.Add(generatedSegmentGenotype);
                 return generatedSegmentGenotype;
