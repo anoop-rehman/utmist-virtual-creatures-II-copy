@@ -68,7 +68,14 @@ public class Neuron
                 HingeJoint hj = (HingeJoint)effectorJoint;
                 JointMotor motor = hj.motor;
                 float res = a + b + c;
+                // Without this, it won't have enought targetVelocity to rotate the limbs/creature.
+                if (res <= 15)
+                {
+                    res += 10;
+                }
+               
                 motor.targetVelocity = 10f * Mathf.Clamp(res, -40f, 40f);
+                //Debug.Log("Target Velocity I'm trying to hit = " + motor.targetVelocity);
                 hj.motor = motor;
             }
         }
@@ -78,6 +85,7 @@ public class Neuron
 
     public void SetSensorOutputs()
     {
+        // Get the input from the world and put it in the outValue
         outValue = ng.nr.id switch
         {
             0 => segment.GetContact("Right"),
@@ -143,18 +151,21 @@ public class Neuron
 
     public void SetInputNeurons(List<Neuron> inputNeurons)
     {
-        if (inputNeurons.Count >= 1)
+        if (inputNeurons.Count == 1)
         {
             neuronA = inputNeurons[0];
         }
 
-        if (inputNeurons.Count >= 2)
+        if (inputNeurons.Count == 2)
         {
+            neuronA = inputNeurons[0];
             neuronB = inputNeurons[1];
         }
 
-        if (inputNeurons.Count >= 3)
+        if (inputNeurons.Count == 3)
         {
+            neuronA = inputNeurons[0];
+            neuronB = inputNeurons[1];
             neuronC = inputNeurons[2];
         }
         if (inputNeurons.Count > 3)
@@ -256,22 +267,28 @@ public class Creature : MonoBehaviour
     {
         foreach (Neuron n in sensors)
         {
-            // Get sensor STUFF
+            // Sets the value for the sensor neurons. This would mean getting information from the world and keeping it in n.outValue
+            // An example of this is photosensor neuron
             n.SetSensorOutputs();
         }
 
         foreach (Neuron n in neurons)
         {
+            // Take action from the neurons
             n.GetInputs();
         }
 
         foreach (Neuron n in neurons)
         {
+            // Post action, get the new information from the world (like taking information from sensors and maube seeing if hey should be activated or not
+            // An idea could be: If certain photosensor is very close to a neuron, don't activate it as you'd much rather optimize a differnt axes one to align the creature
+            // in that direction? Idk I'm just rambling at this point
             n.SetOutput();
         }
 
         foreach (Neuron n in effectors)
         {
+            // Takes action
             n.GetInputs();
         }
     }

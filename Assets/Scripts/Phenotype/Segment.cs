@@ -176,10 +176,10 @@ public class Segment : MonoBehaviour
         hingeJoint.motor = motor;
 
         JointLimits limits = hingeJoint.limits;
-        limits.min = -60f;
+        limits.min = -75f;
         limits.bounciness = 0;
         limits.bounceMinVelocity = 0;
-        limits.max = 60f;
+        limits.max = 75f;
         hingeJoint.limits = limits;
         hingeJoint.useLimits = true;
     }
@@ -302,7 +302,14 @@ public class Segment : MonoBehaviour
                 photosensorObj = childObj;
             }
         }
-        Light lightsource = photosensorObj.GetComponent<Light>();
+
+        Light lightsource = null;
+
+        if (photosensorObj)
+        {
+            lightsource = photosensorObj.GetComponent<Light>();
+        }
+        
         if (lightsource == null)
         {
             return 0;

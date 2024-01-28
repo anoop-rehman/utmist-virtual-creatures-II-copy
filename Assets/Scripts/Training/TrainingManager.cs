@@ -169,10 +169,27 @@ public class TrainingManager : MonoBehaviour
                 Vector3 photosensorSpawnLocation = instantiatedEnv.transform.position;
                 // Generate a random z value between -25 and +25
                 // Randomizing the spawn location of goal photosensor to encourage better learning every generation (yet to delete and spawn new random photosensor per gen)
-                float randomZ = UnityEngine.Random.Range(-25f, 25f);
-                float randomX = UnityEngine.Random.Range(-25f, 25f);
+                // Randomly choose between if z is + or -
+                float randomZ = 8f;
+                //if (UnityEngine.Random.Range(0, 2) == 0)
+                //{
+                //    randomZ = UnityEngine.Random.Range(-12f, -7f);
+                //}
+                //else
+                //{
+                //    randomZ = UnityEngine.Random.Range(7f, 12f);
+                //}
+                //float randomX;
+                //if (UnityEngine.Random.Range(0, 2) == 0)
+                //{
+                //    randomX = UnityEngine.Random.Range(-6f, -2f);
+                //}
+                //else
+                //{
+                //    randomX = UnityEngine.Random.Range(2f, 6f);
+                //}
                 photosensorSpawnLocation.z += randomZ;
-                photosensorSpawnLocation.x += randomX;
+                //photosensorSpawnLocation.x += randomX;
                 // Not sure why the photosensor spawns in the sky so to bring it to ground, do -5f
                 photosensorSpawnLocation.y -= 5f;
                 instantiatedEnv.SpawnPhotosensorObject(photosensorSpawnLocation);

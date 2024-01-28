@@ -187,7 +187,7 @@ namespace KSS
             float scalingFactor = (maxFitness != minFitness) ? 1.0f / (maxFitness - minFitness) : 1.0f;
 
             // float exponent = 0.5f;
-            float temperature = 0.1f; // You can adjust this value to find the right balance
+            float temperature = 0.35f; // You can adjust this value to find the right balance
             float denom = topEvals.Select(x => Mathf.Pow((float)(x.fitness.Value - minFitness) * scalingFactor, 1 / temperature)).Sum();
             //float denom = topEvals.Select(x => Mathf.Exp((float)x.fitness.Value - maxFitness)).Sum();
             topEvals = topEvals.OrderByDescending(x => x.fitness.Value).ToList();
@@ -199,6 +199,7 @@ namespace KSS
                 CreatureGenotypeEval topSoftmaxEval = topEval.ShallowCopy();
                 //topSoftmaxEval.fitness = Mathf.Exp((float)topSoftmaxEval.fitness.Value - maxFitness);
                 //topSoftmaxEval.fitness = Mathf.Pow((float)topSoftmaxEval.fitness.Value, exponent);
+                float fitnessProbability = Mathf.Pow((float)(topSoftmaxEval.fitness.Value - minFitness) * scalingFactor, 1 / temperature);
                 topSoftmaxEval.fitness = Mathf.Pow((float)(topSoftmaxEval.fitness.Value - minFitness) * scalingFactor, 1 / temperature);
                 topSoftmaxEvals.Add(topSoftmaxEval);
             }
@@ -459,8 +460,8 @@ namespace KSS
             Debug.Log("Best: " + topEvals.Max(x => x.fitness.Value));
             saveK.best = bestEval;
 
-            bestEval.cg.SaveData("BestCreatures/" + "Gen-" + currentGenerationIndex + " reward= " + bestEval.fitness.Value + ".creature",
-                true, true); ;
+            //bestEval.cg.SaveData("BestCreatures/" + "Gen-" + currentGenerationIndex + " reward= " + bestEval.fitness.Value + ".creature",
+            //    true, true); ;
 
             string path = Path.Combine(OptionsPersist.instance.VCSaves, save.saveName + ".save");
             save.SaveData(path, true, true);

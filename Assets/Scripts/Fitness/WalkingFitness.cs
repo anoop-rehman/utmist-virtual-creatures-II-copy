@@ -70,10 +70,10 @@ public class WalkingFitness : Fitness
             return 0f;
         }
         float distanceMoved = Vector3.Distance(oldCOM, currCom);
-        //if (distanceMoved < 1.01f)
-        //{
-        //    return 0f;
-        //}
+        if (distanceMoved < 0.5f)
+        {
+            return 0f;
+        }
 
         prevSpeed = currSpeed;
         //distance = Vector3.Distance(currCom,prevCom);
@@ -110,8 +110,32 @@ public class WalkingFitness : Fitness
         
         Vector3 photosensorWorldPos = photosensor.transform.TransformVector(photosensor.transform.position);
         Vector2 distance_away = (new Vector2(currCom.x, currCom.z)) - (new Vector2(photosensorWorldPos.x, photosensorWorldPos.z));
+        if (distance_away.magnitude <= 3f)
+        {
+            // Generate new location for photosensor and return 5f for very good job baby
+            float randomX, randomZ;
+            if (UnityEngine.Random.Range(0, 1) == 0)
+            {
+                randomX = UnityEngine.Random.Range(-9f, -4.5f);
+                randomZ = UnityEngine.Random.Range(4.5f, 9f);
+            }
+            else
+            {
+                randomX = UnityEngine.Random.Range(4.5f, 9f);
+                randomZ = UnityEngine.Random.Range(-9f, -4.5f);
+            }
+            
+            Vector3 newPhotosensorLoc = myEnvironment.transform.position;
+            newPhotosensorLoc.x += randomX;
+            newPhotosensorLoc.y -= 5f;  // To aovid light spawning 5 units above ground
+            newPhotosensorLoc.z += randomZ;
+            photosensor.transform.position = newPhotosensorLoc;
+
+            return 5f;
+        }
         //reward += currSpeed;
         reward = 1 / (Mathf.Pow((distance_away).magnitude, 2)) ;
+
         oldCOM = currCom;
         //Debug.Log("photosensorWorldPos = " + photosensorWorldPos + ", Center of Mass = " + currCom + ", reward = " + reward);
 
