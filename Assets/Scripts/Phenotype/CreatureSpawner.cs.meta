@@ -5,7 +5,7 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - creaturePrefab: {instanceID: 0}
-  - segmentPrefab: {instanceID: 0}
+  - segmentPrefab: {fileID: 6837624401485191407, guid: 56ac4567187132f4f921d8ae50078f2e, type: 3}
   - spherePrefab: {fileID: 7905355095525755881, guid: b4d80ebd3a8a17e48831a58877cdd86c, type: 3}
   - hingePrefab: {fileID: 2712183638841377252, guid: ae11351c3b8069444a17b36560d853be, type: 3}
   executionOrder: 0
