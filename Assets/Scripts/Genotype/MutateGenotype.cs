@@ -724,6 +724,13 @@ public class MutateGenotype
                 generatedSegmentGenotype.dimensionZ = mp.GetRandomFloat("s_dz"); 
                 generatedSegmentGenotype.jointType = (JointType)Random.Range(0, 4);
 
+                // ENVIRONMENT TEAM ADD-ON
+                generatedSegmentGenotype.childJointFace = (JointFace)Random.Range(0, 5);
+                do
+                {
+                    generatedSegmentGenotype.parentJointFace = (JointFace)Random.Range(0, 5);
+                } while (generatedSegmentGenotype.childJointFace != generatedSegmentGenotype.parentJointFace);
+
                 cg.segments.Add(generatedSegmentGenotype);
                 return generatedSegmentGenotype;
             }

@@ -3,7 +3,11 @@ guid: 995ffbf13ae25dd4282f4ad0f04a3e25
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - creaturePrefab: {instanceID: 0}
+  - segmentPrefab: {instanceID: 0}
+  - spherePrefab: {fileID: 7905355095525755881, guid: b4d80ebd3a8a17e48831a58877cdd86c, type: 3}
+  - hingePrefab: {fileID: 2712183638841377252, guid: ae11351c3b8069444a17b36560d853be, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

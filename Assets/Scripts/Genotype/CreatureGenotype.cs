@@ -229,6 +229,17 @@ public enum JointType
 }
 
 [System.Serializable]
+public enum JointFace
+{
+    Top,
+    Bottom,
+    Left,
+    Right,
+    Front,
+    Back,
+}
+
+[System.Serializable]
 public enum TrainingStage
 {
     KSS,
@@ -260,6 +271,9 @@ public class SegmentGenotype
     public float dimensionY; // Random.Range(0.05f, 3f);
     [Range(0.05f, 3f)]
     public float dimensionZ; // Random.Range(0.05f, 3f);
+
+    // ENVIRONMENT TEAM ADD-ON
+    public JointFace childJointFace, parentJointFace;
 
     public JointType jointType;
 

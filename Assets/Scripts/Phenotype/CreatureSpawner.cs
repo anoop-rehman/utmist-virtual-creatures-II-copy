@@ -12,6 +12,8 @@ public class CreatureSpawner : MonoBehaviour
     [Header("Prefabs")]
     public Creature creaturePrefab;
     public GameObject segmentPrefab;
+    public GameObject spherePrefab;
+    public GameObject hingePrefab;
 
     [Header("Settings")]
     [SerializeField]
@@ -199,6 +201,7 @@ public class CreatureSpawner : MonoBehaviour
         public Rigidbody parentSegmentRigidbody;
         public bool isRoot;
         public int otherReflectInt;
+        public Transform parentSegmentTransform; // ENVIRONMENT TEAM ADD-ON
     }
 
     private void SetupSegment(SegmentGrabData sgd, out Segment spawnedSegment,
@@ -265,6 +268,43 @@ public class CreatureSpawner : MonoBehaviour
         if (!sgd.isRoot)
         {
             sgd.c.actionMotors.Add(spawnedSegmentGameObject.GetComponent<HingeJoint>());
+
+            //ENVIRONMENT TEAM ADD-ON
+            Vector3 jointPosition = Vector3.zero;
+            switch (sgd.sg.parentJointFace)
+            {
+                case (JointFace.Top):
+                    {
+                        jointPosition += sgd.parentSegmentTransform.up;
+                    }
+                    break;
+                case (JointFace.Bottom):
+                    {
+                        jointPosition -= sgd.parentSegmentTransform.up;
+                    }
+                    break;
+                case (JointFace.Left):
+                    {
+                        jointPosition -= sgd.parentSegmentTransform.right;
+                    }
+                    break;
+                case (JointFace.Right):
+                    {
+                        jointPosition += sgd.parentSegmentTransform.right;
+                    }
+                    break;
+                case (JointFace.Front):
+                    {
+                        jointPosition += sgd.parentSegmentTransform.forward;
+                    }
+                    break;
+                case (JointFace.Back):
+                    {
+                        jointPosition -= sgd.parentSegmentTransform.forward;
+                    }
+                    break;
+            }
+
             switch (sgd.sg.jointType)
             {
                 case (JointType.Fixed):
@@ -275,25 +315,25 @@ public class CreatureSpawner : MonoBehaviour
 
                 case (JointType.HingeX):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(1, 0, 0), sgd.parentSegmentRigidbody);
+                        spawnedSegment.AttachHingeJoint(new Vector3(1, 0, 0), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
                     }
                     break;
 
                 case (JointType.HingeY):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(0, 1 * sgd.otherReflectInt, 0), sgd.parentSegmentRigidbody);
+                        spawnedSegment.AttachHingeJoint(new Vector3(0, 1 * sgd.otherReflectInt, 0), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
                     }
                     break;
 
                 case (JointType.HingeZ):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(0, 0, 1 * sgd.otherReflectInt), sgd.parentSegmentRigidbody);
+                        spawnedSegment.AttachHingeJoint(new Vector3(0, 0, 1 * sgd.otherReflectInt), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
                     }
                     break;
 
                 case (JointType.Spherical):
                     {
-                        spawnedSegment.AttachSphericalJoint(sgd.parentSegmentRigidbody);
+                        spawnedSegment.AttachSphericalJoint(sgd.parentSegmentRigidbody, spherePrefab, sgd.c.transform);
                     }
                     break;
 
@@ -404,6 +444,7 @@ public class CreatureSpawner : MonoBehaviour
         sgd.recursiveLimitValues = ssd.recursiveLimitValues;
         sgd.connectionPath = ssd.connectionPath;
         sgd.parentSegmentRigidbody = ssd.parentSegment?.GetComponent<Rigidbody>();
+        sgd.parentSegmentTransform = ssd.parentSegment?.transform;
         sgd.isRoot = ssd.isRoot;
         sgd.otherReflectInt = otherReflectInt;
 
