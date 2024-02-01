@@ -311,7 +311,7 @@ public class Segment : MonoBehaviour
 
     public void HandleStay(Collider other, string name)
     {
-        if (other.gameObject.layer != 6)
+        if (other.gameObject.layer != 6) // if segment collides with a non creature object like the floor. TODO: check if currently our creatures can accidentally collide with each other during training.. since I believe they're all on the same layer...
         {
             switch (name)
             {
