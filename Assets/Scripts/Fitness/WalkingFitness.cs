@@ -118,13 +118,13 @@ public class WalkingFitness : Fitness
             float randomX, randomZ;
             if (UnityEngine.Random.Range(0, 1) == 0)
             {
-                randomX = UnityEngine.Random.Range(-9f, -4.5f);
-                randomZ = UnityEngine.Random.Range(4.5f, 9f);
+                randomX = UnityEngine.Random.Range(-15f, -8f);
+                randomZ = UnityEngine.Random.Range(8f, 15f);
             }
             else
             {
-                randomX = UnityEngine.Random.Range(4.5f, 9f);
-                randomZ = UnityEngine.Random.Range(-9f, -4.5f);
+                randomX = UnityEngine.Random.Range(8f, 15f);
+                randomZ = UnityEngine.Random.Range(-15f, -8f);
             }
             
             Vector3 newPhotosensorLoc = myEnvironment.transform.position;
@@ -135,7 +135,7 @@ public class WalkingFitness : Fitness
 
             reward += 5f;
         }
-        reward += 1 / (Mathf.Pow((distance_away).magnitude, 2)) + currSpeed;
+        reward += 1 / (Mathf.Pow((distance_away).magnitude, 2));
 
 
         oldCOM = currCom;
