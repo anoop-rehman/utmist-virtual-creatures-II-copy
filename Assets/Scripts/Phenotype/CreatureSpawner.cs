@@ -201,7 +201,9 @@ public class CreatureSpawner : MonoBehaviour
         public Rigidbody parentSegmentRigidbody;
         public bool isRoot;
         public int otherReflectInt;
-        public Transform parentSegmentTransform; // ENVIRONMENT TEAM ADD-ON
+        public Transform parentSegmentTransform; // ENVIRONMENT TEAM ADD-ON;
+
+        public CreatureJoint joint;
     }
 
     private void SetupSegment(SegmentGrabData sgd, out Segment spawnedSegment,
@@ -271,7 +273,7 @@ public class CreatureSpawner : MonoBehaviour
 
             //ENVIRONMENT TEAM ADD-ON
             Vector3 jointPosition = Vector3.zero;
-            switch (sgd.sg.parentJointFace)
+            switch (sgd.joint.parentJointFace)
             {
                 case (JointFace.Top):
                     {
@@ -304,8 +306,8 @@ public class CreatureSpawner : MonoBehaviour
                     }
                     break;
             }
-
-            switch (sgd.sg.jointType)
+            
+            switch (sgd.joint.jointType)
             {
                 case (JointType.Fixed):
                     {
@@ -382,8 +384,9 @@ public class CreatureSpawner : MonoBehaviour
         public List<byte> connectionPath;
 
         // Joint Parameters
-        
+        public CreatureJoint joint;
     }
+
     Segment SpawnSegment(SpawnSegmentData ssd)
     {
         // Debug.Log(counter);
@@ -408,6 +411,8 @@ public class CreatureSpawner : MonoBehaviour
             List<byte> connectionPath = new List<byte>();
 
             parentScale = 1f;
+
+            ssd.joint = null;
         }
         else
         {
@@ -420,6 +425,7 @@ public class CreatureSpawner : MonoBehaviour
             otherReflectBool = ssd.myConnection.reflected ^ ssd.parentReflect.Value;
             otherReflectInt = otherReflectBool ? -1 : 1;
 
+            // TO-DO: Change to account for joint
             spawnPos = parentTransform.position +
                 parentTransform.right * parentTransform.localScale.x * ssd.myConnection.anchorX * reflectInt * parentReflectInt +
                 parentTransform.up * parentTransform.localScale.y * (ssd.myConnection.anchorY + 0.5f) +
@@ -434,6 +440,7 @@ public class CreatureSpawner : MonoBehaviour
             }
 
             parentScale = ssd.parentGlobalScale.Value * ssd.myConnection.scale;
+
         }
 
         // Package the data
@@ -450,10 +457,19 @@ public class CreatureSpawner : MonoBehaviour
         sgd.parentSegmentTransform = ssd.parentSegment?.transform;
         sgd.isRoot = ssd.isRoot;
         sgd.otherReflectInt = otherReflectInt;
+        sgd.joint = ssd.joint;
 
         // Spawn the segment
         if (segmentPool == null) InitializeSegmentObjectPool();
+
+		GameObject jointObject;
+		
+        if (!ssd.isRoot) 
+            ssd.joint.SpawnJoint(hingePrefab, spherePrefab, ssd.parentSegment, ssd.c.transform, out jointObject); // Instantiate joint before child segment
+
         SetupSegment(sgd, out Segment spawnedSegment, out GameObject spawnedSegmentGameObject, out bool runTerminalOnly);
+
+        
 
         // Check if self-intersecting TODO
 
@@ -483,6 +499,17 @@ public class CreatureSpawner : MonoBehaviour
                 ssd2.parentGlobalScale = parentScale;
                 ssd2.parentReflect = otherReflectBool;
                 ssd2.connectionPath = connectionPathClone;
+
+                // Create new joint parameters for recursion
+                SegmentGenotype newSegmentGenotype = ssd2.cg.GetSegment(ssd2.myConnection.destination);
+                ssd2.joint = new CreatureJoint();
+                ssd2.joint.jointType = newSegmentGenotype.jointType;
+                ssd2.joint.parentJointFace = newSegmentGenotype.parentJointFace;
+
+                Vector3 dimVector = new Vector3(sgd.sg.dimensionX, sgd.sg.dimensionY, sgd.sg.dimensionZ) * sgd.parentScale;
+                Vector3 newDimVector = new Vector3(newSegmentGenotype.dimensionX, newSegmentGenotype.dimensionY, newSegmentGenotype.dimensionZ) * ssd2.parentGlobalScale.Value * ssd2.myConnection.scale;
+                ssd2.joint.SetSize(dimVector, newDimVector);
+                ssd2.joint.SetSpawnPos(dimVector, spawnPos, ssd2.parentSegment.transform);
 
                 // Recurse to child segment
                 Segment childSegment = SpawnSegment(ssd2);

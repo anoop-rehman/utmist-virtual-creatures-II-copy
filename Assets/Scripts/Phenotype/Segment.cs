@@ -157,16 +157,19 @@ public class Segment : MonoBehaviour
         }
     }
 
+    // TO-DO: Change to account for Joint.cs implementation
     public void AttachFixedJoint(Rigidbody parentRigidbody)
     {
         fixedJoint = gameObject.AddComponent<FixedJoint>();
         fixedJoint.connectedBody = parentRigidbody;
     }
+    
 
+    // TO-DO: Change to account for Joint.cs implementation and change to CharacterJoint
     public void AttachHingeJoint(Vector3 axis, Rigidbody parentRigidbody, GameObject cylinderPrefab, Vector3 jointPosition, Vector3 dimVector, Transform parent)
     {
         if (hingeJoint != null) return;
-        GameObject jointObject = Instantiate(cylinderPrefab, Vector3.zero, Quaternion.identity);
+        /*GameObject jointObject = Instantiate(cylinderPrefab, Vector3.zero, Quaternion.identity);
         jointObject.transform.parent = parent;
         jointObject.transform.localPosition = Vector3.zero;
         FixedJoint jointObjectj = jointObject.AddComponent<FixedJoint>();
@@ -192,16 +195,17 @@ public class Segment : MonoBehaviour
         limits.bounceMinVelocity = 0;
         limits.max = 75f;
         hingeJoint.limits = limits;
-        hingeJoint.useLimits = true;
+        hingeJoint.useLimits = true;*/
     }
 
+    // TO-DO: Change to account for Joint.cs implementation
     public void AttachSphericalJoint(Rigidbody parentRigidbody, GameObject spherePrefab, Transform parent)
     {
 
-        GameObject spawnedJointGameObject = Instantiate(spherePrefab, Vector3.zero, Quaternion.identity);
+        /*GameObject spawnedJointGameObject = Instantiate(spherePrefab, Vector3.zero, Quaternion.identity);
         spawnedJointGameObject.transform.parent = parent;
         sphericalJoint = spawnedJointGameObject.AddComponent<CharacterJoint>();
-        sphericalJoint.connectedBody = parentRigidbody;
+        sphericalJoint.connectedBody = parentRigidbody;*/
         /*
         sphericalJoint = gameObject.AddComponent<ConfigurableJoint>();
         sphericalJoint.connectedBody = parentRigidbody;

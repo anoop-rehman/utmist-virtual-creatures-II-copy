@@ -272,10 +272,11 @@ public class SegmentGenotype
     [Range(0.05f, 3f)]
     public float dimensionZ; // Random.Range(0.05f, 3f);
 
-    // ENVIRONMENT TEAM ADD-ON
+    // Implicit Joint Genotype (if issue, talk to env team lmao)
+    public JointType jointType;
+    public Vector3 jointDimVector;
     public JointFace childJointFace, parentJointFace;
 
-    public JointType jointType;
 
     /// <summary>
     /// Returns a newly-made ghost SegmentGenotype.

@@ -1103,10 +1103,10 @@ public class MutateGenotype
                 {
                     sg.dimensionZ = mp.ModifyFloat(sg.dimensionZ, "s_dz");
                 }
-                /*if (mp.CoinFlip("s_jt"))
+                if (mp.CoinFlip("s_jt"))
                 {
                     sg.jointType = (JointType)Random.Range(0, 4);
-                }*/
+                }
             }
 
             // 2. New random node added to graph.
