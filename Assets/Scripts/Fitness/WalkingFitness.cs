@@ -135,7 +135,7 @@ public class WalkingFitness : Fitness
 
             reward += 5f;
         }
-        reward = 1 / (Mathf.Pow((distance_away).magnitude, 2)) + currSpeed;
+        reward += 1 / (Mathf.Pow((distance_away).magnitude, 2)) + currSpeed;
 
 
         oldCOM = currCom;
