@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class WalkingFitness : Fitness
 {
+    public float startTime;
+    public float endTime;
     public float pushThreshold = 2f;
     //public float pushPenaltyDiscount = 0.9f;
     public float pushPenaltyDiscount = 0.2f;
@@ -131,10 +133,10 @@ public class WalkingFitness : Fitness
             newPhotosensorLoc.z += randomZ;
             photosensor.transform.position = newPhotosensorLoc;
 
-            return 5f;
+            reward += 5f;
         }
-        //reward += currSpeed;
-        reward = 1 / (Mathf.Pow((distance_away).magnitude, 2)) ;
+        reward = 1 / (Mathf.Pow((distance_away).magnitude, 2)) + currSpeed;
+
 
         oldCOM = currCom;
         //Debug.Log("photosensorWorldPos = " + photosensorWorldPos + ", Center of Mass = " + currCom + ", reward = " + reward);
