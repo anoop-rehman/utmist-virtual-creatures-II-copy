@@ -296,6 +296,7 @@ public class Segment : MonoBehaviour
         GameObject photosensorObj = null;
         foreach (Transform childTransform in environmentObj.transform)
         {
+            //TOOO: rename incorrectly named photosensors to lightsources
             GameObject childObj = childTransform.gameObject;
             if (childObj.CompareTag("Photosensor"))
             {
@@ -318,10 +319,19 @@ public class Segment : MonoBehaviour
         {
             Vector3 position = lightsource.transform.position;
             Vector3 normalVector = (position - transform.position).normalized;
+            Vector2 normalVector2D = new Vector2(normalVector.x, normalVector.z);
+
+            Vector3 creatureForward = creature.gameObject.transform.forward;
+            Vector2 creatureForward2D = new Vector2(creatureForward.x, creatureForward.z);
+
+            float angleToLightSource = Vector2.Angle(creatureForward2D, normalVector2D);
+            
+
             return varNumber switch
             {
                 0 => normalVector.x,
-                1 => normalVector.y,
+                //1 => normalVector.y
+                1 => angleToLightSource,
                 2 => normalVector.z,
                 _ => 0,
             };
