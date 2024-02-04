@@ -380,6 +380,9 @@ public class CreatureSpawner : MonoBehaviour
         public float? parentGlobalScale;
         public bool? parentReflect;
         public List<byte> connectionPath;
+
+        // Joint Parameters
+        
     }
     Segment SpawnSegment(SpawnSegmentData ssd)
     {
