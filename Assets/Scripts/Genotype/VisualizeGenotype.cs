@@ -161,7 +161,7 @@ public class VisualizeGenotype
                       + "rankdir = \"LR\";\n";
                       //+ "1[shape = \"point\"];";
 
-            int count = 0;
+            int count = 100;
 
             // this list holds what #label neuron is the first neuron in a segment
             List<int> firstNeur = new List<int>(); 
@@ -177,9 +177,9 @@ public class VisualizeGenotype
                 if (segment.id == 0)
                 {
                     dotString += "graph [style=dashed];\n";
+                    firstNeur.Add(count);
+                    count++;
                 }
-
-                firstNeur.Add(count);
 
                 if (segment.neurons.Count() == 0)
                 {
@@ -187,12 +187,14 @@ public class VisualizeGenotype
                     count++;
                 }
 
+                firstNeur.Add(segment.neurons[0].nr.id);
+
                 foreach (NeuronGenotype neuron in segment.neurons)
                 {
                     // list all the neurons within each segment
                     string label = ngTypeToString(neuron);
-                    dotString += count.ToString() + " [label=\"" + label + "\"];\n";
-                    count++;
+                    dotString += neuron.nr.id.ToString() + " [label=\"" + label + "\"];\n";
+                    //count++;
                 }
 
                 dotString += "}\n";
@@ -225,12 +227,10 @@ public class VisualizeGenotype
 
                 foreach (NeuronGenotype neuron in segment.neurons)
                 {
-                    string name = ngTypeToString(neuron);
-
                     foreach (NeuronReference input in neuron.inputs)
                     {
                         // input.id stores the input of the connection
-                        
+                        dotString += input.id + " -> " + neuron.nr.id + ";\n";
                     }
                 }
             }
