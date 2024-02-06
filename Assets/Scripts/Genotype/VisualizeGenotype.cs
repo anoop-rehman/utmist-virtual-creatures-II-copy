@@ -10,7 +10,7 @@ public class VisualizeGenotype
 {
     public static string ngTypeToString(NeuronGenotype neuron)
     {
-        /*0 => a + b, // sum
+        /*  0 => a + b, // sum
             1 => a* b, // product
             2 => a / b, // divide
             3 => Mathf.Min(a + b, c), // sum-threshold
@@ -34,35 +34,74 @@ public class VisualizeGenotype
             21 => b* Mathf.Sin(Time.time * a) + c, // oscillate-wave
             22 => b * (Time.time * a - Mathf.Floor(Time.time * a)) + c, // oscillate-saw
             _ => 0
+
+        non math neurons
+
+          0 => segment.GetContact("Right"),
+            1 => segment.GetContact("Left"),
+            2 => segment.GetContact("Top"),
+            3 => segment.GetContact("Bottom"),
+            4 => segment.GetContact("Front"),
+            5 => segment.GetContact("Back"),
+            6 => segment.jointAxisX,
+            7 => segment.jointAxisY,
+            8 => segment.jointAxisZ,
+            9 => segment.GetPhotosensor(0),
+            10 => segment.GetPhotosensor(1),
+            11 => segment.GetPhotosensor(2),
         */
 
-        switch (neuron.type)
+        if (neuron.nr.id >= 13)
         {
-            case 0: return "sum";
-            case 1: return "prod";
-            case 2: return "div";
-            case 3: return "sumt";
-            case 4: return ">";
-            case 5: return "sign";
-            case 6: return "min";
-            case 7: return "max";
-            case 8: return "abs";
-            case 9: return "if";
-            case 10: return "itplt";
-            case 11: return "sin";
-            case 12: return "cos";
-            case 13: return "atan";
-            case 14: return "log";
-            case 15: return "expt";
-            case 16: return "sigm";
-            case 17: return "intgrl";
-            case 18: return "d/dx";
-            case 19: return "smooth";
-            case 20: return "mem";
-            case 21: return "wav";
-            case 22: return "saw";
-            default: return "";
+            switch (neuron.type)
+            {
+                case 0: return "sum";
+                case 1: return "prod";
+                case 2: return "div";
+                case 3: return "sumt";
+                case 4: return ">";
+                case 5: return "sign";
+                case 6: return "min";
+                case 7: return "max";
+                case 8: return "abs";
+                case 9: return "if";
+                case 10: return "itplt";
+                case 11: return "sin";
+                case 12: return "cos";
+                case 13: return "atan";
+                case 14: return "log";
+                case 15: return "expt";
+                case 16: return "sigm";
+                case 17: return "intgrl";
+                case 18: return "d/dx";
+                case 19: return "smooth";
+                case 20: return "mem";
+                case 21: return "wav";
+                case 22: return "saw";
+                default: return "";
+            }
+        }   else
+        {
+            switch (neuron.nr.id)
+            {
+                case 0: return "right-c";
+                case 1: return "left-c";
+                case 2: return "top-c";
+                case 3: return "bot-c";
+                case 4: return "front-c";
+                case 5: return "back-c";
+                case 6: return "jX";
+                case 7: return "jY";
+                case 8: return "jZ";
+                case 9: return "ps-x";
+                case 10: return "ps-theta";
+                case 11: return "ps-z";
+                case 12: return "E0";
+                default: return "";
+            }
         }
+
+        
     }
 
     public static string cgToDotString(CreatureGenotype cg, bool visualizeNeurons)
@@ -181,8 +220,22 @@ public class VisualizeGenotype
                         dotString += " [ltail=cluster" + segment.id + ",lhead=cluster" + connection.destination + "];\n";
                     }
                 }
+
+                //foreach (NeuronGenotype connect in segment.neurons[segment].inputs)
+
+                foreach (NeuronGenotype neuron in segment.neurons)
+                {
+                    string name = ngTypeToString(neuron);
+
+                    foreach (NeuronReference input in neuron.inputs)
+                    {
+                        // input.id stores the input of the connection
+                        
+                    }
+                }
             }
         }
+
 
         dotString += "}";
 
