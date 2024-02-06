@@ -13,6 +13,11 @@ public class WalkingFitness : Fitness
     float distance, prevSpeed;
     float currSpeed = 0f;
     public Creature creature;
+
+    // TODO: figure out what do with this lmao
+    //public float creatureMass = 0f;
+    // =====================================
+
     // Keep track of old position of the agent.
     // If its current position and old position is the same => It isn't moving so don't reward it for staying still
     public Vector3 oldCOM = Vector3.zero;
@@ -43,6 +48,13 @@ public class WalkingFitness : Fitness
         //if (creature == null)
         //    return;
         //Reset();
+
+        // TODO: figure out what do with this lmao
+        //foreach (Segment seg in this.creature.segments)
+        //{
+        //    creatureMass += seg.myRigidbody.mass;
+        //}
+        // =====================================
     }
 
     // Update is called once per frame
@@ -60,9 +72,9 @@ public class WalkingFitness : Fitness
     {
         //Creature creature = myEnvironment.currentCreature;
         float reward = 0f;
-	
-	    prevCom = currCom;
-       	currCom = creature.GetCentreOfMass();
+
+        prevCom = currCom;
+        currCom = creature.GetCentreOfMass();
 
         if (firstFrame)
         {
@@ -79,7 +91,7 @@ public class WalkingFitness : Fitness
         //distance = Vector3.Distance(currCom,prevCom);
         distance = Vector3.Dot(currCom - prevCom, Vector3.forward);
 
-        currSpeed = distance/Time.deltaTime;
+        currSpeed = distance / Time.deltaTime;
 
         if (float.IsNaN(distance))
         {
@@ -104,10 +116,10 @@ public class WalkingFitness : Fitness
             }
         }
         if (photosensor == null)
-        { 
+        {
             return 0f;
         }
-        
+
         Vector3 photosensorWorldPos = photosensor.transform.TransformVector(photosensor.transform.position);
         Vector2 distance_away = (new Vector2(currCom.x, currCom.z)) - (new Vector2(photosensorWorldPos.x, photosensorWorldPos.z));
         if (distance_away.magnitude <= 3f)
@@ -124,7 +136,7 @@ public class WalkingFitness : Fitness
                 randomX = UnityEngine.Random.Range(4.5f, 9f);
                 randomZ = UnityEngine.Random.Range(-9f, -4.5f);
             }
-            
+
             Vector3 newPhotosensorLoc = myEnvironment.transform.position;
             newPhotosensorLoc.x += randomX;
             newPhotosensorLoc.y -= 5f;  // To aovid light spawning 5 units above ground
@@ -134,7 +146,34 @@ public class WalkingFitness : Fitness
             return 5f;
         }
         //reward += currSpeed;
-        reward = 1 / (Mathf.Pow((distance_away).magnitude, 2)) ;
+
+        // TODO: add the energy thing here
+        float e1 = 0f;     // kinetic energy (mv^2)/2
+
+        Debug.Log(creature);
+        //Debug.Log("effectors list size: " + this.creature.effectors.Count);
+
+        foreach (Neuron n in this.creature.effectors)
+        {
+            if (n != null)
+            {
+                HingeJoint ejoint = (HingeJoint)n.effectorJoint;
+                JointMotor motor = ejoint.motor;
+                //Debug.Log(motor.targetVelocity);
+                e1 += Mathf.Abs(motor.targetVelocity);
+            }
+        }
+        Debug.Log("e1 = " + e1);
+
+        Debug.Log("===============================");
+
+        //List<HingeJoint> motors = this.creature.actionMotors;
+        //JointMotor motor = motors[0].motor;
+        //float v = motor.targetVelocity;
+        //Debug.Log("motor 0 targetvelocity: " + v);
+
+
+        reward = 1 / (Mathf.Pow((distance_away).magnitude, 2));
 
         oldCOM = currCom;
         //Debug.Log("photosensorWorldPos = " + photosensorWorldPos + ", Center of Mass = " + currCom + ", reward = " + reward);
@@ -143,11 +182,11 @@ public class WalkingFitness : Fitness
         // We do not implement this because I am lazy
         // Initial push <=> curr speed would be way slower than prev speed => apply discount to reward
 
-     //   if (pushThreshold * currSpeed < prevSpeed)
-	    //{
-            
-		   // reward *= pushPenaltyDiscount;
-	    //}
+        //   if (pushThreshold * currSpeed < prevSpeed)
+        //{
+
+        // reward *= pushPenaltyDiscount;
+        //}
 
         //if (currSpeed < 0.01f) // If the creature has stopped moving, penalize it
         //{
