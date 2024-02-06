@@ -177,17 +177,17 @@ public class VisualizeGenotype
                 if (segment.id == 0)
                 {
                     dotString += "graph [style=dashed];\n";
-                    firstNeur.Add(count);
-                    count++;
                 }
 
                 if (segment.neurons.Count() == 0)
                 {
                     dotString += count.ToString() + " [label=\"\", color=\"#FFFFFF\"];\n";
+                    firstNeur.Add(count);
                     count++;
+                } else
+                {
+                    firstNeur.Add(segment.neurons[0].nr.id);
                 }
-
-                firstNeur.Add(segment.neurons[0].nr.id);
 
                 foreach (NeuronGenotype neuron in segment.neurons)
                 {
