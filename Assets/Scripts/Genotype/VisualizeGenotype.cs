@@ -230,7 +230,8 @@ public class VisualizeGenotype
                     foreach (NeuronReference input in neuron.inputs)
                     {
                         // input.id stores the input of the connection
-                        dotString += input.id + " -> " + neuron.nr.id + ";\n";
+                        dotString += input.id + " -> " + neuron.nr.id + "[tailport=e, headport=w]" + ";\n";
+                        
                     }
                 }
             }
