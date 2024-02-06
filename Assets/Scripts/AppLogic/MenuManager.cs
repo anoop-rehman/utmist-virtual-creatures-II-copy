@@ -262,7 +262,7 @@ public class MenuManager : MonoBehaviour
         // This line takes from a template creature genotype found in a Unity PropertyDrawer
         //optimizationSettings.initialGenotype = templateCGSO == null ? null : templateCGSO.cg;
         //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Leaper.creature", false); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
-        optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Users/anooprehman/Virtual Creatures/Creatures/TWO_ARM_ROWER.creature", true); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
+        optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Users/anooprehman/Virtual Creatures/Creatures/carolgen5walker.creature", true); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
         //optimizationSettings.initialGenotype = null;
 
 
