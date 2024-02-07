@@ -306,9 +306,9 @@ public class CreatureSpawner : MonoBehaviour
         if (sgd.cg.stage == TrainingStage.KSS)
         {
 
-            //if (id == 0) // if this segment is the ghost node
+            //if (id == 1) // if this segment is the root node
 
-            if (id == 1) // if this segment is the root node
+            if (id == 2) // if this segment is the ghost node
             {
                 List<byte> ngNrIds = new List<byte>();
                 foreach (NeuronGenotype ng in sgd.sg.neurons)
@@ -318,18 +318,8 @@ public class CreatureSpawner : MonoBehaviour
 
                 for (int i = 9; i < 12; i++)
                 {
-                    //if (!ngNrIds.Contains((byte)9))
                     if (!ngNrIds.Contains((byte) i))
                     {
-                        //NeuronGenotype photoSensorXNg = new NeuronGenotype(new NeuronReference());
-                        //photoSensorXNg.nr.id = 9;
-                        //photoSensorXNg.nr.relativeLevelNullable = null;
-                        //photoSensorXNg.nr.relativityNullable = null;
-
-                        //sgd.sg.neurons.Add(photoSensorXNg);
-
-                        //ngNrIds.Add((byte)9);
-
                         NeuronGenotype photoSensorNg = new NeuronGenotype(new NeuronReference());
                         photoSensorNg.nr.id = (byte) i;
                         photoSensorNg.nr.relativeLevelNullable = null;
