@@ -528,7 +528,7 @@ namespace KSS
                 tm.SaveTraining();
 
                 // stop training after TOTAL_GENS gens
-                int TOTAL_GENS = 400;
+                int TOTAL_GENS = 2;
                 if (saveK.generations.Count == TOTAL_GENS)
                 {
                     // Export CSV
@@ -540,13 +540,20 @@ namespace KSS
                     //string formattedTime = now.ToString("hh:mm:ss:tt_MM:dd:yyyy").ToUpper().Replace(":", "-");
                     ////formattedTime = formattedTime.Insert(6, "_");
                     //string runFolderName = formattedTime + "_EVOLUTIONRUN";
-                    string runFolderPath = Path.Combine(OptionsPersist.VCCreatures, MenuManager.saveName);
+
+                    //string runFolderPath = Path.Combine(OptionsPersist.VCCreatures, MenuManager.saveName);
+                    string runFolderPath = Path.Combine(OptionsPersist.VCCreatures, "12-42-00-PM_02-07-2024_EVOLUTIONRUN");
                     if (!Directory.Exists(runFolderPath))
                     {
                         Directory.CreateDirectory(runFolderPath);
                     }
 
-                    for (int i = 0; i < saveK.generations.Count; i++)
+
+                    string runSaveFolderPath = Path.Combine(OptionsPersist.VCSaves, "12-42-00-PM_02-07-2024_EVOLUTIONRUN.save");
+
+                    KSSSave saveK2 = (KSSSave)KSSSave.LoadData(runSaveFolderPath, true);
+
+                    for (int i = 0; i < saveK2.generations.Count; i++)
                     {
                         string genFolderName = "GEN_" + i.ToString();
                         string genFolderPath = Path.Combine(runFolderPath, genFolderName);
@@ -555,17 +562,17 @@ namespace KSS
                             Directory.CreateDirectory(genFolderPath);
                         }
 
-                        CreatureGenotype bestCg = saveK.generations[i].SelectBestEval().cg;
+                        CreatureGenotype bestCg = saveK2.generations[i].SelectBestEval().cg;
                         string bestCgFilename = "BEST_" + bestCg.name;
                         string bestCgPath = Path.Combine(genFolderPath, bestCgFilename + ".creature");
                         bestCg.SaveData(bestCgPath, true, false);
 
-                        CreatureGenotype medianCg = saveK.generations[i].SelectMedianEval().cg;
+                        CreatureGenotype medianCg = saveK2.generations[i].SelectMedianEval().cg;
                         string medianCgFilename = "MEDIAN_" + medianCg.name;
                         string medianCgPath = Path.Combine(genFolderPath, medianCgFilename + ".creature");
                         medianCg.SaveData(medianCgPath, true, false);
 
-                        CreatureGenotype worstCg = saveK.generations[i].SelectWorstEval().cg;
+                        CreatureGenotype worstCg = saveK2.generations[i].SelectWorstEval().cg;
                         string worstCgFilename = "WORST_" + worstCg.name;
                         string worstCgPath = Path.Combine(genFolderPath, worstCgFilename + ".creature");
                         worstCg.SaveData(worstCgPath, true, false);
