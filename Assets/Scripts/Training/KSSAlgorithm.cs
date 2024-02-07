@@ -472,7 +472,7 @@ namespace KSS
                 for (int i = 0; i < currentGeneration.cgEvals.Count; i++)
                 {
                     cgSizes.Add(currentGeneration.cgEvals[i].cg.GetSize());
-                    Debug.Log(currentGeneration.cgEvals[i].cg.GetSize());
+                    //Debug.Log(currentGeneration.cgEvals[i].cg.GetSize());
                 }
 
                 cgSizes = cgSizes.OrderByDescending(x => x).ToList();
