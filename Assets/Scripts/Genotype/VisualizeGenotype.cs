@@ -105,8 +105,6 @@ public class VisualizeGenotype
     }
 
     public static string cgToDotString(CreatureGenotype cg, bool visualizeNeurons)
-    //public static void cgToDotString(CreatureGenotype cg, bool visualizeNeurons)
-
     {
 
         string dotString = "digraph \"" + cg.name + "\" {";
@@ -241,26 +239,24 @@ public class VisualizeGenotype
         dotString += "}";
 
         return dotString;
-        //CreatePngFromDot(dotString, "output.png");
-        //UnityEngine.Debug.Log(dotString);
-
     }
 
-    public static void CreatePngFromDot(string dotString, string outputPath)
+    public static void CreatePngFromDot(string dotString, string cgName)
     {
-        // run which dot and replace this string with the output
+        // TODO: run which dot and replace this string with the output
         // TODO: Could replace with a new process
         string dotPath = "/opt/homebrew/bin/dot";
 
         // Create a temporary DOT file
         UnityEngine.Debug.Log(dotString);
         string dotFilePath = Path.Combine(Application.persistentDataPath, "temp.dot");
+        UnityEngine.Debug.Log(Application.persistentDataPath);
         File.WriteAllText(dotFilePath, dotString);
 
         // Start a new process to run the 'dot' command
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
-            // Replace with CMD.exe for Windows, for Mac -> /bin/bash
+            // TODO: Replace with CMD.exe for Windows, for Mac -> /bin/bash
             FileName = "/bin/bash",
             WorkingDirectory = Application.persistentDataPath,
             UseShellExecute = false,
@@ -268,7 +264,8 @@ public class VisualizeGenotype
             RedirectStandardOutput = true,
             CreateNoWindow = true,
             // This is the command we are running in terminal
-            Arguments = "-c \"" + dotPath + " -Tpng \"temp.dot\" -o \"output.png\"" + "\""
+            Arguments = "-c \"" + dotPath + " -Tpng \"temp.dot\" -o \"" + cgName + ".png\"" + "\""
+
         };
 
         Process process = new Process

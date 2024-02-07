@@ -127,8 +127,11 @@ public class CreatureSpawner : MonoBehaviour
         SpawnSegment(ssd);
         //SpawnSegment(cg, c, recursiveLimitInitial, position);
         c.InitializeCreature(fitness);
+
         string dotString = VisualizeGenotype.cgToDotString(cg, true);
-        VisualizeGenotype.CreatePngFromDot(dotString, "output.png");
+        VisualizeGenotype.CreatePngFromDot(dotString, cg.name);
+        Debug.Log("da genotype graph has been created for creature " + cg.name);
+
         return c;
 
 
