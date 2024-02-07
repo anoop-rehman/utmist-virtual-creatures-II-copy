@@ -227,17 +227,17 @@ public class CreatureSpawner : MonoBehaviour
         {
             // Adding a mandatory photosensor neuron to the root segment of the creature
 
-            // Consider adding 1 more neurons with type = 11  for lightsource z position
-            NeuronReference X_photosensorNR = new NeuronReference();
-            X_photosensorNR.id = 9;   // Give it an ID of a X AXIS POS photosensor neuron
-            NeuronGenotype X_photosensorNG = new NeuronGenotype(X_photosensorNR);
-            Neuron X_photosensorNeuron = sgd.c.AddNeuron(X_photosensorNG, null, spawnedSegment, id);
-            spawnedSegment.AddNeuron(X_photosensorNeuron);
-            NeuronReference Z_photosensorNR = new NeuronReference();
-            Z_photosensorNR.id = 11;   // Give it an ID of a photosensor neuron
-            NeuronGenotype Z_photosensorNG = new NeuronGenotype(Z_photosensorNR);
-            Neuron Z_photosensorNeuron = sgd.c.AddNeuron(Z_photosensorNG, null, spawnedSegment, id);
-            spawnedSegment.AddNeuron(Z_photosensorNeuron);
+            //// Consider adding 1 more neurons with type = 11  for lightsource z position
+            //NeuronReference X_photosensorNR = new NeuronReference();
+            //X_photosensorNR.id = 9;   // Give it an ID of a X AXIS POS photosensor neuron
+            //NeuronGenotype X_photosensorNG = new NeuronGenotype(X_photosensorNR);
+            //Neuron X_photosensorNeuron = sgd.c.AddNeuron(X_photosensorNG, null, spawnedSegment, id);
+            //spawnedSegment.AddNeuron(X_photosensorNeuron);
+            //NeuronReference Z_photosensorNR = new NeuronReference();
+            //Z_photosensorNR.id = 11;   // Give it an ID of a photosensor neuron
+            //NeuronGenotype Z_photosensorNG = new NeuronGenotype(Z_photosensorNR);
+            //Neuron Z_photosensorNeuron = sgd.c.AddNeuron(Z_photosensorNG, null, spawnedSegment, id);
+            //spawnedSegment.AddNeuron(Z_photosensorNeuron);
         }
         if (!sgd.isRoot)
         {
@@ -305,6 +305,32 @@ public class CreatureSpawner : MonoBehaviour
         // Add neurons
         if (sgd.cg.stage == TrainingStage.KSS)
         {
+            if (id == 1) // if this segment is the root node
+            {
+                List<byte> ngNrIds = new List<byte>();
+                foreach (NeuronGenotype ng in sgd.sg.neurons)
+                {
+                    ngNrIds.Add(ng.nr.id);
+                }
+
+                for (int i = 9; i < 12; i++)
+                {
+                    if (!ngNrIds.Contains((byte) i))
+                    {
+                        NeuronGenotype photoSensorNg = new NeuronGenotype(new NeuronReference());
+                        photoSensorNg.nr.id = (byte) i;
+                        photoSensorNg.nr.relativeLevelNullable = null;
+                        photoSensorNg.nr.relativityNullable = null;
+
+                        sgd.sg.neurons.Add(photoSensorNg);
+
+                        ngNrIds.Add((byte) i);
+
+                    }
+                }
+            }
+
+
             // Add neurons
             foreach (NeuronGenotype ng in sgd.sg.neurons)
             {
@@ -325,6 +351,9 @@ public class CreatureSpawner : MonoBehaviour
                 }
                 spawnedSegment.AddNeuron(addedNeuron);
             }
+
+            
+
         }
     }
 
