@@ -7,6 +7,7 @@ using UnityEditor;
 using System.Text;
 using System.Linq;
 using System.IO;
+using System;
 using System.Runtime.Serialization.Formatters.Binary;
 
 
@@ -501,6 +502,49 @@ namespace KSS
                 currentGeneration.sizeProperty.median = selectedSizes[1];
                 currentGeneration.sizeProperty.worst = selectedSizes[2];
 
+                // --- automating.. ---
+                tm.SaveTraining();
+
+                // stop training after TOTAL_GENS gens
+                int TOTAL_GENS = 10;
+                if (saveK.generations.Count == TOTAL_GENS)
+                {
+                    // Export CSV
+                    saveK.ExportCSV();
+                    Debug.Log("Exported csv boiiiii");
+
+
+                    //// Save best and first creatures
+                    //DateTime now = DateTime.Now;
+                    //string formattedTime = now.ToString("hhmmtt_MMddyyyy").ToUpper().Replace(":", "/");
+                    //formattedTime = formattedTime.Insert(6, "_");
+                    //string runFolderName = formattedTime + "EVOLUTIONRUN";
+                    //string runFolderPath = Path.Combine(OptionsPersist.VCCreatures, runFolderName);
+                    //if (!Directory.Exists(runFolderPath))
+                    //{
+                    //    Directory.CreateDirectory(runFolderPath);
+                    //}
+
+                    //for (int i = 0; i < saveK.generations.Count; i++)
+                    //{
+                    //    string genFolderName = "GEN_" + i.ToString();
+                    //    string genFolderPath = Path.Combine(runFolderPath, genFolderName);
+                    //    if (!Directory.Exists(genFolderPath))
+                    //    {
+                    //        Directory.CreateDirectory(genFolderPath);
+                    //    }
+
+                    //    saveK.generations[i].SelectBestEval().cg.SaveData(genFolderPath, true, false);
+                    //    Debug.Log(string.Format("Saved {0} to {1}", saveK.generations[i].SelectBestEval().cg.name, genFolderPath));
+
+                    //    //saveK.generations[i].cgEvals[0].cg.SaveData(genFolderPath, true, false);
+                    //}
+
+
+                    // End game in editor
+                    EditorApplication.isPlaying = false;
+                }
+
             }
 
         }
@@ -543,8 +587,20 @@ namespace KSS
             Debug.Log("Best: " + topEvals.Max(x => x.fitness.Value));
             saveK.best = bestEval;
 
-            //bestEval.cg.SaveData("BestCreatures/" + "Gen-" + currentGenerationIndex + " reward= " + bestEval.fitness.Value + ".creature",
-            //    true, true); ;
+
+
+            DateTime now = DateTime.Now;
+            string formattedTime = now.ToString("hhmmtt_MMddyyyy").ToUpper().Replace(":", "/");
+            formattedTime = formattedTime.Insert(6, "_");
+            string runFolderName = formattedTime + "EVOLUTIONRUN";
+            string runFolderPath = Path.Combine(OptionsPersist.VCCreatures, runFolderName);
+            if (!Directory.Exists(runFolderPath))
+            {
+                Directory.CreateDirectory(runFolderPath);
+            }
+
+            bestEval.cg.SaveData(runFolderPath + "/ Gen-" + currentGenerationIndex + " reward= " + bestEval.fitness.Value + ".creature",
+                true, true); ;
 
             string path = Path.Combine(OptionsPersist.VCSaves, save.saveName + ".save");
             save.SaveData(path, true, true);

@@ -54,7 +54,7 @@ public class OptionsPersist : MonoBehaviour
     private void Awake()
     {
         appSavePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
-        Debug.Log("thine mother" + appSavePath);
+        //Debug.Log("thine mother" + appSavePath);
         string[] paths = new string[]{
             VCPath, VCSaves, VCCreatures, VCData
         };

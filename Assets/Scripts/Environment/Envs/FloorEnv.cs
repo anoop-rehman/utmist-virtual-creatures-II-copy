@@ -11,9 +11,9 @@ public class FloorEnvSettings : EnvironmentSettings {
     public override EnvArrangeType envArrangeType { get {return EnvArrangeType.LINEAR; } }
     public override float sizeX { get { return 40; } }
     public override float sizeZ { get { return 5; } }
-    //public override float maxTime { get { return 8; } }
     // HOLY MOTHER OF GOD I FINALLY FOUND WHY SIMULATIONS ARE ONLY 35 SECONDS
-    public override float maxTime { get { return 60; } }   // x seconds
+    public override float maxTime { get { return 5; } }
+    //public override float maxTime { get { return 60; } }   // x seconds
 }
 
 public class FloorEnv : Environment

@@ -128,9 +128,9 @@ public class CreatureSpawner : MonoBehaviour
         SpawnSegment(ssd);
         //SpawnSegment(cg, c, recursiveLimitInitial, position);
         c.InitializeCreature(fitness);
-        Debug.Log("Spawned creature " + c.name);
+        //Debug.Log("Spawned creature " + c.name);
 
-        Debug.Log("Its size is: " + c.cg.GetSize().ToString());
+        //Debug.Log("Its size is: " + c.cg.GetSize().ToString());
 
         return c;
     }
