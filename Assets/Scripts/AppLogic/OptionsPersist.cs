@@ -21,31 +21,29 @@ public static class SaveContainer {
 }
 public class OptionsPersist : MonoBehaviour
 {
-    public static OptionsPersist instance;
-
     // Vars here
     [HideInInspector]
-    public string appSavePath { get; private set; }
-    public string VCPath {
+    public static string appSavePath { get; private set; }
+    public static string VCPath {
         get {
             return Path.Combine(appSavePath, "Virtual Creatures");
         }
     }
-    public string VCSaves
+    public static string VCSaves
     {
         get
         {
             return Path.Combine(VCPath, "Saves");
         }
     }
-    public string VCCreatures
+    public static string VCCreatures
     {
         get
         {
             return Path.Combine(VCPath, "Creatures");
         }
     }
-    public string VCData
+    public static string VCData
     {
         get
         {
@@ -55,30 +53,22 @@ public class OptionsPersist : MonoBehaviour
 
     private void Awake()
     {
-        if (instance != null)
-        {
-            Destroy(gameObject); // Can't have two persists active at once
-        }
-        else
-        {
-            instance = this;
-            appSavePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+        appSavePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+        Debug.Log("thine mother" + appSavePath);
+        string[] paths = new string[]{
+            VCPath, VCSaves, VCCreatures, VCData
+        };
 
-            string[] paths = new string[]{
-                VCPath, VCSaves, VCCreatures, VCData
-            };
-
-            foreach (string path in paths)
+        foreach (string path in paths)
+        {
+            if (!Directory.Exists(path))
             {
-                if (!Directory.Exists(path))
-                {
-                    // Try to create the directory.
-                    Directory.CreateDirectory(path);
-                    Console.WriteLine("The directory was created successfully at {0}.", Directory.GetCreationTime(path));
-                }
+                // Try to create the directory.
+                Directory.CreateDirectory(path);
+                Console.WriteLine("The directory was created successfully at {0}.", Directory.GetCreationTime(path));
             }
-            DontDestroyOnLoad(gameObject);
         }
+        DontDestroyOnLoad(gameObject);
     }
 
     public void UpdateAppSavePath(string newPath){

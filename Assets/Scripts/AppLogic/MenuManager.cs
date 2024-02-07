@@ -118,7 +118,7 @@ public class MenuManager : MonoBehaviour
     {
         menus.ForEach(o => o.SetActive(false));
 
-        string[] fileArray = Directory.GetFiles(OptionsPersist.instance.VCSaves, "*.save");
+        string[] fileArray = Directory.GetFiles(OptionsPersist.VCSaves, "*.save");
         chooseItems = new List<EvolutionChooseItem>();
 
         float spacing = 10f;  // spacing between items
