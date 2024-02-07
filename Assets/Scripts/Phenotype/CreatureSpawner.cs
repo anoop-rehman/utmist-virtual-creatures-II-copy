@@ -130,7 +130,6 @@ public class CreatureSpawner : MonoBehaviour
 
         string dotString = VisualizeGenotype.cgToDotString(cg, true);
         VisualizeGenotype.CreatePngFromDot(dotString, cg.name);
-        Debug.Log("da genotype graph has been created for creature " + cg.name);
 
         return c;
 

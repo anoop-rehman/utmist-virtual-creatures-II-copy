@@ -250,7 +250,6 @@ public class VisualizeGenotype
         // Create a temporary DOT file
         UnityEngine.Debug.Log(dotString);
         string dotFilePath = Path.Combine(Application.persistentDataPath, "temp.dot");
-        UnityEngine.Debug.Log(Application.persistentDataPath);
         File.WriteAllText(dotFilePath, dotString);
 
         // Start a new process to run the 'dot' command
@@ -287,6 +286,7 @@ public class VisualizeGenotype
             UnityEngine.Debug.LogError($"Error: 'dot' command failed with exit code {process.ExitCode}");
         }
 
+        //UnityEngine.Debug.Log("da genotype graph has been created for creature " + cgName + "at location " + Application.persistentDataPath); ;
 
         // If we run hello world, uncomment these lines to read the standard output
         //string output = process.StandardOutput.ReadToEnd();
