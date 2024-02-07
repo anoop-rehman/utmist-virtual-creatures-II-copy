@@ -528,20 +528,19 @@ namespace KSS
                 tm.SaveTraining();
 
                 // stop training after TOTAL_GENS gens
-                int TOTAL_GENS = 5;
+                int TOTAL_GENS = 3;
                 if (saveK.generations.Count == TOTAL_GENS)
                 {
                     // Export CSV
                     saveK.ExportCSV();
                     Debug.Log("Exported csv boiiiii");
 
-
-                    // Save best and first creatures
-                    DateTime now = DateTime.Now;
-                    string formattedTime = now.ToString("hhmmtt_MMddyyyy").ToUpper().Replace(":", "/");
-                    formattedTime = formattedTime.Insert(6, "_");
-                    string runFolderName = formattedTime + "EVOLUTIONRUN";
-                    string runFolderPath = Path.Combine(OptionsPersist.VCCreatures, runFolderName);
+                    // Save best, median, and worst creatures from each gen
+                    //DateTime now = DateTime.Now;
+                    //string formattedTime = now.ToString("hh:mm:ss:tt_MM:dd:yyyy").ToUpper().Replace(":", "-");
+                    ////formattedTime = formattedTime.Insert(6, "_");
+                    //string runFolderName = formattedTime + "_EVOLUTIONRUN";
+                    string runFolderPath = Path.Combine(OptionsPersist.VCCreatures, MenuManager.saveName);
                     if (!Directory.Exists(runFolderPath))
                     {
                         Directory.CreateDirectory(runFolderPath);
@@ -556,14 +555,22 @@ namespace KSS
                             Directory.CreateDirectory(genFolderPath);
                         }
 
+                        CreatureGenotype bestCg = saveK.generations[i].SelectBestEval().cg;
+                        string bestCgFilename = "BEST_" + bestCg.name;
+                        string bestCgPath = Path.Combine(genFolderPath, bestCgFilename + ".creature");
+                        bestCg.SaveData(bestCgPath, true, false);
 
-                        string bestCreatureName = "Best: " + saveK.generations[i].SelectBestEval().cg.name;
-                        string bestcreaturePath = Path.Combine(genFolderPath, bestCreatureName + ".creature");
-                        saveK.generations[i].SelectBestEval().cg.SaveData(bestcreaturePath, true, false);
+                        CreatureGenotype medianCg = saveK.generations[i].SelectMedianEval().cg;
+                        string medianCgFilename = "MEDIAN_" + medianCg.name;
+                        string medianCgPath = Path.Combine(genFolderPath, medianCgFilename + ".creature");
+                        medianCg.SaveData(medianCgPath, true, false);
 
-                        //string medianCreatureName = "Median: " + saveK.generations[i].SelectBestEval().cg.name;
-                        //string bestcreaturePath = Path.Combine(genFolderPath, bestCreatureName + ".creature");
-                        //saveK.generations[i].SelectBestEval().cg.SaveData(bestcreaturePath, true, false);
+                        CreatureGenotype worstCg = saveK.generations[i].SelectWorstEval().cg;
+                        string worstCgFilename = "WORST_" + worstCg.name;
+                        string worstCgPath = Path.Combine(genFolderPath, worstCgFilename + ".creature");
+                        worstCg.SaveData(worstCgPath, true, false);
+
+
 
                         //Debug.Log(string.Format("Saved {0} to {1}", bestCreatureName, bestcreaturePath));
 
@@ -618,15 +625,15 @@ namespace KSS
 
 
 
-            DateTime now = DateTime.Now;
-            string formattedTime = now.ToString("hhmmtt_MMddyyyy").ToUpper().Replace(":", "/");
-            formattedTime = formattedTime.Insert(6, "_");
-            string runFolderName = formattedTime + "EVOLUTIONRUN";
-            string runFolderPath = Path.Combine(OptionsPersist.VCCreatures, runFolderName);
-            if (!Directory.Exists(runFolderPath))
-            {
-                Directory.CreateDirectory(runFolderPath);
-            }
+            //DateTime now = DateTime.Now;
+            //string formattedTime = now.ToString("hhmmtt_MMddyyyy").ToUpper().Replace(":", "/");
+            //formattedTime = formattedTime.Insert(6, "_");
+            //string runFolderName = formattedTime + "EVOLUTIONRUN";
+            //string runFolderPath = Path.Combine(OptionsPersist.VCCreatures, runFolderName);
+            //if (!Directory.Exists(runFolderPath))
+            //{
+            //    Directory.CreateDirectory(runFolderPath);
+            //}
 
             //bestEval.cg.SaveData(runFolderPath + "/ Gen-" + currentGenerationIndex + " reward= " + bestEval.fitness.Value + ".creature",
             //    true, true); ;

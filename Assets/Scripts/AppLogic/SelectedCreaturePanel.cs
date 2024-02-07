@@ -62,29 +62,6 @@ public class SelectedCreaturePanel : MonoBehaviour
 
         string path = Path.Combine(OptionsPersist.VCCreatures, currentCreatureClone.cg.name + ".creature");
 
-        //DateTime now = DateTime.Now;
-
-        //// Format the DateTime as a string in the desired format "09:59AM_07FEB2024"
-        //string formattedTime = now.ToString("hhmmtt_MMddyyyy").ToUpper().Replace(":", "/");
-
-        //// Insert an underscore between the time and date parts
-        //formattedTime = formattedTime.Insert(6, "_");
-
-        //// Define the folder name
-        //string folderName = formattedTime + "_EVOLUTIONRUN";
-
-        //// Combine the base path with the new folder name
-        //string basePath = Path.Combine(OptionsPersist.VCCreatures, folderName);
-
-        //// Ensure the directory exists
-        //if (!Directory.Exists(basePath))
-        //{
-        //    Directory.CreateDirectory(basePath);
-        //}
-
-        //// Combine the new base path with the creature file name to get the final path
-        //path = Path.Combine(basePath, currentCreatureClone.cg.name + ".creature");
-
         currentCreatureClone.cg.SaveData(path, true, false);
         Debug.Log(string.Format("Saved {0} to {1}", currentCreatureClone.cg.name, path));
     }

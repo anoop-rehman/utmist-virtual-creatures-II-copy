@@ -45,7 +45,13 @@ public class MenuManager : MonoBehaviour
     public Toggle lockNeuralMutationsToggle;
     public Toggle lockPhysicalMutationsToggle;
 
-    private string saveName = "New Evolution";
+
+    //private string saveName = "New Evolution";
+
+    //TODO: THIS IS JUST A TERRIBLE TEMPORARY QUICK FIX I MADE SO I CAN GO TO SLEEP RN, CLEAN THIS UP PROPERLY LATER!
+    static DateTime now = DateTime.Now;
+    static string formattedTime = now.ToString("hh:mm:ss:tt_MM:dd:yyyy").ToUpper().Replace(":", "-");
+    public static string saveName = formattedTime + "_EVOLUTIONRUN";
 
     // evolution settings values
     private CreatureGenotype initialGenotype;
