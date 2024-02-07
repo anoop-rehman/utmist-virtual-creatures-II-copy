@@ -229,6 +229,17 @@ public enum JointType
 }
 
 [System.Serializable]
+public enum JointFace
+{
+    Top,
+    Bottom,
+    Left,
+    Right,
+    Front,
+    Back,
+}
+
+[System.Serializable]
 public enum TrainingStage
 {
     KSS,
@@ -261,7 +272,11 @@ public class SegmentGenotype
     [Range(0.05f, 3f)]
     public float dimensionZ; // Random.Range(0.05f, 3f);
 
+    // Implicit Joint Genotype (if issue, talk to env team lmao)
     public JointType jointType;
+    public Vector3 jointDimVector;
+    public JointFace childJointFace, parentJointFace;
+
 
     /// <summary>
     /// Returns a newly-made ghost SegmentGenotype.

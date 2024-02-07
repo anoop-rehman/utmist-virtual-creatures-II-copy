@@ -12,6 +12,8 @@ public class CreatureSpawner : MonoBehaviour
     [Header("Prefabs")]
     public Creature creaturePrefab;
     public GameObject segmentPrefab;
+    public GameObject spherePrefab;
+    public GameObject hingePrefab;
 
     [Header("Settings")]
     [SerializeField]
@@ -199,6 +201,9 @@ public class CreatureSpawner : MonoBehaviour
         public Rigidbody parentSegmentRigidbody;
         public bool isRoot;
         public int otherReflectInt;
+        public Transform parentSegmentTransform; // ENVIRONMENT TEAM ADD-ON;
+
+        public CreatureJoint joint;
     }
 
     private void SetupSegment(SegmentGrabData sgd, out Segment spawnedSegment,
@@ -265,7 +270,44 @@ public class CreatureSpawner : MonoBehaviour
         if (!sgd.isRoot)
         {
             sgd.c.actionMotors.Add(spawnedSegmentGameObject.GetComponent<HingeJoint>());
-            switch (sgd.sg.jointType)
+
+            //ENVIRONMENT TEAM ADD-ON
+            Vector3 jointPosition = Vector3.zero;
+            switch (sgd.joint.parentJointFace)
+            {
+                case (JointFace.Top):
+                    {
+                        jointPosition += sgd.parentSegmentTransform.up;
+                    }
+                    break;
+                case (JointFace.Bottom):
+                    {
+                        jointPosition -= sgd.parentSegmentTransform.up;
+                    }
+                    break;
+                case (JointFace.Left):
+                    {
+                        jointPosition -= sgd.parentSegmentTransform.right;
+                    }
+                    break;
+                case (JointFace.Right):
+                    {
+                        jointPosition += sgd.parentSegmentTransform.right;
+                    }
+                    break;
+                case (JointFace.Front):
+                    {
+                        jointPosition += sgd.parentSegmentTransform.forward;
+                    }
+                    break;
+                case (JointFace.Back):
+                    {
+                        jointPosition -= sgd.parentSegmentTransform.forward;
+                    }
+                    break;
+            }
+            
+            switch (sgd.joint.jointType)
             {
                 case (JointType.Fixed):
                     {
@@ -275,25 +317,25 @@ public class CreatureSpawner : MonoBehaviour
 
                 case (JointType.HingeX):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(1, 0, 0), sgd.parentSegmentRigidbody);
+                        spawnedSegment.AttachHingeJoint(new Vector3(1, 0, 0), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
                     }
                     break;
 
                 case (JointType.HingeY):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(0, 1 * sgd.otherReflectInt, 0), sgd.parentSegmentRigidbody);
+                        spawnedSegment.AttachHingeJoint(new Vector3(0, 1 * sgd.otherReflectInt, 0), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
                     }
                     break;
 
                 case (JointType.HingeZ):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(0, 0, 1 * sgd.otherReflectInt), sgd.parentSegmentRigidbody);
+                        spawnedSegment.AttachHingeJoint(new Vector3(0, 0, 1 * sgd.otherReflectInt), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
                     }
                     break;
 
                 case (JointType.Spherical):
                     {
-                        spawnedSegment.AttachSphericalJoint(sgd.parentSegmentRigidbody);
+                        spawnedSegment.AttachSphericalJoint(sgd.parentSegmentRigidbody, spherePrefab, sgd.c.transform);
                     }
                     break;
 
@@ -340,7 +382,11 @@ public class CreatureSpawner : MonoBehaviour
         public float? parentGlobalScale;
         public bool? parentReflect;
         public List<byte> connectionPath;
+
+        // Joint Parameters
+        public CreatureJoint joint;
     }
+
     Segment SpawnSegment(SpawnSegmentData ssd)
     {
         // Debug.Log(counter);
@@ -365,6 +411,8 @@ public class CreatureSpawner : MonoBehaviour
             List<byte> connectionPath = new List<byte>();
 
             parentScale = 1f;
+
+            ssd.joint = null;
         }
         else
         {
@@ -377,10 +425,13 @@ public class CreatureSpawner : MonoBehaviour
             otherReflectBool = ssd.myConnection.reflected ^ ssd.parentReflect.Value;
             otherReflectInt = otherReflectBool ? -1 : 1;
 
+            // TO-DO: Change to account for joint
+            spawnPos = CalculateSegmentPosition();
+            /*
             spawnPos = parentTransform.position +
                 parentTransform.right * parentTransform.localScale.x * ssd.myConnection.anchorX * reflectInt * parentReflectInt +
                 parentTransform.up * parentTransform.localScale.y * (ssd.myConnection.anchorY + 0.5f) +
-                parentTransform.forward * parentTransform.localScale.z * ssd.myConnection.anchorZ;
+                parentTransform.forward * parentTransform.localScale.z * ssd.myConnection.anchorZ;*/
 
             spawnAngle = Quaternion.identity;
             spawnAngle *= parentTransform.rotation;
@@ -391,6 +442,7 @@ public class CreatureSpawner : MonoBehaviour
             }
 
             parentScale = ssd.parentGlobalScale.Value * ssd.myConnection.scale;
+
         }
 
         // Package the data
@@ -404,12 +456,22 @@ public class CreatureSpawner : MonoBehaviour
         sgd.recursiveLimitValues = ssd.recursiveLimitValues;
         sgd.connectionPath = ssd.connectionPath;
         sgd.parentSegmentRigidbody = ssd.parentSegment?.GetComponent<Rigidbody>();
+        sgd.parentSegmentTransform = ssd.parentSegment?.transform;
         sgd.isRoot = ssd.isRoot;
         sgd.otherReflectInt = otherReflectInt;
+        sgd.joint = ssd.joint;
 
         // Spawn the segment
         if (segmentPool == null) InitializeSegmentObjectPool();
+
+		GameObject jointObject;
+		
+        if (!ssd.isRoot) 
+            ssd.joint.SpawnJoint(hingePrefab, spherePrefab, ssd.parentSegment, ssd.c.transform, out jointObject); // Instantiate joint before child segment
+
         SetupSegment(sgd, out Segment spawnedSegment, out GameObject spawnedSegmentGameObject, out bool runTerminalOnly);
+
+        
 
         // Check if self-intersecting TODO
 
@@ -440,6 +502,17 @@ public class CreatureSpawner : MonoBehaviour
                 ssd2.parentReflect = otherReflectBool;
                 ssd2.connectionPath = connectionPathClone;
 
+                // Create new joint parameters for recursion
+                SegmentGenotype newSegmentGenotype = ssd2.cg.GetSegment(ssd2.myConnection.destination);
+                ssd2.joint = new CreatureJoint();
+                ssd2.joint.jointType = newSegmentGenotype.jointType;
+                ssd2.joint.parentJointFace = newSegmentGenotype.parentJointFace;
+
+                Vector3 dimVector = new Vector3(sgd.sg.dimensionX, sgd.sg.dimensionY, sgd.sg.dimensionZ) * sgd.parentScale;
+                Vector3 newDimVector = new Vector3(newSegmentGenotype.dimensionX, newSegmentGenotype.dimensionY, newSegmentGenotype.dimensionZ) * ssd2.parentGlobalScale.Value * ssd2.myConnection.scale;
+                ssd2.joint.SetSize(dimVector, newDimVector);
+                ssd2.joint.SetSpawnPos(dimVector, spawnPos, ssd2.parentSegment.transform);
+
                 // Recurse to child segment
                 Segment childSegment = SpawnSegment(ssd2);
                 childSegment.SetParent(connection.id, spawnedSegment);
@@ -455,4 +528,15 @@ public class CreatureSpawner : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position + spawnPos, 0.1f);
     }
+
+    // Find out which face (to get the vector) 
+    // Rotate vector using calculated spawnAngle -> Pass in spawnAngle
+    // Sum vector with joint position -> Pass in CreatureJoint
+    // Return new position
+    Vector3 CalculateSegmentPosition()
+	{
+        
+
+        return Vector3.zero;
+	}
 }
