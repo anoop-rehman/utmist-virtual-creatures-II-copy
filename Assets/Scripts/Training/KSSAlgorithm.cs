@@ -134,14 +134,14 @@ namespace KSS
             return medianEval;
         }
 
-        public CreatureGenotypeEval SelectMedianEval()
+        public CreatureGenotypeEval SelectWorstEval()
         {
             List<CreatureGenotypeEval> cleanedEvals = new List<CreatureGenotypeEval>(cgEvals);
             cleanedEvals.RemoveAll(x => x.evalStatus == EvalStatus.DISQUALIFIED);
             cleanedEvals.RemoveAll(x => x.fitness.HasValue == false);
-            CreatureGenotypeEval medianEval = cleanedEvals.OrderByDescending(cgEval => cgEval.fitness.Value).ElementAt(cleanedEvals.Count / 2); ;
-            Debug.Log("Median: " + medianEval.fitness.Value);
-            return medianEval;
+            CreatureGenotypeEval worstEval = cleanedEvals.OrderByDescending(cgEval => cgEval.fitness.Value).Last(); ;
+            Debug.Log("Worst: " + worstEval.fitness.Value);
+            return worstEval;
         }
 
 
