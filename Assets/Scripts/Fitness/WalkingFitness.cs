@@ -37,6 +37,7 @@ public class WalkingFitness : Fitness
         //if (creature == null)
         //    return;
         //Reset();
+
     }
 
     // Update is called once per frame
@@ -103,11 +104,12 @@ public class WalkingFitness : Fitness
         
         Vector3 lightsourceWorldPos = lightsource.transform.TransformVector(lightsource.transform.position);
         Vector2 distance_away = (new Vector2(currCom.x, currCom.z)) - (new Vector2(lightsourceWorldPos.x, lightsourceWorldPos.z));
-        if (distance_away.magnitude <= 3f)
+        //if (distance_away.magnitude <= 3f)
+        if (distance_away.magnitude <= 1.5f)
         {
-            // Generate new location for lightsource and return 5f for very good job baby
+            // Generate new location for lightsource and return 5f for very good job 
             float randomX, randomZ;
-            if (UnityEngine.Random.Range(0, 1) == 0)
+            if (UnityEngine.Random.Range(0, 1) == 0) 
             {
                 randomX = UnityEngine.Random.Range(-15f, -8f);
                 randomZ = UnityEngine.Random.Range(8f, 15f);
@@ -142,3 +144,4 @@ public class WalkingFitness : Fitness
         currCom = creature.GetCentreOfMass();
     }
 }
+
