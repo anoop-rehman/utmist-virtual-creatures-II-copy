@@ -318,29 +318,26 @@ public class CreatureSpawner : MonoBehaviour
 
                 for (int i = 9; i < 12; i++)
                 {
-                    //if (!ngNrIds.Contains((byte) i))
-                    if (!ngNrIds.Contains((byte)9))
+                    //if (!ngNrIds.Contains((byte)9))
+                    if (!ngNrIds.Contains((byte) i))
                     {
-                        NeuronGenotype photoSensorXNg = new NeuronGenotype(new NeuronReference());
-                        photoSensorXNg.nr.id = 9;
-                        photoSensorXNg.nr.relativeLevelNullable = null;
-                        photoSensorXNg.nr.relativityNullable = null;
+                        //NeuronGenotype photoSensorXNg = new NeuronGenotype(new NeuronReference());
+                        //photoSensorXNg.nr.id = 9;
+                        //photoSensorXNg.nr.relativeLevelNullable = null;
+                        //photoSensorXNg.nr.relativityNullable = null;
 
-                        //NeuronReference photoSensorXNr = new NeuronReference(); // how do I initialize this NeuronReference properly? like all its properties..
-                        //photoSensorXNr.id = 9;
-                        //photoSensorXNr.relativeLevelNullable = null;
-                        //photoSensorXNr.relativityNullable = null;
-                        //NeuronGenotype photoSensorXNg = new NeuronGenotype(0, new NeuronReference[0], photoSensorXNr);
+                        //sgd.sg.neurons.Add(photoSensorXNg);
 
-                        //photoSensorXNg.nr.connectionPath = sgd.connectionPath;
-                        //photoSensorXNg.nr.relativityNullable = NeuronReferenceRelativity.TRACED;
-                        //Neuron photoSensorX;
+                        //ngNrIds.Add((byte)9);
 
-                        //photoSensorX = sgd.c.AddNeuron(photoSensorXNg, null, spawnedSegment, id);
-                        //spawnedSegment.AddNeuron(photoSensorX);
-                        sgd.sg.neurons.Add(photoSensorXNg);
+                        NeuronGenotype photoSensorNg = new NeuronGenotype(new NeuronReference());
+                        photoSensorNg.nr.id = (byte) i;
+                        photoSensorNg.nr.relativeLevelNullable = null;
+                        photoSensorNg.nr.relativityNullable = null;
 
-                        ngNrIds.Add((byte)9);
+                        sgd.sg.neurons.Add(photoSensorNg);
+
+                        ngNrIds.Add((byte) i);
 
                     }
                 }
