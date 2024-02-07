@@ -123,6 +123,28 @@ namespace KSS
             return bestEval;
         }
 
+
+        public CreatureGenotypeEval SelectMedianEval()
+        {
+            List<CreatureGenotypeEval> cleanedEvals = new List<CreatureGenotypeEval>(cgEvals);
+            cleanedEvals.RemoveAll(x => x.evalStatus == EvalStatus.DISQUALIFIED);
+            cleanedEvals.RemoveAll(x => x.fitness.HasValue == false);
+            CreatureGenotypeEval medianEval = cleanedEvals.OrderByDescending(cgEval => cgEval.fitness.Value).ElementAt(cleanedEvals.Count / 2); ;
+            Debug.Log("Median: " + medianEval.fitness.Value);
+            return medianEval;
+        }
+
+        public CreatureGenotypeEval SelectMedianEval()
+        {
+            List<CreatureGenotypeEval> cleanedEvals = new List<CreatureGenotypeEval>(cgEvals);
+            cleanedEvals.RemoveAll(x => x.evalStatus == EvalStatus.DISQUALIFIED);
+            cleanedEvals.RemoveAll(x => x.fitness.HasValue == false);
+            CreatureGenotypeEval medianEval = cleanedEvals.OrderByDescending(cgEval => cgEval.fitness.Value).ElementAt(cleanedEvals.Count / 2); ;
+            Debug.Log("Median: " + medianEval.fitness.Value);
+            return medianEval;
+        }
+
+
         public List<CreatureGenotypeEval> SelectTopEvals(int populationSize, float survivalRatio)
         {
             Debug.Log("Sizes:");
@@ -467,7 +489,7 @@ namespace KSS
                     saveK.generations[^2].Cull(optimizationSettings.populationSize, optimizationSettings.survivalRatio);
                 }
 
-                Debug.Log("HIT");
+                //Debug.Log("HIT");
                 List<float> cgSizes = new List<float>();
                 for (int i = 0; i < currentGeneration.cgEvals.Count; i++)
                 {
@@ -506,7 +528,7 @@ namespace KSS
                 tm.SaveTraining();
 
                 // stop training after TOTAL_GENS gens
-                int TOTAL_GENS = 10;
+                int TOTAL_GENS = 5;
                 if (saveK.generations.Count == TOTAL_GENS)
                 {
                     // Export CSV
@@ -514,31 +536,38 @@ namespace KSS
                     Debug.Log("Exported csv boiiiii");
 
 
-                    //// Save best and first creatures
-                    //DateTime now = DateTime.Now;
-                    //string formattedTime = now.ToString("hhmmtt_MMddyyyy").ToUpper().Replace(":", "/");
-                    //formattedTime = formattedTime.Insert(6, "_");
-                    //string runFolderName = formattedTime + "EVOLUTIONRUN";
-                    //string runFolderPath = Path.Combine(OptionsPersist.VCCreatures, runFolderName);
-                    //if (!Directory.Exists(runFolderPath))
-                    //{
-                    //    Directory.CreateDirectory(runFolderPath);
-                    //}
+                    // Save best and first creatures
+                    DateTime now = DateTime.Now;
+                    string formattedTime = now.ToString("hhmmtt_MMddyyyy").ToUpper().Replace(":", "/");
+                    formattedTime = formattedTime.Insert(6, "_");
+                    string runFolderName = formattedTime + "EVOLUTIONRUN";
+                    string runFolderPath = Path.Combine(OptionsPersist.VCCreatures, runFolderName);
+                    if (!Directory.Exists(runFolderPath))
+                    {
+                        Directory.CreateDirectory(runFolderPath);
+                    }
 
-                    //for (int i = 0; i < saveK.generations.Count; i++)
-                    //{
-                    //    string genFolderName = "GEN_" + i.ToString();
-                    //    string genFolderPath = Path.Combine(runFolderPath, genFolderName);
-                    //    if (!Directory.Exists(genFolderPath))
-                    //    {
-                    //        Directory.CreateDirectory(genFolderPath);
-                    //    }
+                    for (int i = 0; i < saveK.generations.Count; i++)
+                    {
+                        string genFolderName = "GEN_" + i.ToString();
+                        string genFolderPath = Path.Combine(runFolderPath, genFolderName);
+                        if (!Directory.Exists(genFolderPath))
+                        {
+                            Directory.CreateDirectory(genFolderPath);
+                        }
 
-                    //    saveK.generations[i].SelectBestEval().cg.SaveData(genFolderPath, true, false);
-                    //    Debug.Log(string.Format("Saved {0} to {1}", saveK.generations[i].SelectBestEval().cg.name, genFolderPath));
 
-                    //    //saveK.generations[i].cgEvals[0].cg.SaveData(genFolderPath, true, false);
-                    //}
+                        string bestCreatureName = "Best: " + saveK.generations[i].SelectBestEval().cg.name;
+                        string bestcreaturePath = Path.Combine(genFolderPath, bestCreatureName + ".creature");
+                        saveK.generations[i].SelectBestEval().cg.SaveData(bestcreaturePath, true, false);
+
+                        //string medianCreatureName = "Median: " + saveK.generations[i].SelectBestEval().cg.name;
+                        //string bestcreaturePath = Path.Combine(genFolderPath, bestCreatureName + ".creature");
+                        //saveK.generations[i].SelectBestEval().cg.SaveData(bestcreaturePath, true, false);
+
+                        //Debug.Log(string.Format("Saved {0} to {1}", bestCreatureName, bestcreaturePath));
+
+                    }
 
 
                     // End game in editor
@@ -599,8 +628,8 @@ namespace KSS
                 Directory.CreateDirectory(runFolderPath);
             }
 
-            bestEval.cg.SaveData(runFolderPath + "/ Gen-" + currentGenerationIndex + " reward= " + bestEval.fitness.Value + ".creature",
-                true, true); ;
+            //bestEval.cg.SaveData(runFolderPath + "/ Gen-" + currentGenerationIndex + " reward= " + bestEval.fitness.Value + ".creature",
+            //    true, true); ;
 
             string path = Path.Combine(OptionsPersist.VCSaves, save.saveName + ".save");
             save.SaveData(path, true, true);
