@@ -305,10 +305,7 @@ public class CreatureSpawner : MonoBehaviour
         // Add neurons
         if (sgd.cg.stage == TrainingStage.KSS)
         {
-
-            //if (id == 1) // if this segment is the root node
-
-            if (id == 2) // if this segment is the ghost node
+            if (id == 1) // if this segment is the root node
             {
                 List<byte> ngNrIds = new List<byte>();
                 foreach (NeuronGenotype ng in sgd.sg.neurons)
