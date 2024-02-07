@@ -38,7 +38,7 @@ namespace KSS
         /// </summary>
         public void ExportCSV()
         {
-            StringBuilder sb = new StringBuilder("Generation,Best,Median,Worst");
+            StringBuilder sb = new StringBuilder("Generation,Fitness: Best,Median,Worst,Size: Best,Median,Worst");
             for (int i = 0; i < generations.Count; i++)
             {
                 Generation g = generations[i];
@@ -86,6 +86,8 @@ namespace KSS
         public float bestReward;
 
         public GenerationProperty<float> rewardProperty;
+        public GenerationProperty<float> sizeProperty;
+
 
         public void Cull(int populationSize, float survivalRatio)
         {
@@ -107,7 +109,7 @@ namespace KSS
 
         public string GetDataString()
         {
-            return string.Format("{0},{1}", rewardProperty.GetDataString(), cgEvals[0].cg.GetSize());
+            return string.Format("{0},{1}", rewardProperty.GetDataString(), sizeProperty.GetDataString());
         }
 
         public CreatureGenotypeEval SelectBestEval()
@@ -279,6 +281,7 @@ namespace KSS
     {
         public CreatureGenotype cg;
         public SN<float> fitness; // total reward
+        public SN<float> size;
 
         public EvalStatus evalStatus = EvalStatus.NOT_EVALUATED;
 
@@ -286,6 +289,7 @@ namespace KSS
         {
             this.cg = cg;
             fitness = 0;
+            this.size = cg.GetSize();
             evalStatus = EvalStatus.NOT_EVALUATED;
         }
 
@@ -293,6 +297,7 @@ namespace KSS
         {
             this.cg = cg;
             this.fitness = fitness;
+            //size = cg.GetSize();
             evalStatus = EvalStatus.EVALUATED;
         }
 
@@ -432,6 +437,7 @@ namespace KSS
 
         private void CreateNextGeneration(bool first)
         {
+            Debug.Log("next gen vreated!!!");
             currentGenotypeIndex = 0;
 
             untestedRemaining = optimizationSettings.populationSize;
@@ -459,7 +465,44 @@ namespace KSS
                     //saveK.generations[saveK.generations.Count - 2].cgEvals = new List<CreatureGenotypeEval>() { bestEval } ;
                     saveK.generations[^2].Cull(optimizationSettings.populationSize, optimizationSettings.survivalRatio);
                 }
+
+                Debug.Log("HIT");
+                List<float> cgSizes = new List<float>();
+                for (int i = 0; i < currentGeneration.cgEvals.Count; i++)
+                {
+                    cgSizes.Add(currentGeneration.cgEvals[i].cg.GetSize());
+                    Debug.Log(currentGeneration.cgEvals[i].cg.GetSize());
+                }
+
+                cgSizes = cgSizes.OrderByDescending(x => x).ToList();
+
+                // From chatgpt
+                // Create a new list for largest, median, and smallest sizes
+                List<float> selectedSizes = new List<float>();
+                selectedSizes.Add(cgSizes[0]); // Largest
+
+                // For median, you need to check if the list has an odd or even number of elements
+                if (cgSizes.Count % 2 == 0)
+                {
+                    // If even, you might choose the middle-upper or middle-lower or average them
+                    // Here's how you pick the middle-upper element as median
+                    selectedSizes.Add(cgSizes[cgSizes.Count / 2 - 1]); // Middle-upper for even count
+                }
+                else
+                {
+                    // If odd, this will correctly pick the middle element
+                    selectedSizes.Add(cgSizes[cgSizes.Count / 2]); // Exact middle for odd count
+                }
+
+                // For smallest, you should access the last element correctly
+                selectedSizes.Add(cgSizes[cgSizes.Count - 1]); // Smallest
+
+                currentGeneration.sizeProperty.best = selectedSizes[0];
+                currentGeneration.sizeProperty.median = selectedSizes[1];
+                currentGeneration.sizeProperty.worst = selectedSizes[2];
+
             }
+
         }
 
         private List<CreatureGenotypeEval> SelectTopEvals(Generation g, MutateGenotype.MutationPreferenceSetting mp)
