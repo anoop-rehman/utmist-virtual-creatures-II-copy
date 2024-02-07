@@ -24,14 +24,6 @@ public class WalkingFitness : Fitness
 
     //public GameObject lightSource; // Assign this in the inspector
     //-------------
-    List<Vector3> localTargetPositions = new List<Vector3>
-    {
-    new Vector3(0f, -5.5f, 8f),
-    //new Vector3(1.7f, -5.5f, 5f + 6f),
-    //new Vector3(-2.02f, -5.5f, 5f + 9.48f),
-    //new Vector3(2.25f, -5.5f, 5f + 15.73f),
-    };
-    List<Vector3> worldTargetPositions = new List<Vector3>();
 
     // Start is called before the first frame update
     void Start()
@@ -60,7 +52,6 @@ public class WalkingFitness : Fitness
 
     public override float UpdateFrameReward()
     {
-        //Creature creature = myEnvironment.currentCreature;
         float reward = 0f;
 	
 	    prevCom = currCom;
@@ -139,25 +130,7 @@ public class WalkingFitness : Fitness
 
 
         oldCOM = currCom;
-        //Debug.Log("lightsourceWorldPos = " + lightsourceWorldPos + ", Center of Mass = " + currCom + ", reward = " + reward);
-
-        // Continuing movement is rewarded over that from a single initial push, by giving the velocities during the final phase of the test period a stronger relative weight in the total fitness value
-        // We do not implement this because I am lazy
-        // Initial push <=> curr speed would be way slower than prev speed => apply discount to reward
-
-        //   if (pushThreshold * currSpeed < prevSpeed)
-        //{
-
-        // reward *= pushPenaltyDiscount;
-        //}
-
-        //if (currSpeed < 0.01f) // If the creature has stopped moving, penalize it
-        //{
-
-        //    reward *= stillnessPenalty;
-        //    //Debug.Log("penalized!");
-
-        //}
+     
 
         return reward;
     }
@@ -167,18 +140,5 @@ public class WalkingFitness : Fitness
         creature = myEnvironment.currentCreature;
         if (creature == null) return;
         currCom = creature.GetCentreOfMass();
-        //Instantiate(targetSphere, transform.position, transform.rotation);
-
-        foreach (Vector3 localTargetPosition in localTargetPositions)
-        {
-            worldTargetPositions.Add(localTargetPosition + transform.position);
-        }
-
-        //foreach (Vector3 worldTargetPosition in worldTargetPositions)
-        //{
-        //    // Create a lightsource at each designated posiiton for creatures during training
-        //    Instantiate(lightSource, worldTargetPosition, transform.rotation);
-        //}
-        //Debug.Log("spawned target at" + lightSource.transform.position);
     }
 }
