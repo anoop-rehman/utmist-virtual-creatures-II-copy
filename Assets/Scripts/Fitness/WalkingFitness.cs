@@ -19,10 +19,10 @@ public class WalkingFitness : Fitness
     // If its current position and old position is the same => It isn't moving so don't reward it for staying still
     public Vector3 oldCOM = Vector3.zero;
     //--------------------
-    ////// Photosensor Spawn code moved to Environment.cs where we spawn individual creature.
+    ////// Lightsensor Spawn code moved to Environment.cs where we spawn individual creature.
     ////// Idea is to spawn a lightsource associated with each creature so its easy to delete and create new one every generation
 
-    //public GameObject lightPhotosensor; // Assign this in the inspector
+    //public GameObject lightSource; // Assign this in the inspector
     //-------------
     List<Vector3> localTargetPositions = new List<Vector3>
     {
@@ -37,7 +37,7 @@ public class WalkingFitness : Fitness
     void Start()
     {
         creature = myEnvironment.currentCreature;
-        //lightPhotosensor = Resources.Load<GameObject>("Prefabs/Light_Photosensor");
+        //lightSource = Resources.Load<GameObject>("Prefabs/Light_Source");
         //creature = myEnvironment.currentCreature;
         //currCom = creature.GetCentreOfMass();
 
@@ -94,27 +94,27 @@ public class WalkingFitness : Fitness
         {
             Debug.Log("sus!!!");
         }
-        // Photosensor is the goal for the target as the creature should aim to reach it
-        string tagName = "Photosensor";
-        GameObject photosensor = null;
+        // Lightsource is the goal for the target as the creature should aim to reach it
+        string tagName = "Lightsource";
+        GameObject lightsource = null;
         foreach (Transform childTransform in this.gameObject.transform)
         {
             GameObject childObj = childTransform.gameObject;
             if (childObj.CompareTag(tagName))
             {
-                photosensor = childObj;
+                lightsource = childObj;
             }
         }
-        if (photosensor == null)
+        if (lightsource == null)
         { 
             return 0f;
         }
         
-        Vector3 photosensorWorldPos = photosensor.transform.TransformVector(photosensor.transform.position);
-        Vector2 distance_away = (new Vector2(currCom.x, currCom.z)) - (new Vector2(photosensorWorldPos.x, photosensorWorldPos.z));
+        Vector3 lightsourceWorldPos = lightsource.transform.TransformVector(lightsource.transform.position);
+        Vector2 distance_away = (new Vector2(currCom.x, currCom.z)) - (new Vector2(lightsourceWorldPos.x, lightsourceWorldPos.z));
         if (distance_away.magnitude <= 3f)
         {
-            // Generate new location for photosensor and return 5f for very good job baby
+            // Generate new location for lightsource and return 5f for very good job baby
             float randomX, randomZ;
             if (UnityEngine.Random.Range(0, 1) == 0)
             {
@@ -127,11 +127,11 @@ public class WalkingFitness : Fitness
                 randomZ = UnityEngine.Random.Range(-15f, -8f);
             }
             
-            Vector3 newPhotosensorLoc = myEnvironment.transform.position;
-            newPhotosensorLoc.x += randomX;
-            newPhotosensorLoc.y -= 5f;  // To aovid light spawning 5 units above ground
-            newPhotosensorLoc.z += randomZ;
-            photosensor.transform.position = newPhotosensorLoc;
+            Vector3 newLightsourceLoc = myEnvironment.transform.position;
+            newLightsourceLoc.x += randomX;
+            newLightsourceLoc.y -= 5f;  // To avoid light spawning 5 units above ground
+            newLightsourceLoc.z += randomZ;
+            lightsource.transform.position = newLightsourceLoc;
 
             reward += 5f;
         }
@@ -139,17 +139,17 @@ public class WalkingFitness : Fitness
 
 
         oldCOM = currCom;
-        //Debug.Log("photosensorWorldPos = " + photosensorWorldPos + ", Center of Mass = " + currCom + ", reward = " + reward);
+        //Debug.Log("lightsourceWorldPos = " + lightsourceWorldPos + ", Center of Mass = " + currCom + ", reward = " + reward);
 
         // Continuing movement is rewarded over that from a single initial push, by giving the velocities during the final phase of the test period a stronger relative weight in the total fitness value
         // We do not implement this because I am lazy
         // Initial push <=> curr speed would be way slower than prev speed => apply discount to reward
 
-     //   if (pushThreshold * currSpeed < prevSpeed)
-	    //{
-            
-		   // reward *= pushPenaltyDiscount;
-	    //}
+        //   if (pushThreshold * currSpeed < prevSpeed)
+        //{
+
+        // reward *= pushPenaltyDiscount;
+        //}
 
         //if (currSpeed < 0.01f) // If the creature has stopped moving, penalize it
         //{
@@ -177,8 +177,8 @@ public class WalkingFitness : Fitness
         //foreach (Vector3 worldTargetPosition in worldTargetPositions)
         //{
         //    // Create a lightsource at each designated posiiton for creatures during training
-        //    Instantiate(lightPhotosensor, worldTargetPosition, transform.rotation);
+        //    Instantiate(lightSource, worldTargetPosition, transform.rotation);
         //}
-        //Debug.Log("spawned target at" + lightPhotosensor.transform.position);
+        //Debug.Log("spawned target at" + lightSource.transform.position);
     }
 }

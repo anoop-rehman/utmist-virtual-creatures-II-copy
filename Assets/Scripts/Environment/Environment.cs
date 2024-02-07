@@ -69,9 +69,9 @@ public abstract class Environment : MonoBehaviour
     private EnvironmentSettings es;
     public List<TrainingAlgorithm> tas;
 
-    // Photosensor Related Variables
-    public GameObject lightPhotosensor;
-    private List<Vector3> photosensorSpawnLocations = new List<Vector3>
+    // Lightsource Related Variables
+    public GameObject lightSource;
+    private List<Vector3> lightSourceSpawnLocations = new List<Vector3>
     {
     //new Vector3(0f, -5.5f, 8f),
     //new Vector3(1.7f, -5.5f, 5f + 6f),
@@ -165,13 +165,13 @@ public abstract class Environment : MonoBehaviour
         lastCom = currentCom;
     }
 
-    // Create a photosensor gameobject for the environment (i.e the creature since each creature part of 1 floorEnv object)
-    public void SpawnPhotosensorObject(Vector3 spawnLocation)
+    // Create a lightsource gameobject for the environment (i.e the creature since each creature part of 1 floorEnv object)
+    public void SpawnLightsourceObject(Vector3 spawnLocation)
     {
-        lightPhotosensor = Resources.Load<GameObject>("Prefabs/Light_Photosensor");
+        lightSource = Resources.Load<GameObject>("Prefabs/Light_Source");
         // 4th param transform makes it so the new gameobject created spawns as a child of the FloorEnv.
-        // This way each creature effectively has its own photosensor.
-        Instantiate(lightPhotosensor, spawnLocation, transform.rotation, transform);
+        // This way each creature effectively has its own lightsource.
+        Instantiate(lightSource, spawnLocation, transform.rotation, transform);
     }
     // Spawn creature by passing transform params to Scene CreatureSpawner
     public virtual void StartEnv(CreatureGenotype cg)
@@ -181,22 +181,22 @@ public abstract class Environment : MonoBehaviour
             ResetEnv();
         }
         // Destory existing photsensor gameobjects before creating a new one for new scene.
-        // This solves the issue of multiple photosensor per agent when infact only 1 should ever exist
-        //DestroyExistingPhotosensors();
+        // This solves the issue of multiple lightsource per agent when infact only 1 should ever exist
+        //DestroyExistingLightsources();
         fitness.Reset();
         currentCreature = creatureSpawner.SpawnCreature(cg, spawnTransform.position, fitness);
         currentCreature.transform.parent = creatureHolder;
 
     }
 
-    public void DestroyExistingPhotosensors()
+    public void DestroyExistingLightsources()
     {
-        GameObject[] existingPhotosensors = GameObject.FindGameObjectsWithTag("Photosensor");
-        foreach (GameObject photosensor in existingPhotosensors)
+        GameObject[] existingLightsources = GameObject.FindGameObjectsWithTag("Lightsource");
+        foreach (GameObject lightsource in existingLightsources)
         {
-            if (null != photosensor)
+            if (null != lightsource)
             {
-                Destroy(photosensor);
+                Destroy(lightsource);
             }
         }
     }
