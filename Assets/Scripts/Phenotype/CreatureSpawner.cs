@@ -426,10 +426,12 @@ public class CreatureSpawner : MonoBehaviour
             otherReflectInt = otherReflectBool ? -1 : 1;
 
             // TO-DO: Change to account for joint
+            spawnPos = CalculateSegmentPosition();
+            /*
             spawnPos = parentTransform.position +
                 parentTransform.right * parentTransform.localScale.x * ssd.myConnection.anchorX * reflectInt * parentReflectInt +
                 parentTransform.up * parentTransform.localScale.y * (ssd.myConnection.anchorY + 0.5f) +
-                parentTransform.forward * parentTransform.localScale.z * ssd.myConnection.anchorZ;
+                parentTransform.forward * parentTransform.localScale.z * ssd.myConnection.anchorZ;*/
 
             spawnAngle = Quaternion.identity;
             spawnAngle *= parentTransform.rotation;
@@ -526,4 +528,15 @@ public class CreatureSpawner : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position + spawnPos, 0.1f);
     }
+
+    // Find out which face (to get the vector) 
+    // Rotate vector using calculated spawnAngle -> Pass in spawnAngle
+    // Sum vector with joint position -> Pass in CreatureJoint
+    // Return new position
+    Vector3 CalculateSegmentPosition()
+	{
+        
+
+        return Vector3.zero;
+	}
 }
