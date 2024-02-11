@@ -587,8 +587,16 @@ namespace KSS
                     }
 
 
-                    // End game in editor
+                    //// End game in editor
+                    //EditorApplication.isPlaying = false;
+
+                    // Check if the game is running in the Unity Editor
+                    #if UNITY_EDITOR
                     EditorApplication.isPlaying = false;
+                    #else
+                            // Quit the game if it's a standalone build
+                    Application.Quit();
+                    #endif
                 }
 
             }
