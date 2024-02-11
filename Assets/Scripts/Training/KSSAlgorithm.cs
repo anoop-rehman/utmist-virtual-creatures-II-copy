@@ -538,7 +538,8 @@ namespace KSS
                 tm.SaveTraining();
 
                 // stop training after TOTAL_GENS gens
-                int TOTAL_GENS = 400;
+                //int TOTAL_GENS = 400;
+                int TOTAL_GENS = 4;
                 if (saveK.generations.Count == TOTAL_GENS || userWantsToEndRun == true)
                 {
                     // Export CSV
