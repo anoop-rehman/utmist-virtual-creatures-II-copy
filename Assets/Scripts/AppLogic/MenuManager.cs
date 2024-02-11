@@ -179,18 +179,34 @@ public class MenuManager : MonoBehaviour
     {
         menus.ForEach(o => o.SetActive(false));
 
-        populationSize = int.Parse(populationInput.text);
-        totalGenerations = int.Parse(generationInput.text);
-        envCount = int.Parse(envCountInput.text);
-        maxSegments = int.Parse(maxSegmentsInput.text);
+        //populationSize = int.Parse(populationInput.text);
+        //totalGenerations = int.Parse(generationInput.text);
+        //envCount = int.Parse(envCountInput.text);
+        //maxSegments = int.Parse(maxSegmentsInput.text);
 
-        ratioNumerator = float.Parse(ratioNumeratorInput.text);
+        //ratioNumerator = float.Parse(ratioNumeratorInput.text);
 
-        ratioDenominator = float.Parse(ratioDenominatorInput.text);
+        //ratioDenominator = float.Parse(ratioDenominatorInput.text);
 
-        lockNeuralMutations = lockNeuralMutationsToggle.isOn;
+        //lockNeuralMutations = lockNeuralMutationsToggle.isOn;
 
-        lockPhysicalMutations = lockPhysicalMutationsToggle.isOn;
+        //lockPhysicalMutations = lockPhysicalMutationsToggle.isOn;
+
+
+        populationSize = 300;
+        totalGenerations = 400;
+        envCount = 50;
+        maxSegments = 25;
+
+        ratioNumerator = 1;
+
+        ratioDenominator = 5;
+
+        lockNeuralMutations = false;
+
+        lockPhysicalMutations = false;
+
+
 
         evolutionSettingsMenu.SetActive(true);
 }
