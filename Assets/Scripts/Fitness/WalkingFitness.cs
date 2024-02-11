@@ -25,6 +25,26 @@ public class WalkingFitness : Fitness
     //public GameObject lightSource; // Assign this in the inspector
     //-------------
 
+        List<Vector3> localTargetPositions = new List<Vector3>
+    {
+    new Vector3(0f, -5.5f, 8f),
+    new Vector3(1.7f, -5.5f, 5f + 6f),
+    new Vector3(-2.02f, -5.5f, 5f + 9.48f),
+    new Vector3(2.25f, -5.5f, 5f + 15.73f),
+    };
+    List<Vector3> worldTargetPositions = new List<Vector3>();
+    int currTargetIndex = 0;
+
+    Vector3 lightsourceWorldPos;
+
+    private void Awake()
+    {
+        foreach (Vector3 localTargetPosition in localTargetPositions)
+        {
+            worldTargetPositions.Add(localTargetPosition + transform.position);
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,10 +53,13 @@ public class WalkingFitness : Fitness
         //creature = myEnvironment.currentCreature;
         //currCom = creature.GetCentreOfMass();
 
-        //Debug.Log("creature is null = " + (creature == null));
-        //if (creature == null)
-        //    return;
-        //Reset();
+        Debug.Log("creature is null = " + (creature == null));
+        if (creature == null)
+            return;
+
+
+        lightsourceWorldPos = worldTargetPositions[currTargetIndex];
+        Reset();
 
     }
 
@@ -101,31 +124,22 @@ public class WalkingFitness : Fitness
         { 
             return 0f;
         }
-        
-        Vector3 lightsourceWorldPos = lightsource.transform.TransformVector(lightsource.transform.position);
-        Vector2 distance_away = (new Vector2(currCom.x, currCom.z)) - (new Vector2(lightsourceWorldPos.x, lightsourceWorldPos.z));
-        //if (distance_away.magnitude <= 3f)
-        if (distance_away.magnitude <= 1.5f)
-        {
-            // Generate new location for lightsource and return 5f for very good job 
-            float randomX, randomZ;
-            if (UnityEngine.Random.Range(0, 1) == 0) 
-            {
-                randomX = UnityEngine.Random.Range(-15f, -8f);
-                randomZ = UnityEngine.Random.Range(8f, 15f);
-            }
-            else
-            {
-                randomX = UnityEngine.Random.Range(8f, 15f);
-                randomZ = UnityEngine.Random.Range(-15f, -8f);
-            }
-            
-            Vector3 newLightsourceLoc = myEnvironment.transform.position;
-            newLightsourceLoc.x += randomX;
-            newLightsourceLoc.y -= 5f;  // To avoid light spawning 5 units above ground
-            newLightsourceLoc.z += randomZ;
-            lightsource.transform.position = newLightsourceLoc;
 
+        //Vector3 lightsourceWorldPos = lightsource.transform.TransformVector(lightsource.transform.position);
+        Vector2 distance_away = (new Vector2(currCom.x, currCom.z)) - (new Vector2(lightsourceWorldPos.x, lightsourceWorldPos.z));
+        if (distance_away.magnitude <= 0.5f)
+        //if (distance_away.magnitude <= 1.5f)
+        {
+
+            currTargetIndex += 1;
+            if (currTargetIndex >= worldTargetPositions.Count) // Check if the index exceeds the bounds
+            {
+                currTargetIndex = 0; // Reset index to loop through the targets again
+            }
+            Debug.Log(worldTargetPositions.Count);
+            Vector3 nextLightsourcePosition = worldTargetPositions[currTargetIndex];
+            // You may also need to update the lightsourceWorldPos here to reflect the new target position
+            lightsourceWorldPos = nextLightsourcePosition;
             reward += 5f;
         }
         reward += 1 / (Mathf.Pow((distance_away).magnitude, 2));
@@ -142,6 +156,16 @@ public class WalkingFitness : Fitness
         creature = myEnvironment.currentCreature;
         if (creature == null) return;
         currCom = creature.GetCentreOfMass();
+
+  
+
+
+        ////foreach (Vector3 worldTargetPosition in worldTargetPositions)
+        ////{
+        ////    // Create a lightsource at each designated posiiton for creatures during training
+        ////    Instantiate(lightSource, worldTargetPosition, transform.rotation);
+        ////}
+        ////Debug.Log("spawned target at" + lightSource.transform.position);
     }
 }
 
