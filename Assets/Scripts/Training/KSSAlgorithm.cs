@@ -10,7 +10,6 @@ using System.IO;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
 
-
 namespace KSS
 {
     [System.Serializable]
@@ -360,6 +359,9 @@ namespace KSS
         private bool isSetup = false;
         //private bool generationInProgress = false;
 
+        private bool userWantsToEndRun = false;
+
+
         public override void Setup(TrainingManager tm)
         {
             base.Setup(tm);
@@ -390,6 +392,7 @@ namespace KSS
         // Update is called once per frame
         void Update()
         {
+
             // TODO: currentGenerationIndex needs a stop condition
 
             if (!isSetup)
@@ -430,6 +433,13 @@ namespace KSS
 
             // Update stats text
             tm.statsText.text = string.Format("Gen: {0}, Creatures Remaining: {1}", (currentGenerationIndex + 1).ToString(), untestedRemaining.ToString());
+
+
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                userWantsToEndRun = true;
+            }
+
         }
 
         public override void ResetPing(Environment env, float fitness, bool isDQ)
@@ -529,7 +539,7 @@ namespace KSS
 
                 // stop training after TOTAL_GENS gens
                 int TOTAL_GENS = 400;
-                if (saveK.generations.Count == TOTAL_GENS)
+                if (saveK.generations.Count == TOTAL_GENS || userWantsToEndRun == true)
                 {
                     // Export CSV
                     saveK.ExportCSV();
@@ -577,16 +587,8 @@ namespace KSS
                     }
 
 
-                    //// End game in editor
-                    //EditorApplication.isPlaying = false;
-
-                    // Check if the game is running in the Unity Editor
-                    #if UNITY_EDITOR
+                    // End game in editor
                     EditorApplication.isPlaying = false;
-                    #else
-                    // Quit the game if it's a standalone build
-                    Application.Quit();
-                    #endif
                 }
 
             }
