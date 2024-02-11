@@ -533,7 +533,7 @@ public class CreatureSpawner : MonoBehaviour
     // Rotate vector using calculated spawnAngle -> Pass in spawnAngle
     // Sum vector with joint position -> Pass in CreatureJoint
     // Return new position
-    Vector3 CalculateSegmentPosition()
+    Vector3 CalculateSegmentPosition(Quaternion parentAngle, CreatureJoint joint, JointFace parentJointFace, Vector3 childDimension, Quaternion childAngle)
 	{
         
 
