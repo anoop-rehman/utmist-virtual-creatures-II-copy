@@ -43,6 +43,8 @@ public class WalkingFitness : Fitness
         {
             worldTargetPositions.Add(localTargetPosition + transform.position);
         }
+        lightsourceWorldPos = worldTargetPositions[currTargetIndex];
+
     }
 
     // Start is called before the first frame update
@@ -58,7 +60,6 @@ public class WalkingFitness : Fitness
             return;
 
 
-        lightsourceWorldPos = worldTargetPositions[currTargetIndex];
         Reset();
 
     }
@@ -127,19 +128,31 @@ public class WalkingFitness : Fitness
 
         //Vector3 lightsourceWorldPos = lightsource.transform.TransformVector(lightsource.transform.position);
         Vector2 distance_away = (new Vector2(currCom.x, currCom.z)) - (new Vector2(lightsourceWorldPos.x, lightsourceWorldPos.z));
-        if (distance_away.magnitude <= 0.5f)
+        if (distance_away.magnitude <= 3f)
         //if (distance_away.magnitude <= 1.5f)
         {
+            Debug.Log("creature position = " + creature.transform.position);
+            Debug.Log("lightsourceWorldPos = " + lightsourceWorldPos);
+            Debug.Log("distance_away = " + distance_away);
+
 
             currTargetIndex += 1;
             if (currTargetIndex >= worldTargetPositions.Count) // Check if the index exceeds the bounds
             {
                 currTargetIndex = 0; // Reset index to loop through the targets again
             }
-            Debug.Log(worldTargetPositions.Count);
+            Debug.Log(creature.cg.name + " REACHED TARGET!!!");
             Vector3 nextLightsourcePosition = worldTargetPositions[currTargetIndex];
             // You may also need to update the lightsourceWorldPos here to reflect the new target position
             lightsourceWorldPos = nextLightsourcePosition;
+
+
+            Vector3 newLightsourceLoc = myEnvironment.transform.position;
+            newLightsourceLoc = lightsourceWorldPos;
+            lightsource.transform.position = newLightsourceLoc;
+
+
+
             reward += 5f;
         }
         reward += 1 / (Mathf.Pow((distance_away).magnitude, 2));
