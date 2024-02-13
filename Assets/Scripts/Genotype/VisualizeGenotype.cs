@@ -178,7 +178,7 @@ public class VisualizeGenotype
                         //continue;
                     } else
                     {
-                        dotString += segment.id + firstNeur[segment.id].ToString() + " -> " + connection.destination + firstNeur[connection.destination].ToString();
+                        dotString += segment.id + "." + firstNeur[segment.id].ToString() + " -> " + connection.destination + "." + firstNeur[connection.destination].ToString();
                         dotString += " [ltail=cluster" + segment.id + ",lhead=cluster" + connection.destination + "];\n";
                     }
                 }
@@ -204,14 +204,16 @@ public class VisualizeGenotype
                                 dotString += segment.id + "." + input.id + " -> " + segment.id + "." + neuron.nr.id + ";\n";
                                 break;
                             case NeuronReferenceRelativity.CHILD:
-                                List<byte> cp = neuron.nr.connectionPath;
-                                
-                                //SegmentConnectionGenotype connection = segment.GetConnection()
-                                //SegmentGenotype child = 
+                                //NeuronGenotype targetNeur = cg.GetNeuronInput(neuron.nr, segment).Item1;
+                                SegmentGenotype targetSeg = cg.GetNeuronInput(neuron.nr, segment).Item2;
+
+                                dotString += segment.id + "." + input.id + " -> " + targetSeg.id + "." + neuron.nr.id + ";\n";
+                                break;
+                            default:
                                 break;
 
                         }
-                        dotString += input.id + " -> " + neuron.nr.id + ";\n";
+                        //dotString += input.id + " -> " + neuron.nr.id + ";\n";
                     }
                 }
             }
