@@ -10,7 +10,7 @@ public class VisualizeGenotype
 {
     public static string ngTypeToString(NeuronGenotype neuron)
     {
-        /*0 => a + b, // sum
+        /*  0 => a + b, // sum
             1 => a* b, // product
             2 => a / b, // divide
             3 => Mathf.Min(a + b, c), // sum-threshold
@@ -34,40 +34,77 @@ public class VisualizeGenotype
             21 => b* Mathf.Sin(Time.time * a) + c, // oscillate-wave
             22 => b * (Time.time * a - Mathf.Floor(Time.time * a)) + c, // oscillate-saw
             _ => 0
+
+        non math neurons
+
+          0 => segment.GetContact("Right"),
+            1 => segment.GetContact("Left"),
+            2 => segment.GetContact("Top"),
+            3 => segment.GetContact("Bottom"),
+            4 => segment.GetContact("Front"),
+            5 => segment.GetContact("Back"),
+            6 => segment.jointAxisX,
+            7 => segment.jointAxisY,
+            8 => segment.jointAxisZ,
+            9 => segment.GetPhotosensor(0),
+            10 => segment.GetPhotosensor(1),
+            11 => segment.GetPhotosensor(2),
         */
 
-        switch (neuron.type)
+        if (neuron.nr.id >= 13)
         {
-            case 0: return "sum";
-            case 1: return "prod";
-            case 2: return "div";
-            case 3: return "sumt";
-            case 4: return ">";
-            case 5: return "sign";
-            case 6: return "min";
-            case 7: return "max";
-            case 8: return "abs";
-            case 9: return "if";
-            case 10: return "itplt";
-            case 11: return "sin";
-            case 12: return "cos";
-            case 13: return "atan";
-            case 14: return "log";
-            case 15: return "expt";
-            case 16: return "sigm";
-            case 17: return "intgrl";
-            case 18: return "d/dx";
-            case 19: return "smooth";
-            case 20: return "mem";
-            case 21: return "wav";
-            case 22: return "saw";
-            default: return "";
+            switch (neuron.type)
+            {
+                case 0: return "sum";
+                case 1: return "prod";
+                case 2: return "div";
+                case 3: return "sumt";
+                case 4: return ">";
+                case 5: return "sign";
+                case 6: return "min";
+                case 7: return "max";
+                case 8: return "abs";
+                case 9: return "if";
+                case 10: return "itplt";
+                case 11: return "sin";
+                case 12: return "cos";
+                case 13: return "atan";
+                case 14: return "log";
+                case 15: return "expt";
+                case 16: return "sigm";
+                case 17: return "intgrl";
+                case 18: return "d/dx";
+                case 19: return "smooth";
+                case 20: return "mem";
+                case 21: return "wav";
+                case 22: return "saw";
+                default: return "";
+            }
+        }   else
+        {
+            switch (neuron.nr.id)
+            {
+                case 0: return "right-c";
+                case 1: return "left-c";
+                case 2: return "top-c";
+                case 3: return "bot-c";
+                case 4: return "front-c";
+                case 5: return "back-c";
+                case 6: return "jX";
+                case 7: return "jY";
+                case 8: return "jZ";
+                case 9: return "ps-x";
+                case 10: return "ps-theta";
+                case 11: return "ps-z";
+                case 12: return "E0";
+                default: return "";
+            }
         }
+
+        
     }
 
     public static string cgToDotString(CreatureGenotype cg, bool visualizeNeurons)
-    //public static void cgToDotString(CreatureGenotype cg, bool visualizeNeurons)
-
     {
 
         string dotString = "digraph \"" + cg.name + "\" {";
@@ -79,7 +116,7 @@ public class VisualizeGenotype
             foreach (SegmentGenotype segment in cg.segments)
             {
 
-                // list all the nodes
+                // declare all the nodes
                 if (segment.id == 1)
                 {
                     dotString += ("1 [label=\"segment 1 (root)\", color=\"#"
@@ -112,9 +149,8 @@ public class VisualizeGenotype
                 }
             }
 
-
-            dotString += "}";
         }
+
         else
         {
             // graph definitions 
@@ -123,7 +159,7 @@ public class VisualizeGenotype
                       + "rankdir = \"LR\";\n";
                       //+ "1[shape = \"point\"];";
 
-            int count = 0;
+            int count = 100;
 
             // this list holds what #label neuron is the first neuron in a segment
             List<int> firstNeur = new List<int>(); 
@@ -141,12 +177,14 @@ public class VisualizeGenotype
                     dotString += "graph [style=dashed];\n";
                 }
 
-                firstNeur.Add(count);
-
                 if (segment.neurons.Count() == 0)
                 {
                     dotString += count.ToString() + " [label=\"\", color=\"#FFFFFF\"];\n";
+                    firstNeur.Add(count);
                     count++;
+                } else
+                {
+                    firstNeur.Add(segment.neurons[0].nr.id);
                 }
 
                 foreach (NeuronGenotype neuron in segment.neurons)
@@ -219,17 +257,15 @@ public class VisualizeGenotype
             }
         }
 
+
         dotString += "}";
 
         return dotString;
-        //CreatePngFromDot(dotString, "output.png");
-        //UnityEngine.Debug.Log(dotString);
-
     }
 
-    public static void CreatePngFromDot(string dotString, string outputPath)
+    public static void CreatePngFromDot(string dotString, string cgName)
     {
-        // run which dot and replace this string with the output
+        // TODO: run which dot and replace this string with the output
         // TODO: Could replace with a new process
         string dotPath = "/opt/homebrew/bin/dot";
 
@@ -250,7 +286,8 @@ public class VisualizeGenotype
             RedirectStandardOutput = true,
             CreateNoWindow = true,
             // This is the command we are running in terminal
-            Arguments = "-c \"" + dotPath + " -Tpng \"temp.dot\" -o \"output.png\"" + "\""
+            Arguments = "-c \"" + dotPath + " -Tpng \"temp.dot\" -o \"" + cgName + ".png\"" + "\""
+
         };
 
         Process process = new Process
@@ -272,6 +309,7 @@ public class VisualizeGenotype
             UnityEngine.Debug.LogError($"Error: 'dot' command failed with exit code {process.ExitCode}");
         }
 
+        //UnityEngine.Debug.Log("da genotype graph has been created for creature " + cgName + "at location " + Application.persistentDataPath); ;
 
         // If we run hello world, uncomment these lines to read the standard output
         //string output = process.StandardOutput.ReadToEnd();

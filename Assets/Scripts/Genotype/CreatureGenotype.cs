@@ -13,7 +13,7 @@ public class NeuronGenotype
 
     public NeuronReference[] inputs;
     [Range(-15f, 15f)]
-    public float[] weights; // -15 - 15
+    public float[] weights; // -15 to 15
     public NeuronReference nr;
 
     public NeuronGenotype(byte type, NeuronReference[] inputs, NeuronReference nr)

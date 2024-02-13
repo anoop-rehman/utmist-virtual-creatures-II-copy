@@ -127,8 +127,10 @@ public class CreatureSpawner : MonoBehaviour
         SpawnSegment(ssd);
         //SpawnSegment(cg, c, recursiveLimitInitial, position);
         c.InitializeCreature(fitness);
+
         string dotString = VisualizeGenotype.cgToDotString(cg, true);
-        VisualizeGenotype.CreatePngFromDot(dotString, "output.png");
+        VisualizeGenotype.CreatePngFromDot(dotString, cg.name);
+
         return c;
 
 
