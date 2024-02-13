@@ -153,8 +153,8 @@ public class VisualizeGenotype
                 {
                     // list all the neurons within each segment
                     string label = ngTypeToString(neuron);
-                    dotString += count.ToString() + " [label=\"" + label + "\"];\n";
-                    count++;
+                    dotString += segment.id + "." + neuron.nr.id.ToString() + " [label=\"" + label + "\"];\n";
+                    //count++;
                 }
 
                 dotString += "}\n";
@@ -169,17 +169,49 @@ public class VisualizeGenotype
                     if (segment.id == connection.destination)
                     {
                         dotString += recCount.ToString() + "[shape = \"point\"];\n";
-                        dotString += firstNeur[segment.id].ToString() + " -> " + recCount.ToString();
+                        dotString += segment.id + "." + firstNeur[segment.id].ToString() + " -> " + recCount.ToString();
                         dotString += " [ltail=cluster" + connection.destination + "];\n";
-                        dotString += recCount.ToString() + " -> " + firstNeur[connection.destination].ToString();
+                        dotString += recCount.ToString() + " -> " + connection.destination + "." + firstNeur[connection.destination].ToString();
                         dotString += " [lhead=cluster" + connection.destination + "];\n";
                         recCount++;
 
                         //continue;
                     } else
                     {
-                        dotString += firstNeur[segment.id].ToString() + " -> " + firstNeur[connection.destination].ToString();
+                        dotString += segment.id + firstNeur[segment.id].ToString() + " -> " + connection.destination + firstNeur[connection.destination].ToString();
                         dotString += " [ltail=cluster" + segment.id + ",lhead=cluster" + connection.destination + "];\n";
+                    }
+                }
+
+                //foreach (NeuronGenotype connect in segment.neurons[segment].inputs)
+
+                foreach (NeuronGenotype neuron in segment.neurons)
+                {
+                    foreach (NeuronReference input in neuron.inputs)
+                    {
+                        // input.id stores the input of the connection
+                        NeuronReferenceRelativity rel = neuron.nr.relativity;
+                        switch(rel)
+                        {
+                            case NeuronReferenceRelativity.GHOST:
+                                dotString += segment.id + "." + input.id + " -> " + "0." + neuron.nr.id + ";\n";
+                                break;
+                            case NeuronReferenceRelativity.PARENT:
+                                SegmentGenotype parent = cg.GetParentSegmentGenotype(segment.id);
+                                dotString += segment.id + "." + input.id + " -> " + parent.id + "." + neuron.nr.id + ";\n";
+                                break;
+                            case NeuronReferenceRelativity.SELF:
+                                dotString += segment.id + "." + input.id + " -> " + segment.id + "." + neuron.nr.id + ";\n";
+                                break;
+                            case NeuronReferenceRelativity.CHILD:
+                                List<byte> cp = neuron.nr.connectionPath;
+                                
+                                //SegmentConnectionGenotype connection = segment.GetConnection()
+                                //SegmentGenotype child = 
+                                break;
+
+                        }
+                        dotString += input.id + " -> " + neuron.nr.id + ";\n";
                     }
                 }
             }
@@ -207,6 +239,7 @@ public class VisualizeGenotype
         // Start a new process to run the 'dot' command
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
+            // TODO: run a check for windows/mac replace CMD.exe or /bin/bash
             // Replace with CMD.exe for Windows, for Mac -> /bin/bash
             FileName = "/bin/bash",
             WorkingDirectory = Application.persistentDataPath,
