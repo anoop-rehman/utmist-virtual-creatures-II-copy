@@ -179,7 +179,7 @@ public class VisualizeGenotype
 
                 if (segment.neurons.Count() == 0)
                 {
-                    dotString += count.ToString() + " [label=\"\", color=\"#FFFFFF\"];\n";
+                    dotString += segment.id + "." + count.ToString() + " [label=\"\", color=\"#FFFFFF\"];\n";
                     firstNeur.Add(count);
                     count++;
                 } else
@@ -228,26 +228,50 @@ public class VisualizeGenotype
                     foreach (NeuronReference input in neuron.inputs)
                     {
                         // input.id stores the input of the connection
-                        NeuronReferenceRelativity rel = neuron.nr.relativity;
+                        NeuronReferenceRelativity rel = input.relativity;
                         switch(rel)
                         {
                             case NeuronReferenceRelativity.GHOST:
+                                UnityEngine.Debug.Log("ghost");
                                 dotString += segment.id + "." + input.id + " -> " + "0." + neuron.nr.id + ";\n";
                                 break;
                             case NeuronReferenceRelativity.PARENT:
-                                SegmentGenotype parent = cg.GetParentSegmentGenotype(segment.id);
-                                dotString += segment.id + "." + input.id + " -> " + parent.id + "." + neuron.nr.id + ";\n";
+                                //  UnityEngine.Debug.Log("parent");
+                                //SegmentGenotype parent = cg.GetParentSegmentGenotype(segment.id);
+                                //dotString += parent.id + "." + input.id + " -> " + segment.id + "." + neuron.nr.id + ";\n";
+                                System.Tuple<NeuronGenotype, SegmentGenotype> targe = cg.GetNeuronInput(neuron.nr, segment);
+
+                                if (targe != null)
+                                {
+                                    if (targe.Item2 != null)
+                                    {
+                                        dotString += segment.id + "." + input.id + " -> " + targe.Item2.id + "." + neuron.nr.id + ";\n";
+                                    }
+                                }
+
                                 break;
                             case NeuronReferenceRelativity.SELF:
+                                UnityEngine.Debug.Log("self");
                                 dotString += segment.id + "." + input.id + " -> " + segment.id + "." + neuron.nr.id + ";\n";
                                 break;
                             case NeuronReferenceRelativity.CHILD:
+                                UnityEngine.Debug.Log("child");
                                 //NeuronGenotype targetNeur = cg.GetNeuronInput(neuron.nr, segment).Item1;
                                 SegmentGenotype targetSeg = cg.GetNeuronInput(neuron.nr, segment).Item2;
 
                                 dotString += segment.id + "." + input.id + " -> " + targetSeg.id + "." + neuron.nr.id + ";\n";
                                 break;
                             default:
+                                System.Tuple<NeuronGenotype, SegmentGenotype> target = cg.GetNeuronInput(neuron.nr, segment);
+
+                                if (target != null)
+                                {
+                                    if (target.Item2 != null)
+                                    {
+                                        dotString += segment.id + "." + input.id + " -> " + target.Item2.id + "." + neuron.nr.id + ";\n";
+                                    }
+                                }  
+
                                 break;
 
                         }
