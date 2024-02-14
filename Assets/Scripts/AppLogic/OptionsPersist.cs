@@ -52,6 +52,13 @@ public class OptionsPersist : MonoBehaviour
             return Path.Combine(VCPath, "Data");
         }
     }
+    public string VCViz
+    {
+        get
+        {
+            return Path.Combine(VCPath, "Visuals");
+        }
+    }
 
     private void Awake()
     {
@@ -65,7 +72,7 @@ public class OptionsPersist : MonoBehaviour
             appSavePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
 
             string[] paths = new string[]{
-                VCPath, VCSaves, VCCreatures, VCData
+                VCPath, VCSaves, VCCreatures, VCData, VCViz
             };
 
             foreach (string path in paths)

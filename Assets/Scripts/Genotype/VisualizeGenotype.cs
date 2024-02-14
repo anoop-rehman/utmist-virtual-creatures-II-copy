@@ -227,54 +227,16 @@ public class VisualizeGenotype
                 {
                     foreach (NeuronReference input in neuron.inputs)
                     {
-                        // input.id stores the input of the connection
-                        NeuronReferenceRelativity rel = input.relativity;
-                        switch(rel)
+                        System.Tuple<NeuronGenotype, SegmentGenotype> target = cg.GetNeuronInput(input, segment);
+
+                        if (target != null)
                         {
-                            case NeuronReferenceRelativity.GHOST:
-                                UnityEngine.Debug.Log("ghost");
-                                dotString += segment.id + "." + input.id + " -> " + "0." + neuron.nr.id + ";\n";
-                                break;
-                            case NeuronReferenceRelativity.PARENT:
-                                //  UnityEngine.Debug.Log("parent");
-                                //SegmentGenotype parent = cg.GetParentSegmentGenotype(segment.id);
-                                //dotString += parent.id + "." + input.id + " -> " + segment.id + "." + neuron.nr.id + ";\n";
-                                System.Tuple<NeuronGenotype, SegmentGenotype> targe = cg.GetNeuronInput(neuron.nr, segment);
-
-                                if (targe != null)
-                                {
-                                    if (targe.Item2 != null)
-                                    {
-                                        dotString += segment.id + "." + input.id + " -> " + targe.Item2.id + "." + neuron.nr.id + ";\n";
-                                    }
-                                }
-
-                                break;
-                            case NeuronReferenceRelativity.SELF:
-                                UnityEngine.Debug.Log("self");
-                                dotString += segment.id + "." + input.id + " -> " + segment.id + "." + neuron.nr.id + ";\n";
-                                break;
-                            case NeuronReferenceRelativity.CHILD:
-                                UnityEngine.Debug.Log("child");
-                                //NeuronGenotype targetNeur = cg.GetNeuronInput(neuron.nr, segment).Item1;
-                                SegmentGenotype targetSeg = cg.GetNeuronInput(neuron.nr, segment).Item2;
-
-                                dotString += segment.id + "." + input.id + " -> " + targetSeg.id + "." + neuron.nr.id + ";\n";
-                                break;
-                            default:
-                                System.Tuple<NeuronGenotype, SegmentGenotype> target = cg.GetNeuronInput(neuron.nr, segment);
-
-                                if (target != null)
-                                {
-                                    if (target.Item2 != null)
-                                    {
-                                        dotString += segment.id + "." + input.id + " -> " + target.Item2.id + "." + neuron.nr.id + ";\n";
-                                    }
-                                }  
-
-                                break;
-
+                            if (target.Item2 != null)
+                            {
+                                dotString += target.Item2.id + "." + input.id + " -> " + segment.id + "." + neuron.nr.id + ";\n";
+                            }
                         }
+                    
                         //dotString += input.id + " -> " + neuron.nr.id + ";\n";
                     }
                 }
@@ -295,7 +257,8 @@ public class VisualizeGenotype
 
         // Create a temporary DOT file
         UnityEngine.Debug.Log(dotString);
-        string dotFilePath = Path.Combine(Application.persistentDataPath, "temp.dot");
+        string dotFilePath = Path.Combine(OptionsPersist.instance.VCViz, "temp.dot");
+        UnityEngine.Debug.Log(Application.persistentDataPath);
         File.WriteAllText(dotFilePath, dotString);
 
         // Start a new process to run the 'dot' command
@@ -304,7 +267,7 @@ public class VisualizeGenotype
             // TODO: run a check for windows/mac replace CMD.exe or /bin/bash
             // Replace with CMD.exe for Windows, for Mac -> /bin/bash
             FileName = "/bin/bash",
-            WorkingDirectory = Application.persistentDataPath,
+            WorkingDirectory = OptionsPersist.instance.VCViz,
             UseShellExecute = false,
             RedirectStandardInput = true,
             RedirectStandardOutput = true,
