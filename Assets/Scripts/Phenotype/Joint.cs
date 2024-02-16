@@ -72,9 +72,46 @@ public class CreatureJoint : MonoBehaviour
 				break;
 		}
 
-		spawnPos += parentSegmentTransform.forward * shiftForward * (parentSegmentTransform.localScale.z + dimVector.z);
-		spawnPos += parentSegmentTransform.right * shiftRight * (parentSegmentTransform.localScale.x + dimVector.x);
-		spawnPos += parentSegmentTransform.up * shiftUp * (parentSegmentTransform.localScale.y + dimVector.y);
+		float dimensionOfInterest = 0f;
+
+		switch(jointType)
+        {
+			case (JointType.HingeY):
+				if (parentJointFace == JointFace.Top)
+					dimensionOfInterest = dimVector.y;
+				else if (parentJointFace == JointFace.Bottom)
+					dimensionOfInterest = dimVector.y;
+				else if (parentJointFace == JointFace.Left || parentJointFace == JointFace.Back)
+					dimensionOfInterest = dimVector.x;
+				else if (parentJointFace == JointFace.Right || parentJointFace == JointFace.Front)
+					dimensionOfInterest = dimVector.x;
+				break;
+			case (JointType.HingeX):
+				if (parentJointFace == JointFace.Top || parentJointFace == JointFace.Front)
+					dimensionOfInterest = dimVector.x;
+				else if (parentJointFace == JointFace.Bottom || parentJointFace == JointFace.Back)
+					dimensionOfInterest = dimVector.x;
+				else if (parentJointFace == JointFace.Left)
+					dimensionOfInterest = dimVector.y;
+				else if (parentJointFace == JointFace.Right)
+					dimensionOfInterest = dimVector.y;
+				break;
+			case (JointType.HingeZ):
+				if (parentJointFace == JointFace.Top || parentJointFace == JointFace.Right)
+					dimensionOfInterest = dimVector.x;
+				else if (parentJointFace == JointFace.Bottom || parentJointFace == JointFace.Left)
+					dimensionOfInterest = dimVector.x;
+				else if (parentJointFace == JointFace.Front)
+					dimensionOfInterest = dimVector.y;
+				else if (parentJointFace == JointFace.Back)
+					dimensionOfInterest = dimVector.y;
+				break;
+
+		}
+
+		spawnPos += parentSegmentTransform.forward * shiftForward * (parentSegmentTransform.localScale.z + dimensionOfInterest);
+		spawnPos += parentSegmentTransform.right * shiftRight * (parentSegmentTransform.localScale.x + dimensionOfInterest);
+		spawnPos += parentSegmentTransform.up * shiftUp * (parentSegmentTransform.localScale.y + dimensionOfInterest);
 
 	}
 
