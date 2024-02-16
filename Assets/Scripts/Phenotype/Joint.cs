@@ -20,6 +20,12 @@ public class CreatureJoint : MonoBehaviour
 		jointObject.transform.localScale = dimVector;
 		jointObject.transform.parent = creature;
 		jointObject.transform.localPosition = spawnPos;
+
+		if (jointType == JointType.HingeX)
+			jointObject.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+		else if (jointType == JointType.HingeZ)
+			jointObject.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+		Debug.Log(jointObject.transform.localRotation.eulerAngles);
 		FixedJoint parentToJointConn = jointObject.AddComponent<FixedJoint>();
 		parentToJointConn.connectedBody = parentSegment.GetComponent<Rigidbody>();
 		parentToJointConn.autoConfigureConnectedAnchor = false;
@@ -32,16 +38,9 @@ public class CreatureJoint : MonoBehaviour
 		dimVector.z = Mathf.Min(parentSize.z, childSize.z);
 		float maxFloat = float.MaxValue;
 
-		if (jointType == JointType.HingeX)
-			fitDimVector(ref dimVector.z, ref dimVector.y, ref maxFloat);
+		fitDimVector(ref dimVector.x, ref dimVector.z, ref maxFloat);
 
-		else if (jointType == JointType.HingeY)
-			fitDimVector(ref dimVector.x, ref dimVector.z, ref maxFloat);
-
-		else if (jointType == JointType.HingeZ)
-			fitDimVector(ref dimVector.x, ref dimVector.y, ref maxFloat);
-
-		else if (jointType == JointType.Spherical)
+		if (jointType == JointType.Spherical || jointType == JointType.Fixed)
 			fitDimVector(ref dimVector.x, ref dimVector.z, ref dimVector.y);
 	}
 
