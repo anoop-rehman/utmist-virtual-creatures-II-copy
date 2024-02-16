@@ -686,6 +686,9 @@ public class CreatureGenotype
         BinaryFormatter formatter = new BinaryFormatter();
         string fullPath = isFullPath ? path : Application.persistentDataPath + path;
 
+        ///////////aa
+        Debug.Log("Persistent data path = " + Application.persistentDataPath);
+
         // Check if name already exists
         if (!overwrite) fullPath = fullPath.GetNextFilename();
 

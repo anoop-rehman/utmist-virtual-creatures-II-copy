@@ -552,6 +552,9 @@ namespace KSS
                     ////formattedTime = formattedTime.Insert(6, "_");
                     //string runFolderName = formattedTime + "_EVOLUTIONRUN";
                     string runFolderPath = Path.Combine(OptionsPersist.VCCreatures, MenuManager.saveName);
+
+                    Debug.Log("options persist = " + OptionsPersist.VCCreatures);
+
                     if (!Directory.Exists(runFolderPath))
                     {
                         Directory.CreateDirectory(runFolderPath);
@@ -586,6 +589,10 @@ namespace KSS
                         //Debug.Log(string.Format("Saved {0} to {1}", bestCreatureName, bestcreaturePath));
 
                     }
+
+
+                    // echo when the whole run is done running
+                    Debug.Log("The whole run is done running");
 
 
                     //// End game in editor
