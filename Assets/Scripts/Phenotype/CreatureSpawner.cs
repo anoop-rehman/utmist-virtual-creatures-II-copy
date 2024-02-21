@@ -464,6 +464,15 @@ public class CreatureSpawner : MonoBehaviour
                 spawnedSegment.AddChild(connection.id, childSegment);
             }
         }
+
+
+        Debug.Log("spawnedSegment.name: " + spawnedSegment.name);
+        if (spawnedSegment.parent != null)
+        {
+            Debug.Log("spawnedSegment.parent.Item2.name: " + spawnedSegment.parent.Item2.name);
+            Debug.Log("spawnedSegment.parent.Item1: " + spawnedSegment.parent.Item1.ToString());
+        }
+     
         return spawnedSegment;
     }
 
