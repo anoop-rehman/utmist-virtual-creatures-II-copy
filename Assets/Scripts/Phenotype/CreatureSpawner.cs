@@ -441,8 +441,8 @@ public class CreatureSpawner : MonoBehaviour
             }
 
             Vector3 childSegmentVector = new Vector3(currentSegmentGenotype.dimensionX, currentSegmentGenotype.dimensionY, currentSegmentGenotype.dimensionZ);
-            // TO-DO: Change to account for joint
-            spawnPos = CalculateSegmentPosition(spawnAngle, parentTransform, ssd.joint, currentSegmentGenotype.childJointFace, childSegmentVector);
+    
+            spawnPos = CalculateSegmentPosition(spawnAngle, parentTransform, ssd.joint, currentSegmentGenotype.childJointFace, currentSegmentGenotype.parentJointFace, childSegmentVector);
 
             parentScale = ssd.parentGlobalScale.Value * ssd.myConnection.scale;
 
@@ -514,7 +514,7 @@ public class CreatureSpawner : MonoBehaviour
                 Vector3 dimVector = new Vector3(sgd.sg.dimensionX, sgd.sg.dimensionY, sgd.sg.dimensionZ) * sgd.parentScale;
                 Vector3 newDimVector = new Vector3(newSegmentGenotype.dimensionX, newSegmentGenotype.dimensionY, newSegmentGenotype.dimensionZ) * ssd2.parentGlobalScale.Value * ssd2.myConnection.scale;
                 ssd2.joint.SetSize(dimVector, newDimVector);
-                ssd2.joint.SetSpawnPos(dimVector, spawnPos, ssd2.parentSegment.transform);
+                ssd2.joint.SetSpawnPos(spawnPos, ssd2.parentSegment.transform);
 
                 // Recurse to child segment
                 Segment childSegment = SpawnSegment(ssd2);
@@ -537,32 +537,75 @@ public class CreatureSpawner : MonoBehaviour
     // Sum vector with joint position -> Pass in CreatureJoint
     // Return new position
     
-    Vector3 CalculateSegmentPosition(Quaternion childAngle, Transform parentSegmentTransform, CreatureJoint joint, JointFace childJointFace, Vector3 childDimension)
+    Vector3 CalculateSegmentPosition(Quaternion childAngle, Transform parentSegmentTransform, CreatureJoint joint, JointFace childJointFace, JointFace parentJointFace, Vector3 childDimension)
 	{
-        Vector3 forwardVector = childAngle * parentSegmentTransform.forward;
-        float jointSize = 0f;
-        float segmentSize = 0f;
 
         // To find cylinder radius
-        if (joint.jointType == JointType.HingeX)
-            jointSize = joint.dimVector.z;
-        else if (joint.jointType == JointType.HingeY)
-            jointSize = joint.dimVector.z;
-        else if (joint.jointType == JointType.HingeZ)
-            jointSize = joint.dimVector.x;
-        else if (joint.jointType == JointType.Spherical)
-            jointSize = joint.dimVector.x;
+        float jointSize = joint.dimVector.x;
 
-        // To find child segment length of interest
-        if (childJointFace == JointFace.Top || childJointFace == JointFace.Bottom)
-            segmentSize = childDimension.y;
-        else if (childJointFace == JointFace.Left || childJointFace == JointFace.Right)
-            segmentSize = childDimension.x;
-        else if (childJointFace == JointFace.Front || childJointFace == JointFace.Back)
-            segmentSize = childDimension.z;
+        switch (joint.jointType)
+        {
+            case (JointType.HingeY):
+                if (parentJointFace == JointFace.Top)
+                    jointSize = joint.dimVector.y * 2;
+                else if (parentJointFace == JointFace.Bottom)
+                    jointSize = joint.dimVector.y * 2;
+                else if (parentJointFace == JointFace.Left || parentJointFace == JointFace.Back)
+                    jointSize = joint.dimVector.x;
+                else if (parentJointFace == JointFace.Right || parentJointFace == JointFace.Front)
+                    jointSize = joint.dimVector.x;
+                break;
+            case (JointType.HingeX):
+                if (parentJointFace == JointFace.Top || parentJointFace == JointFace.Front)
+                    jointSize = joint.dimVector.x;
+                else if (parentJointFace == JointFace.Bottom || parentJointFace == JointFace.Back)
+                    jointSize = joint.dimVector.x;
+                else if (parentJointFace == JointFace.Left)
+                    jointSize = joint.dimVector.y * 2;
+                else if (parentJointFace == JointFace.Right)
+                    jointSize = joint.dimVector.y * 2;
+                break;
+            case (JointType.HingeZ):
+                if (parentJointFace == JointFace.Top || parentJointFace == JointFace.Right)
+                    jointSize = joint.dimVector.x;
+                else if (parentJointFace == JointFace.Bottom || parentJointFace == JointFace.Left)
+                    jointSize = joint.dimVector.x;
+                else if (parentJointFace == JointFace.Front)
+                    jointSize = joint.dimVector.y * 2;
+                else if (parentJointFace == JointFace.Back)
+                    jointSize = joint.dimVector.y * 2;
+                break;
+        }
 
-        Vector3 spawnPosition = parentSegmentTransform.position + parentSegmentTransform.forward * jointSize;
-        spawnPosition += forwardVector * (jointSize + segmentSize);
+        Vector3 directionVec = Vector3.zero;
+
+        switch(parentJointFace)
+		{
+            case (JointFace.Top):
+                directionVec = parentSegmentTransform.up;
+                break;
+            case (JointFace.Bottom):
+                directionVec = parentSegmentTransform.up * -1;
+                break;
+            case (JointFace.Right):
+                directionVec = parentSegmentTransform.right;
+                break;
+            case (JointFace.Left):
+                directionVec = parentSegmentTransform.right * -1;
+                break;
+            case (JointFace.Front):
+                directionVec = parentSegmentTransform.forward;
+                break;
+            case (JointFace.Back):
+                directionVec = parentSegmentTransform.forward * -1;
+                break;
+            default:
+                break;
+		}
+
+
+        Vector3 spawnPosition = joint.spawnPos;
+        spawnPosition += childAngle * directionVec * jointSize/2.0f;
 
         return spawnPosition;
 	}

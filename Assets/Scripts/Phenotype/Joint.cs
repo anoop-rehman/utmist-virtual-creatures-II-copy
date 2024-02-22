@@ -17,7 +17,8 @@ public class CreatureJoint : MonoBehaviour
 		else
 			jointObject = Instantiate(hingeJointPrefab, Vector3.zero, Quaternion.identity);
 
-		jointObject.transform.localScale = dimVector;
+		jointObject.transform.localScale = this.dimVector;
+		Debug.Log("True dimVector:" + this.dimVector);
 		jointObject.transform.parent = creature;
 		jointObject.transform.localPosition = spawnPos;
 
@@ -33,20 +34,22 @@ public class CreatureJoint : MonoBehaviour
 
 	public void SetSize(Vector3 parentSize, Vector3 childSize)
 	{
-		dimVector.x = Mathf.Min(parentSize.x, childSize.x);
-		dimVector.y = Mathf.Min(parentSize.y, childSize.y);
-		dimVector.z = Mathf.Min(parentSize.z, childSize.z);
+		this.dimVector.x = Mathf.Min(parentSize.x, childSize.x);
+		this.dimVector.y = Mathf.Min(parentSize.y, childSize.y);
+		this.dimVector.z = Mathf.Min(parentSize.z, childSize.z);
 		float maxFloat = float.MaxValue;
 
-		fitDimVector(ref dimVector.x, ref dimVector.z, ref maxFloat);
+		fitDimVector(ref this.dimVector.x, ref this.dimVector.z, ref maxFloat);
 
 		if (jointType == JointType.Spherical || jointType == JointType.Fixed)
-			fitDimVector(ref dimVector.x, ref dimVector.z, ref dimVector.y);
+			fitDimVector(ref this.dimVector.x, ref this.dimVector.z, ref this.dimVector.y);
+
+		Debug.Log("Calculated dimVector:" + this.dimVector);
 	}
 
-	public void SetSpawnPos(Vector3 dimVector, Vector3 segmentSpawnPos, Transform parentSegmentTransform)
+	public void SetSpawnPos(Vector3 segmentSpawnPos, Transform parentSegmentTransform)
 	{
-		spawnPos = segmentSpawnPos;
+		spawnPos = parentSegmentTransform.localPosition;
 
 		int shiftUp = 0, shiftRight = 0, shiftForward = 0;
 
@@ -72,15 +75,15 @@ public class CreatureJoint : MonoBehaviour
 				break;
 		}
 
-		float dimensionOfInterest = 0f;
+		float dimensionOfInterest = dimVector.x;
 
-		switch(jointType)
+		switch (jointType)
         {
 			case (JointType.HingeY):
 				if (parentJointFace == JointFace.Top)
-					dimensionOfInterest = dimVector.y;
+					dimensionOfInterest = dimVector.y*2;
 				else if (parentJointFace == JointFace.Bottom)
-					dimensionOfInterest = dimVector.y;
+					dimensionOfInterest = dimVector.y * 2;
 				else if (parentJointFace == JointFace.Left || parentJointFace == JointFace.Back)
 					dimensionOfInterest = dimVector.x;
 				else if (parentJointFace == JointFace.Right || parentJointFace == JointFace.Front)
@@ -92,9 +95,9 @@ public class CreatureJoint : MonoBehaviour
 				else if (parentJointFace == JointFace.Bottom || parentJointFace == JointFace.Back)
 					dimensionOfInterest = dimVector.x;
 				else if (parentJointFace == JointFace.Left)
-					dimensionOfInterest = dimVector.y;
+					dimensionOfInterest = dimVector.y * 2;
 				else if (parentJointFace == JointFace.Right)
-					dimensionOfInterest = dimVector.y;
+					dimensionOfInterest = dimVector.y * 2;
 				break;
 			case (JointType.HingeZ):
 				if (parentJointFace == JointFace.Top || parentJointFace == JointFace.Right)
@@ -102,16 +105,18 @@ public class CreatureJoint : MonoBehaviour
 				else if (parentJointFace == JointFace.Bottom || parentJointFace == JointFace.Left)
 					dimensionOfInterest = dimVector.x;
 				else if (parentJointFace == JointFace.Front)
-					dimensionOfInterest = dimVector.y;
+					dimensionOfInterest = dimVector.y * 2;
 				else if (parentJointFace == JointFace.Back)
-					dimensionOfInterest = dimVector.y;
+					dimensionOfInterest = dimVector.y * 2;
 				break;
-
 		}
 
-		spawnPos += parentSegmentTransform.forward * shiftForward * (parentSegmentTransform.localScale.z + dimensionOfInterest);
-		spawnPos += parentSegmentTransform.right * shiftRight * (parentSegmentTransform.localScale.x + dimensionOfInterest);
-		spawnPos += parentSegmentTransform.up * shiftUp * (parentSegmentTransform.localScale.y + dimensionOfInterest);
+		spawnPos += parentSegmentTransform.forward * shiftForward * (parentSegmentTransform.localScale.z/2.0f + dimensionOfInterest/2.0f);
+		spawnPos += parentSegmentTransform.right * shiftRight * (parentSegmentTransform.localScale.x/2.0f + dimensionOfInterest/2.0f);
+		spawnPos += parentSegmentTransform.up * shiftUp * (parentSegmentTransform.localScale.y/2.0f + dimensionOfInterest/2.0f);
+		
+		// To center the joint
+		spawnPos += parentSegmentTransform.up * (parentSegmentTransform.localScale.y/2.0f);
 
 	}
 
