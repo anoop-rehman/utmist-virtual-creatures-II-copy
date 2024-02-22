@@ -132,6 +132,28 @@ public class CreatureSpawner : MonoBehaviour
 
         //Debug.Log("Its size is: " + c.cg.GetSize().ToString());
 
+
+        foreach (Segment segment in c.segments)
+        {
+            Debug.Log("------");
+            Debug.Log("the segment's id is " + segment.id);
+            Debug.Log("the segment's size is " + segment.myRigidbody.transform.localScale);
+            if (segment.parent != null)
+            {
+                Debug.Log("the segment's parent's id is " + segment.parent.Item2.id);
+            }
+            if (segment.myRigidbody.GetComponent<HingeJoint>() != null && segment.myRigidbody.GetComponent<FixedJoint>() == null)
+            {
+                Debug.Log("the segment's anchorpos is " + segment.myRigidbody.GetComponent<HingeJoint>().connectedAnchor);
+            }
+            if (segment.myRigidbody.GetComponent<HingeJoint>() == null && segment.myRigidbody.GetComponent<FixedJoint>() != null)
+            {
+                Debug.Log("the segment's anchorpos is " + segment.myRigidbody.GetComponent<FixedJoint>().connectedAnchor);
+            }
+
+
+        }
+
         return c;
     }
 
@@ -466,12 +488,12 @@ public class CreatureSpawner : MonoBehaviour
         }
 
 
-        Debug.Log("spawnedSegment.name: " + spawnedSegment.name);
-        if (spawnedSegment.parent != null)
-        {
-            Debug.Log("spawnedSegment.parent.Item2.name: " + spawnedSegment.parent.Item2.name);
-            Debug.Log("spawnedSegment.parent.Item1: " + spawnedSegment.parent.Item1.ToString());
-        }
+        //Debug.Log("spawnedSegment.name: " + spawnedSegment.name);
+        //if (spawnedSegment.parent != null)
+        //{
+        //    Debug.Log("spawnedSegment.parent.Item2.name: " + spawnedSegment.parent.Item2.name);
+        //    Debug.Log("spawnedSegment.parent.Item1: " + spawnedSegment.parent.Item1.ToString());
+        //}
      
         return spawnedSegment;
     }
