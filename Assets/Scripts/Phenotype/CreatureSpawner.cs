@@ -136,12 +136,16 @@ public class CreatureSpawner : MonoBehaviour
         foreach (Segment segment in c.segments)
         {
             Debug.Log("------");
-            Debug.Log("the segment's id is " + segment.id);
+            Debug.Log("the segment's id is " + segment.id); //prob remove 
             Debug.Log("the segment's size is " + segment.myRigidbody.transform.localScale);
             if (segment.parent != null)
             {
-                Debug.Log("the segment's parent's id is " + segment.parent.Item2.id);
+                Debug.Log("the segment's parent's id is " + segment.parent.Item2.id); // prob remove
             }
+
+            // wait so then but how do we find the unique parent id..
+            // soln: the joint knows. yeah that works
+
             if (segment.myRigidbody.GetComponent<HingeJoint>() != null && segment.myRigidbody.GetComponent<FixedJoint>() == null)
             {
                 Debug.Log("the segment's anchorpos is " + segment.myRigidbody.GetComponent<HingeJoint>().connectedAnchor);
@@ -154,7 +158,7 @@ public class CreatureSpawner : MonoBehaviour
             //also output:
             // joint type
             // joint axis (if its hinge)
-
+            // segment color (r,g,b)
 
         }
 
