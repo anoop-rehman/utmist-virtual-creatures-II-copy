@@ -151,6 +151,10 @@ public class CreatureSpawner : MonoBehaviour
                 Debug.Log("the segment's anchorpos is " + segment.myRigidbody.GetComponent<FixedJoint>().connectedAnchor);
             }
 
+            //also output:
+            // joint type
+            // joint axis (if its hinge)
+
 
         }
 
