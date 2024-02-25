@@ -2,10 +2,28 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using Newtonsoft.Json; // Make sure to include Newtonsoft.Json or another JSON library
+
+public class SegmentInfo
+{
+    public int UniqueId { get; set; }
+    public byte TypeId { get; set; }
+    public Vector3 Position { get; set; }
+    public Vector3 LocalPosition { get; set; }
+    public Vector3 Rotation { get; set; }
+    public Vector3 LocalRotation { get; set; }
+    public Vector3 Size { get; set; }
+    public int? ParentUniqueId { get; set; }
+    public string? JointType { get; set; }
+    public Vector3? JointAnchorPos { get; set; }
+    public Vector3? JointAxis { get; set; }
+    public Vector3 Color { get; set; }
+}
 
 public class CreatureSpawner : MonoBehaviour
 {
@@ -133,61 +151,116 @@ public class CreatureSpawner : MonoBehaviour
         //Debug.Log("Its size is: " + c.cg.GetSize().ToString());
 
 
+        List<SegmentInfo> segmentsInfo = new List<SegmentInfo>();
+
         //foreach (Segment segment in c.segments)
         for (int i = 0; i < c.segments.Count; i++)
         {
             Segment segment = c.segments[i];
-            Debug.Log("------");
-            Debug.Log("the segment's unique id is: " + i); //prob remove
-            byte typeId = segment.id;
-            Debug.Log("(for debug)the segment's type id is: " + typeId); //prob remove
-            Debug.Log("the segment's position is " + segment.myRigidbody.transform.position);
-            Debug.Log("the segment's rotation is " + segment.myRigidbody.transform.rotation.eulerAngles);
-            Debug.Log("the segment's size is " + segment.myRigidbody.transform.localScale);
-
-
-            //if (segment.parent != null)
-            //{
-            //    Debug.Log("the segment's parent's id is " + segment.parent.Item2.id); // prob remove
-            //}
-
-            // wait so then but how do we find the unique parent id..
-            // soln: the joint knows. yeah that works
+            SegmentInfo info = new SegmentInfo
+            {
+                UniqueId = i,
+                TypeId = segment.id,
+                Position = segment.myRigidbody.transform.position,
+                LocalPosition = segment.myRigidbody.transform.localPosition,
+                Rotation = segment.myRigidbody.transform.rotation.eulerAngles,
+                LocalRotation = segment.myRigidbody.transform.localEulerAngles,
+                Size = segment.myRigidbody.transform.localScale
+            };
 
             if (segment.myRigidbody.GetComponent<HingeJoint>() != null && segment.myRigidbody.GetComponent<FixedJoint>() == null)
             {
                 HingeJoint hingeJoint = segment.myRigidbody.GetComponent<HingeJoint>();
                 Segment parentSegment = hingeJoint.connectedBody.gameObject.GetComponent<Segment>();
-                Debug.Log("the segment's parent's unique id is: " + c.segments.FindIndex(s => s == parentSegment));
-
-                Debug.Log("the segment's joint type is: hinge");
-                Debug.Log("the segment's joint's anchorpos is: " + segment.myRigidbody.GetComponent<HingeJoint>().connectedAnchor);
-                Debug.Log("the segment's joint axis is: " + hingeJoint.axis);
+                info.ParentUniqueId = c.segments.FindIndex(s => s == parentSegment);
+                info.JointType = "hinge";
+                info.JointAnchorPos = hingeJoint.connectedAnchor;
+                info.JointAxis = hingeJoint.axis;
             }
-            if (segment.myRigidbody.GetComponent<HingeJoint>() == null && segment.myRigidbody.GetComponent<FixedJoint>() != null)
+            else if (segment.myRigidbody.GetComponent<HingeJoint>() == null && segment.myRigidbody.GetComponent<FixedJoint>() != null)
             {
                 FixedJoint fixedJoint = segment.myRigidbody.GetComponent<FixedJoint>();
                 Segment parentSegment = fixedJoint.connectedBody.gameObject.GetComponent<Segment>();
-                Debug.Log("the segment's parent's unique id is " + c.segments.FindIndex(s => s == parentSegment));
-
-                Debug.Log("the segment's joint type is: fixed");
-                Debug.Log("the segment's joint's anchorpos is " + segment.myRigidbody.GetComponent<FixedJoint>().connectedAnchor);
+                info.ParentUniqueId = c.segments.FindIndex(s => s == parentSegment);
+                info.JointType = "fixed";
+                info.JointAnchorPos = fixedJoint.connectedAnchor;
+            }
+            else if (segment.myRigidbody.GetComponent<HingeJoint>() == null && segment.myRigidbody.GetComponent<FixedJoint>() == null)
+            {
+                info.ParentUniqueId = null;
+                info.JointType = null;
+                info.JointAnchorPos = null;
             }
 
+            byte r = c.cg.segments.Find(seg => seg.id == info.TypeId).r;
+            byte g = c.cg.segments.Find(seg => seg.id == info.TypeId).g;
+            byte b = c.cg.segments.Find(seg => seg.id == info.TypeId).b;
+            info.Color = new Vector3(r, g, b);
 
-            //Debug.Log("the segment's color is: " + segment.myRigidbody.transform.GetChild(0).GetComponent<Material>().color.ToString());
-            byte r = c.cg.segments.Find(segment => segment.id == typeId).r;
-            byte g = c.cg.segments.Find(segment => segment.id == typeId).g;
-            byte b = c.cg.segments.Find(segment => segment.id == typeId).b;
-
-            Debug.Log("the segment's color is: " + new Vector3(r, g, b));
-
+            segmentsInfo.Add(info);
 
 
-            //also output:
-            // segment color (r,g,b)
+            //Debug.Log("------");
+            //Debug.Log("the segment's unique id is: " + i); //prob remove
+            //byte typeId = segment.id;
+            //Debug.Log("(for debug)the segment's type id is: " + typeId); //prob remove
+            //Debug.Log("the segment's position is " + segment.myRigidbody.transform.position);
+            //Debug.Log("the segment's local position is " + segment.myRigidbody.transform.localPosition);
+
+            //Debug.Log("the segment's rotation is " + segment.myRigidbody.transform.rotation.eulerAngles);
+            //Debug.Log("the segment's local rotation is " + segment.myRigidbody.transform.localEulerAngles);
+            //Debug.Log("the segment's size is " + segment.myRigidbody.transform.localScale);
+
+
+            ////if (segment.parent != null)
+            ////{
+            ////    Debug.Log("the segment's parent's id is " + segment.parent.Item2.id); // prob remove
+            ////}
+
+            //// wait so then but how do we find the unique parent id..
+            //// soln: the joint knows. yeah that works
+
+            //if (segment.myRigidbody.GetComponent<HingeJoint>() != null && segment.myRigidbody.GetComponent<FixedJoint>() == null)
+            //{
+            //    HingeJoint hingeJoint = segment.myRigidbody.GetComponent<HingeJoint>();
+            //    Segment parentSegment = hingeJoint.connectedBody.gameObject.GetComponent<Segment>();
+            //    Debug.Log("the segment's parent's unique id is: " + c.segments.FindIndex(s => s == parentSegment));
+
+            //    Debug.Log("the segment's joint type is: hinge");
+            //    Debug.Log("the segment's joint's anchorpos is: " + segment.myRigidbody.GetComponent<HingeJoint>().connectedAnchor);
+            //    Debug.Log("the segment's joint axis is: " + hingeJoint.axis);
+            //}
+            //if (segment.myRigidbody.GetComponent<HingeJoint>() == null && segment.myRigidbody.GetComponent<FixedJoint>() != null)
+            //{
+            //    FixedJoint fixedJoint = segment.myRigidbody.GetComponent<FixedJoint>();
+            //    Segment parentSegment = fixedJoint.connectedBody.gameObject.GetComponent<Segment>();
+            //    Debug.Log("the segment's parent's unique id is " + c.segments.FindIndex(s => s == parentSegment));
+
+            //    Debug.Log("the segment's joint type is: fixed");
+            //    Debug.Log("the segment's joint's anchorpos is " + segment.myRigidbody.GetComponent<FixedJoint>().connectedAnchor);
+            //}
+
+
+            ////Debug.Log("the segment's color is: " + segment.myRigidbody.transform.GetChild(0).GetComponent<Material>().color.ToString());
+            //byte r = c.cg.segments.Find(segment => segment.id == typeId).r;
+            //byte g = c.cg.segments.Find(segment => segment.id == typeId).g;
+            //byte b = c.cg.segments.Find(segment => segment.id == typeId).b;
+
+            //Debug.Log("the segment's color is: " + new Vector3(r, g, b));
 
         }
+
+
+        var settings = new JsonSerializerSettings
+        {
+            Formatting = Formatting.Indented,
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        };
+
+        // Serialize to JSON
+        string json = JsonConvert.SerializeObject(segmentsInfo, Formatting.Indented, settings);
+        // Write to file
+        File.WriteAllText("blueprint.json", json);
 
         return c;
     }
