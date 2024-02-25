@@ -228,22 +228,6 @@ public class CreatureSpawner : MonoBehaviour
         spawnedSegment.SetCreature(sgd.c);
         sgd.c.segments.Add(spawnedSegment);
 
-        if (sgd.isRoot)
-        {
-            // Adding a mandatory photosensor neuron to the root segment of the creature
-
-            //// Consider adding 1 more neurons with type = 11  for lightsource z position
-            //NeuronReference X_photosensorNR = new NeuronReference();
-            //X_photosensorNR.id = 9;   // Give it an ID of a X AXIS POS photosensor neuron
-            //NeuronGenotype X_photosensorNG = new NeuronGenotype(X_photosensorNR);
-            //Neuron X_photosensorNeuron = sgd.c.AddNeuron(X_photosensorNG, null, spawnedSegment, id);
-            //spawnedSegment.AddNeuron(X_photosensorNeuron);
-            //NeuronReference Z_photosensorNR = new NeuronReference();
-            //Z_photosensorNR.id = 11;   // Give it an ID of a photosensor neuron
-            //NeuronGenotype Z_photosensorNG = new NeuronGenotype(Z_photosensorNR);
-            //Neuron Z_photosensorNeuron = sgd.c.AddNeuron(Z_photosensorNG, null, spawnedSegment, id);
-            //spawnedSegment.AddNeuron(Z_photosensorNeuron);
-        }
         if (!sgd.isRoot)
         {
             spawnedSegment.SetPath(sgd.connectionPath);

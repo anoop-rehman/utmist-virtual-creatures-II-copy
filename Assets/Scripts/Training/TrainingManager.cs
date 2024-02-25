@@ -164,35 +164,14 @@ public class TrainingManager : MonoBehaviour
                 instantiatedEnv.Setup(ts.envSettings);
                 instantiatedEnv.transform.parent = envHolder;
                 instantiatedEnv.gameObject.name += (i + 1).ToString();
-                // ATM, I take the current floorEnv (transform object) and add 'x' units in Z direction.
-                // This makes it so each floor env will have its photosensor 5 units front of where the agent spawns
-                Vector3 photosensorSpawnLocation = instantiatedEnv.transform.position;
-                // Generate a random z value between -25 and +25
-                // Randomizing the spawn location of goal photosensor to encourage better learning every generation (yet to delete and spawn new random photosensor per gen)
-                // Randomly choose between if z is + or -
-                float randomZ = 8f;
-                //if (UnityEngine.Random.Range(0, 2) == 0)
-                //{
-                //    randomZ = UnityEngine.Random.Range(-12f, -7f);
-                //}
-                //else
-                //{
-                //    randomZ = UnityEngine.Random.Range(7f, 12f);
-                //}
-                //float randomX;
-                //if (UnityEngine.Random.Range(0, 2) == 0)
-                //{
-                //    randomX = UnityEngine.Random.Range(-6f, -2f);
-                //}
-                //else
-                //{
-                //    randomX = UnityEngine.Random.Range(2f, 6f);
-                //}
-                photosensorSpawnLocation.z += randomZ;
-                //photosensorSpawnLocation.x += randomX;
-                // Not sure why the photosensor spawns in the sky so to bring it to ground, do -5f
-                photosensorSpawnLocation.y -= 5f;
-                instantiatedEnv.SpawnPhotosensorObject(photosensorSpawnLocation);
+                // ATM, I take the current floorEnv (transform object) and add 'initialForwardDisplacement' units in the Z direction.
+                // This makes it so each floor env will have its lightsource 'initialForwardDisplacement' units front of where the agent spawns
+                Vector3 lightsourceSpawnLocation = instantiatedEnv.transform.position;
+                float initialForwardDisplacement = +8f;
+                lightsourceSpawnLocation.z += initialForwardDisplacement;
+                // The lightsource spawns in the sky, so to bring it to the ground, displace it by -5f vertically.
+                lightsourceSpawnLocation.y -= 5f;
+                instantiatedEnv.SpawnLightsourceObject(lightsourceSpawnLocation);
                 environments.Add(instantiatedEnv);
                 Transform oneOff = instantiatedEnv.transform.Find("OneOffHolder");
                 if (oneOff != null && i != 0) {

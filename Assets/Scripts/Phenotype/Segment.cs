@@ -293,21 +293,21 @@ public class Segment : MonoBehaviour
         
         string name = creature.gameObject.transform.parent.parent.gameObject.name;
         GameObject environmentObj = creature.gameObject.transform.parent.parent.gameObject;
-        GameObject photosensorObj = null;
+        GameObject lightsourceObj = null;
         foreach (Transform childTransform in environmentObj.transform)
         {
             GameObject childObj = childTransform.gameObject;
-            if (childObj.CompareTag("Photosensor"))
+            if (childObj.CompareTag("Lightsource"))
             {
-                photosensorObj = childObj;
+                lightsourceObj = childObj;
             }
         }
 
         Light lightsource = null;
 
-        if (photosensorObj)
+        if (lightsourceObj)
         {
-            lightsource = photosensorObj.GetComponent<Light>();
+            lightsource = lightsourceObj.GetComponent<Light>();
         }
         
         if (lightsource == null)

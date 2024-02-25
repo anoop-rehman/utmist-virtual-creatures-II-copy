@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 6396203147471335406}
   - component: {fileID: 1086685777982096042}
   m_Layer: 0
-  m_Name: Light_Photosensor
-  m_TagString: Photosensor
+  m_Name: Light_Source
+  m_TagString: Lightsource
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
