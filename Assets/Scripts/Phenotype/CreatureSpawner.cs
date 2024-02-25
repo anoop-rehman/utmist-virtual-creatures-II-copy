@@ -139,10 +139,12 @@ public class CreatureSpawner : MonoBehaviour
             Segment segment = c.segments[i];
             Debug.Log("------");
             Debug.Log("the segment's unique id is: " + i); //prob remove
-            Debug.Log("(for debug)the segment's type id is: " + segment.id); //prob remove
-            Debug.Log("the segment's size is " + segment.myRigidbody.transform.localScale);
+            byte typeId = segment.id;
+            Debug.Log("(for debug)the segment's type id is: " + typeId); //prob remove
             Debug.Log("the segment's position is " + segment.myRigidbody.transform.position);
-            Debug.Log("the segment's rotation is " + segment.myRigidbody.transform.rotation);
+            Debug.Log("the segment's rotation is " + segment.myRigidbody.transform.rotation.eulerAngles);
+            Debug.Log("the segment's size is " + segment.myRigidbody.transform.localScale);
+
 
             //if (segment.parent != null)
             //{
@@ -172,7 +174,14 @@ public class CreatureSpawner : MonoBehaviour
                 Debug.Log("the segment's joint's anchorpos is " + segment.myRigidbody.GetComponent<FixedJoint>().connectedAnchor);
             }
 
-            //Debug.Log("the segment's color is: " + );
+
+            //Debug.Log("the segment's color is: " + segment.myRigidbody.transform.GetChild(0).GetComponent<Material>().color.ToString());
+            byte r = c.cg.segments.Find(segment => segment.id == typeId).r;
+            byte g = c.cg.segments.Find(segment => segment.id == typeId).g;
+            byte b = c.cg.segments.Find(segment => segment.id == typeId).b;
+
+            Debug.Log("the segment's color is: " + new Vector3(r, g, b));
+
 
 
             //also output:
