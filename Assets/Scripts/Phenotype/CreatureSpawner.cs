@@ -141,6 +141,9 @@ public class CreatureSpawner : MonoBehaviour
             Debug.Log("the segment's unique id is: " + i); //prob remove
             Debug.Log("(for debug)the segment's type id is: " + segment.id); //prob remove
             Debug.Log("the segment's size is " + segment.myRigidbody.transform.localScale);
+            Debug.Log("the segment's position is " + segment.myRigidbody.transform.position);
+            Debug.Log("the segment's rotation is " + segment.myRigidbody.transform.rotation);
+
             //if (segment.parent != null)
             //{
             //    Debug.Log("the segment's parent's id is " + segment.parent.Item2.id); // prob remove
@@ -169,7 +172,7 @@ public class CreatureSpawner : MonoBehaviour
                 Debug.Log("the segment's joint's anchorpos is " + segment.myRigidbody.GetComponent<FixedJoint>().connectedAnchor);
             }
 
-            Debug.Log("the segment's color is: fixed");
+            //Debug.Log("the segment's color is: " + );
 
 
             //also output:
