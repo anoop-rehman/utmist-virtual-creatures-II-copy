@@ -440,11 +440,13 @@ public class CreatureSpawner : MonoBehaviour
                 spawnAngle = Quaternion.LookRotation(Vector3.Reflect(spawnAngle * Vector3.forward, Vector3.right), Vector3.Reflect(spawnAngle * Vector3.up, Vector3.right));
             }
 
-            Vector3 childSegmentVector = new Vector3(currentSegmentGenotype.dimensionX, currentSegmentGenotype.dimensionY, currentSegmentGenotype.dimensionZ);
+            parentScale = ssd.parentGlobalScale.Value * ssd.myConnection.scale;
+
+            Vector3 childSegmentVector = new Vector3(currentSegmentGenotype.dimensionX, currentSegmentGenotype.dimensionY, currentSegmentGenotype.dimensionZ) * parentScale;
     
             spawnPos = CalculateSegmentPosition(spawnAngle, parentTransform, ssd.joint, currentSegmentGenotype.childJointFace, currentSegmentGenotype.parentJointFace, childSegmentVector);
 
-            parentScale = ssd.parentGlobalScale.Value * ssd.myConnection.scale;
+            
 
         }
 
@@ -578,34 +580,55 @@ public class CreatureSpawner : MonoBehaviour
         }
 
         Vector3 directionVec = Vector3.zero;
+        float dimensionOfInterest = 0f;
+        int shiftDown = 1;
 
         switch(parentJointFace)
 		{
             case (JointFace.Top):
                 directionVec = parentSegmentTransform.up;
+                shiftDown = 0;
                 break;
             case (JointFace.Bottom):
                 directionVec = parentSegmentTransform.up * -1;
+                shiftDown = 0;
                 break;
             case (JointFace.Right):
                 directionVec = parentSegmentTransform.right;
+                dimensionOfInterest = childDimension.x;
                 break;
             case (JointFace.Left):
                 directionVec = parentSegmentTransform.right * -1;
+                dimensionOfInterest = childDimension.x;
                 break;
             case (JointFace.Front):
                 directionVec = parentSegmentTransform.forward;
+                dimensionOfInterest = childDimension.z;
                 break;
             case (JointFace.Back):
                 directionVec = parentSegmentTransform.forward * -1;
+                dimensionOfInterest = childDimension.z;
                 break;
             default:
                 break;
 		}
 
 
-        Vector3 spawnPosition = joint.spawnPos;
-        spawnPosition += childAngle * directionVec * jointSize/2.0f;
+        Vector3 spawnPosition = joint.spawnPos - shiftDown * parentSegmentTransform.up * childDimension.y/2.0f;
+        spawnPosition += childAngle * directionVec * (jointSize+dimensionOfInterest)/2.0f;
+        Debug.Log(childDimension);
+        if (joint.jointType == JointType.HingeZ && (parentJointFace == JointFace.Back || parentJointFace == JointFace.Front))
+		{
+            spawnPosition = joint.spawnPos - childAngle * parentSegmentTransform.up * (childDimension.y + joint.dimVector.x / 2.0f) ;
+        } else if (joint.jointType == JointType.HingeY && (parentJointFace == JointFace.Top || parentJointFace == JointFace.Bottom))
+		{
+            spawnPosition = joint.spawnPos - childAngle * parentSegmentTransform.right * (childDimension.x/2.0f + joint.dimVector.x / 2.0f) - parentSegmentTransform.up * childDimension.y/2.0f;
+            
+        } else if (joint.jointType == JointType.HingeX && (parentJointFace == JointFace.Left || parentJointFace == JointFace.Right))
+		{
+            spawnPosition = joint.spawnPos - childAngle * parentSegmentTransform.up * (childDimension.y + joint.dimVector.x / 2.0f);
+        }
+        Debug.Log(spawnPosition);
 
         return spawnPosition;
 	}
