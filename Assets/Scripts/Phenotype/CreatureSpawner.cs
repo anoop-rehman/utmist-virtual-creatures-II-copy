@@ -138,8 +138,8 @@ public class CreatureSpawner : MonoBehaviour
         {
             Segment segment = c.segments[i];
             Debug.Log("------");
-            Debug.Log("the segment's unique id is " + i); //prob remove
-            Debug.Log("(for debug)the segment's type id is " + segment.id); //prob remove
+            Debug.Log("the segment's unique id is: " + i); //prob remove
+            Debug.Log("(for debug)the segment's type id is: " + segment.id); //prob remove
             Debug.Log("the segment's size is " + segment.myRigidbody.transform.localScale);
             //if (segment.parent != null)
             //{
@@ -153,20 +153,26 @@ public class CreatureSpawner : MonoBehaviour
             {
                 HingeJoint hingeJoint = segment.myRigidbody.GetComponent<HingeJoint>();
                 Segment parentSegment = hingeJoint.connectedBody.gameObject.GetComponent<Segment>();
-                Debug.Log(c.segments.FindIndex(parentSegment));
+                Debug.Log("the segment's parent's unique id is: " + c.segments.FindIndex(s => s == parentSegment));
 
-
-                //Debug.Log("the segment's parent's id is " + segment.myRigidbody.GetComponent<HingeJoint>().connectedBody); // prob remove
-                Debug.Log("the segment's anchorpos is " + segment.myRigidbody.GetComponent<HingeJoint>().connectedAnchor);
+                Debug.Log("the segment's joint type is: hinge");
+                Debug.Log("the segment's joint's anchorpos is: " + segment.myRigidbody.GetComponent<HingeJoint>().connectedAnchor);
+                Debug.Log("the segment's joint axis is: " + hingeJoint.axis);
             }
             if (segment.myRigidbody.GetComponent<HingeJoint>() == null && segment.myRigidbody.GetComponent<FixedJoint>() != null)
             {
-                Debug.Log("the segment's anchorpos is " + segment.myRigidbody.GetComponent<FixedJoint>().connectedAnchor);
+                FixedJoint fixedJoint = segment.myRigidbody.GetComponent<FixedJoint>();
+                Segment parentSegment = fixedJoint.connectedBody.gameObject.GetComponent<Segment>();
+                Debug.Log("the segment's parent's unique id is " + c.segments.FindIndex(s => s == parentSegment));
+
+                Debug.Log("the segment's joint type is: fixed");
+                Debug.Log("the segment's joint's anchorpos is " + segment.myRigidbody.GetComponent<FixedJoint>().connectedAnchor);
             }
 
+            Debug.Log("the segment's color is: fixed");
+
+
             //also output:
-            // joint type
-            // joint axis (if its hinge)
             // segment color (r,g,b)
 
         }
