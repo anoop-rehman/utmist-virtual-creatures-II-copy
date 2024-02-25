@@ -133,21 +133,30 @@ public class CreatureSpawner : MonoBehaviour
         //Debug.Log("Its size is: " + c.cg.GetSize().ToString());
 
 
-        foreach (Segment segment in c.segments)
+        //foreach (Segment segment in c.segments)
+        for (int i = 0; i < c.segments.Count; i++)
         {
+            Segment segment = c.segments[i];
             Debug.Log("------");
-            Debug.Log("the segment's id is " + segment.id); //prob remove 
+            Debug.Log("the segment's unique id is " + i); //prob remove
+            Debug.Log("(for debug)the segment's type id is " + segment.id); //prob remove
             Debug.Log("the segment's size is " + segment.myRigidbody.transform.localScale);
-            if (segment.parent != null)
-            {
-                Debug.Log("the segment's parent's id is " + segment.parent.Item2.id); // prob remove
-            }
+            //if (segment.parent != null)
+            //{
+            //    Debug.Log("the segment's parent's id is " + segment.parent.Item2.id); // prob remove
+            //}
 
             // wait so then but how do we find the unique parent id..
             // soln: the joint knows. yeah that works
 
             if (segment.myRigidbody.GetComponent<HingeJoint>() != null && segment.myRigidbody.GetComponent<FixedJoint>() == null)
             {
+                HingeJoint hingeJoint = segment.myRigidbody.GetComponent<HingeJoint>();
+                Segment parentSegment = hingeJoint.connectedBody.gameObject.GetComponent<Segment>();
+                Debug.Log(c.segments.FindIndex(parentSegment));
+
+
+                //Debug.Log("the segment's parent's id is " + segment.myRigidbody.GetComponent<HingeJoint>().connectedBody); // prob remove
                 Debug.Log("the segment's anchorpos is " + segment.myRigidbody.GetComponent<HingeJoint>().connectedAnchor);
             }
             if (segment.myRigidbody.GetComponent<HingeJoint>() == null && segment.myRigidbody.GetComponent<FixedJoint>() != null)
