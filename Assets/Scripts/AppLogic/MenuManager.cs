@@ -313,9 +313,9 @@ public class MenuManager : MonoBehaviour
         menus.ForEach(o => o.SetActive(false));
 
         populationSize = 300;
-        //totalGenerations = 400;
-        totalGenerations = 4;
-        envCount = 50;
+        totalGenerations = 400;
+        //totalGenerations = 4;
+        envCount = 25;
         maxSegments = 25;
 
         ratioNumerator = 1;

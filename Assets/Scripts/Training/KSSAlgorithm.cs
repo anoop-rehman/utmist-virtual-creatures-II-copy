@@ -9,6 +9,7 @@ using System.Linq;
 using System.IO;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Diagnostics;
 
 namespace KSS
 {
@@ -61,7 +62,7 @@ namespace KSS
                 writer.Write(content);
             }
 
-            Debug.Log($"CSV file written to \"{filePath}\"");
+            UnityEngine.Debug.Log($"CSV file written to \"{filePath}\"");
         }
 
         public bool IsValid()
@@ -118,7 +119,7 @@ namespace KSS
             cleanedEvals.RemoveAll(x => x.evalStatus == EvalStatus.DISQUALIFIED);
             cleanedEvals.RemoveAll(x => x.fitness.HasValue == false);
             CreatureGenotypeEval bestEval = cleanedEvals.OrderByDescending(cgEval => cgEval.fitness.Value).FirstOrDefault();
-            Debug.Log("Best: " + bestEval.fitness.Value);
+            UnityEngine.Debug.Log("Best: " + bestEval.fitness.Value);
             return bestEval;
         }
 
@@ -129,7 +130,7 @@ namespace KSS
             cleanedEvals.RemoveAll(x => x.evalStatus == EvalStatus.DISQUALIFIED);
             cleanedEvals.RemoveAll(x => x.fitness.HasValue == false);
             CreatureGenotypeEval medianEval = cleanedEvals.OrderByDescending(cgEval => cgEval.fitness.Value).ElementAt(cleanedEvals.Count / 2); ;
-            Debug.Log("Median: " + medianEval.fitness.Value);
+            UnityEngine.Debug.Log("Median: " + medianEval.fitness.Value);
             return medianEval;
         }
 
@@ -139,15 +140,15 @@ namespace KSS
             cleanedEvals.RemoveAll(x => x.evalStatus == EvalStatus.DISQUALIFIED);
             cleanedEvals.RemoveAll(x => x.fitness.HasValue == false);
             CreatureGenotypeEval worstEval = cleanedEvals.OrderByDescending(cgEval => cgEval.fitness.Value).Last(); ;
-            Debug.Log("Worst: " + worstEval.fitness.Value);
+            UnityEngine.Debug.Log("Worst: " + worstEval.fitness.Value);
             return worstEval;
         }
 
 
         public List<CreatureGenotypeEval> SelectTopEvals(int populationSize, float survivalRatio)
         {
-            Debug.Log("Sizes:");
-            Debug.Log(string.Format("{0},{1}", rewardProperty.GetDataString(), cgEvals[0].cg.GetSize()));
+            UnityEngine.Debug.Log("Sizes:");
+            UnityEngine.Debug.Log(string.Format("{0},{1}", rewardProperty.GetDataString(), cgEvals[0].cg.GetSize()));
             List<CreatureGenotypeEval> cleanedEvals = new List<CreatureGenotypeEval>(cgEvals);
             List<CreatureGenotypeEval> topEvals = new List<CreatureGenotypeEval>();
             cleanedEvals.RemoveAll(x => x.evalStatus == EvalStatus.DISQUALIFIED);
@@ -272,7 +273,7 @@ namespace KSS
             {
                 CreatureGenotype cg = topSoftmaxEvals[i].cg;
                 int childrenCount = intValues[i];
-                if (i <= 1) Debug.Log(string.Format("{0} ({1}, {2}), children; {3}/{4}", cg.name, topEvals[i].fitness.Value, topSoftmaxEvals[i].fitness.Value / denom, childrenCount, sizeChildren));
+                if (i <= 1) UnityEngine.Debug.Log(string.Format("{0} ({1}, {2}), children; {3}/{4}", cg.name, topEvals[i].fitness.Value, topSoftmaxEvals[i].fitness.Value / denom, childrenCount, sizeChildren));
                 for (int j = 0; j < childrenCount; j++)
                 {
                     g.cgEvals.Add(new CreatureGenotypeEval(MutateGenotype.MutateCreatureGenotype(cg, mp)));
@@ -281,12 +282,12 @@ namespace KSS
 
             if (g.cgEvals.Count != size)
             {
-                Debug.Log(remainingCount);
-                Debug.Log(topSoftmaxEvals.Select(x => x.fitness.Value).ToList());
+                UnityEngine.Debug.Log(remainingCount);
+                UnityEngine.Debug.Log(topSoftmaxEvals.Select(x => x.fitness.Value).ToList());
 
                 foreach (CreatureGenotypeEval topSoftmaxEval in topSoftmaxEvals)
                 {
-                    Debug.Log(topSoftmaxEval.fitness.Value);
+                    UnityEngine.Debug.Log(topSoftmaxEval.fitness.Value);
                 }
 
                 throw new System.Exception("Wrong generation size!");
@@ -371,7 +372,7 @@ namespace KSS
 
             if (saveK.isNew)
             {
-                Debug.Log("New save, first generation...");
+                UnityEngine.Debug.Log("New save, first generation...");
                 CreateNextGeneration(true);
             }
             else
@@ -470,7 +471,7 @@ namespace KSS
 
         private void CreateNextGeneration(bool first)
         {
-            Debug.Log("next gen vreated!!!");
+            UnityEngine.Debug.Log("next gen vreated!!!");
             currentGenotypeIndex = 0;
 
             untestedRemaining = optimizationSettings.populationSize;
@@ -499,12 +500,12 @@ namespace KSS
                     saveK.generations[^2].Cull(optimizationSettings.populationSize, optimizationSettings.survivalRatio);
                 }
 
-                //Debug.Log("HIT");
+                //UnityEngine.Debug.Log("HIT");
                 List<float> cgSizes = new List<float>();
                 for (int i = 0; i < currentGeneration.cgEvals.Count; i++)
                 {
                     cgSizes.Add(currentGeneration.cgEvals[i].cg.GetSize());
-                    //Debug.Log(currentGeneration.cgEvals[i].cg.GetSize());
+                    //UnityEngine.Debug.Log(currentGeneration.cgEvals[i].cg.GetSize());
                 }
 
                 cgSizes = cgSizes.OrderByDescending(x => x).ToList();
@@ -544,7 +545,7 @@ namespace KSS
                 {
                     // Export CSV
                     saveK.ExportCSV();
-                    Debug.Log("Exported csv boiiiii");
+                    //UnityEngine.Debug.Log("Exported csv boiiiii");
 
                     // Save best, median, and worst creatures from each gen
                     //DateTime now = DateTime.Now;
@@ -553,7 +554,46 @@ namespace KSS
                     //string runFolderName = formattedTime + "_EVOLUTIONRUN";
                     string runFolderPath = Path.Combine(OptionsPersist.VCCreatures, MenuManager.saveName);
 
-                    Debug.Log("options persist = " + OptionsPersist.VCCreatures);
+
+
+                    UnityEngine.Debug.Log("options persist = " + OptionsPersist.VCCreatures);
+                    // Start a new process to run the 'dot' command
+                    ProcessStartInfo startInfo = new ProcessStartInfo()
+                    {
+                        // TODO: run a check for windows/mac replace CMD.exe or /bin/bash
+                        // Replace with CMD.exe for Windows, for Mac -> /bin/bash
+                        FileName = "/bin/bash",
+                        WorkingDirectory = OptionsPersist.VCCreatures,
+                        UseShellExecute = false,
+                        RedirectStandardInput = true,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true,
+                        // This is the command we are running in terminal
+                        //Arguments = "-c \"" + dotPath + " -Tpng \"temp.dot\" -o \"" + cgName + ".png\"" + "\""
+                        Arguments = "echo " + OptionsPersist.VCCreatures
+
+                    };
+
+                    Process process = new Process
+                    {
+                        StartInfo = startInfo
+                    };
+
+                    // Execute our process
+                    process.Start();
+                    //process.BeginOutputReadLine();
+
+                    process.WaitForExit();
+
+                    // Error Checking
+                    if (process.ExitCode != 0)
+                    {
+                        UnityEngine.Debug.LogError($"Error: 'dot' command failed with exit code {process.ExitCode}");
+                    }
+
+
+                    /////
+
 
                     if (!Directory.Exists(runFolderPath))
                     {
@@ -586,13 +626,13 @@ namespace KSS
 
 
 
-                        //Debug.Log(string.Format("Saved {0} to {1}", bestCreatureName, bestcreaturePath));
+                        //UnityEngine.Debug.Log(string.Format("Saved {0} to {1}", bestCreatureName, bestcreaturePath));
 
                     }
 
 
                     // echo when the whole run is done running
-                    Debug.Log("The whole run is done running");
+                    UnityEngine.Debug.Log("The whole run is done running");
 
 
                     //// End game in editor
@@ -644,9 +684,9 @@ namespace KSS
                 }
             }
 
-            Debug.Log(string.Format("{0}/{1} Creatures with >=0 fitness.", positiveCount, topCount));
+            UnityEngine.Debug.Log(string.Format("{0}/{1} Creatures with >=0 fitness.", positiveCount, topCount));
             CreatureGenotypeEval bestEval = GetBestCreatureEval();
-            Debug.Log("Best: " + topEvals.Max(x => x.fitness.Value));
+            UnityEngine.Debug.Log("Best: " + topEvals.Max(x => x.fitness.Value));
             saveK.best = bestEval;
 
 
@@ -711,19 +751,19 @@ namespace KSS
 
             if (GUILayout.Button("Save Current KSSSave"))
             {
-                Debug.Log("Saving Current KSSSave");
+                UnityEngine.Debug.Log("Saving Current KSSSave");
                 KSSSave save = alg.saveK;
                 save.SaveData("/" + save.saveName + ".saveK", false, true);
-                Debug.Log(Application.persistentDataPath);
+                UnityEngine.Debug.Log(Application.persistentDataPath);
             }
 
             if (GUILayout.Button("Save Best Creature"))
             {
-                Debug.Log("Saving Best Creature");
+                UnityEngine.Debug.Log("Saving Best Creature");
                 CreatureGenotype cg = alg.GetBestCreatureGenotype();
                 string path = EditorUtility.SaveFilePanel("Save Creature As", "C:", cg.name + ".creature", "creature");
                 cg.SaveData(path, true, true);
-                Debug.Log(Application.persistentDataPath);
+                UnityEngine.Debug.Log(Application.persistentDataPath);
             }
         }
     }
