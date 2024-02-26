@@ -175,8 +175,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6472731533670679720}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -6.42, z: 0}
-  m_LocalScale: {x: 6000, y: 400, z: 1}
+  m_LocalPosition: {x: 6000, y: -6.42, z: 0}
+  m_LocalScale: {x: 15000, y: 400, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 535851296851451833}
@@ -302,7 +302,7 @@ MonoBehaviour:
   spawnTransform: {fileID: 0}
   creatureHolder: {fileID: 0}
   tas: []
-  lightPhotosensor: {fileID: 0}
+  lightSource: {fileID: 0}
 --- !u!1 &6472731534607262250
 GameObject:
   m_ObjectHideFlags: 0

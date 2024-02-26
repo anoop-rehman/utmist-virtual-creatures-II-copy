@@ -272,7 +272,7 @@ public class MenuManager : MonoBehaviour
         //optimizationSettings.initialGenotype = templateCGSO == null ? null : templateCGSO.cg;
         //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Leaper.creature", false); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
         //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Users/anooprehman/Virtual Creatures/Creatures/carolgen5walker.creature", true); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
-        optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/TWO_ARM_ROWER.creature", SaveLocation.CREATURES); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
+        optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/25_SEGMENT_FISH.creature", SaveLocation.CREATURES); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
         //optimizationSettings.initialGenotype = null;
 
 
@@ -313,9 +313,9 @@ public class MenuManager : MonoBehaviour
         menus.ForEach(o => o.SetActive(false));
 
         populationSize = 300;
-        totalGenerations = 400;
+        totalGenerations = 100;
         //totalGenerations = 4;
-        envCount = 25;
+        envCount = 300;
         maxSegments = 25;
 
         ratioNumerator = 1;
