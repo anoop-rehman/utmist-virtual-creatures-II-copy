@@ -441,6 +441,12 @@ namespace KSS
                 userWantsToEndRun = true;
             }
 
+            if (CheckIfUserWantsToEndRun(Path.Combine(OptionsPersist.VCSaves, "userWantsToEndRun.txt")))
+            {
+                userWantsToEndRun = true;
+
+            }
+
         }
 
         public override void ResetPing(Environment env, float fitness, bool isDQ)
@@ -467,6 +473,25 @@ namespace KSS
                 }
             }
             return null;
+        }
+
+        // Call this method to check if the first character in the file is "y"
+        private bool CheckIfUserWantsToEndRun(string userWantsToEndRunFilePath)
+        {
+            try
+            {
+                string content = File.ReadAllText(userWantsToEndRunFilePath);
+                if (content.Length > 0 && content[0] == 'y')
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.Log("An error occurred while reading the userWantsToEndRun.txt file: " + ex.Message);
+            }
+
+            return false;
         }
 
         private void CreateNextGeneration(bool first)

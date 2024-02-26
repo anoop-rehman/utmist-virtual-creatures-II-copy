@@ -12,7 +12,7 @@ public class FloorEnvSettings : EnvironmentSettings {
     public override float sizeX { get { return 40; } }
     public override float sizeZ { get { return 5; } }
     // HOLY MOTHER OF GOD I FINALLY FOUND WHY SIMULATIONS ARE ONLY 35 SECONDS
-    //public override float maxTime { get { return 5; } }
+    // public override float maxTime { get { return 5; } }
     public override float maxTime { get { return 60; } }   // x seconds
 }
 

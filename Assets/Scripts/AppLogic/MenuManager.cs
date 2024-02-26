@@ -78,11 +78,33 @@ public class MenuManager : MonoBehaviour
         }
     }
 
+    private void CreateUserWantsToEndRunFile(string userWantsToEndRunFilePath)
+    {
+        // // Ensure the directory path ends with a directory separator
+        // if (!directoryPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+        // {
+        //     directoryPath += Path.DirectorySeparatorChar;
+        // }
+
+        // filePath = directoryPath + "userWantsToEndRun.txt";
+
+        // string checkFilePath = Path.Combine(OptionsPersist.VCCreatures, MenuManager.saveName);
+
+
+        // Create the file with "n" if it does not exist
+        if (!File.Exists(userWantsToEndRunFilePath))
+        {
+            File.WriteAllText(userWantsToEndRunFilePath, "n");
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         menus = new List<GameObject>() { mainMenu, optionsMenu, creditsMenu, chooseEvolution, editEvolution, evolutionSettingsMenu, viewEvolution.gameObject };
         ShowMainMenu();
+
+        CreateUserWantsToEndRunFile(Path.Combine(OptionsPersist.VCSaves, "userWantsToEndRun.txt"));
 
         // AUTO EVO RUN
         AutoEvolutionRun();
@@ -313,9 +335,13 @@ public class MenuManager : MonoBehaviour
         menus.ForEach(o => o.SetActive(false));
 
         populationSize = 300;
+        // populationSize = 5;
+
         totalGenerations = 100;
-        //totalGenerations = 4;
+
         envCount = 300;
+        // envCount = 5;
+
         maxSegments = 25;
 
         ratioNumerator = 1;
