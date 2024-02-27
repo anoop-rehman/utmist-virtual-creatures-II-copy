@@ -496,7 +496,8 @@ namespace KSS
 
         private void CreateNextGeneration(bool first)
         {
-            UnityEngine.Debug.Log("next gen vreated!!!");
+            //UnityEngine.Debug.Log("next gen vreated!!!");
+            UnityEngine.Debug.Log("gen " + currentGenerationIndex + " vreated!!!");
             currentGenotypeIndex = 0;
 
             untestedRemaining = optimizationSettings.populationSize;
