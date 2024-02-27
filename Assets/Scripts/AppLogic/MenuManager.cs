@@ -293,7 +293,7 @@ public class MenuManager : MonoBehaviour
         // This line takes from a template creature genotype found in a Unity PropertyDrawer
         //optimizationSettings.initialGenotype = templateCGSO == null ? null : templateCGSO.cg;
         //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Leaper.creature", false); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
-        //optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Users/anooprehman/Virtual Creatures/Creatures/carolgen5walker.creature", true); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
+        // optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/Users/anooprehman/Downloads/01-39-51-AM_02-27-2024_EVOLUTIONRUN/GEN_51/BEST_cae-dominuslupus.creature", SaveLocation.FULL_PATH); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
         optimizationSettings.initialGenotype = CreatureGenotype.LoadData("/25_SEGMENT_FISH.creature", SaveLocation.CREATURES); // null means start w/ random creatures. TODO: Non-null will mean spawn that with mutations!
         //optimizationSettings.initialGenotype = null;
 
@@ -337,10 +337,11 @@ public class MenuManager : MonoBehaviour
         populationSize = 300;
         // populationSize = 5;
 
-        totalGenerations = 100;
+        totalGenerations = 15;
+        // totalGenerations = 5;
 
         envCount = 300;
-        // envCount = 5;
+        // envCount = 100;
 
         maxSegments = 25;
 
