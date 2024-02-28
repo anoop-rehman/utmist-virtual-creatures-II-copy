@@ -6,7 +6,7 @@ public class CreatureJoint : MonoBehaviour
 	public Vector3 dimVector;
 	public Vector3 spawnPos;
 	public JointFace childJointFace, parentJointFace;
-
+	public GameObject jointGameObject;
 	public double rotateLimit;
 
 	public void SpawnJoint(GameObject hingeJointPrefab, GameObject sphereJointPrefab, GameObject parentSegment, Transform creature, out GameObject jointObject)

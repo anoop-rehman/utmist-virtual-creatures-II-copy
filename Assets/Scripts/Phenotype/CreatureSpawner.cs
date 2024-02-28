@@ -208,6 +208,7 @@ public class CreatureSpawner : MonoBehaviour
 
     private void SetupSegment(SegmentGrabData sgd, out Segment spawnedSegment,
         out GameObject spawnedSegmentGameObject,
+        GameObject jointGameObject,
         out bool runTerminalOnly)
     {
         // Calculate required values
@@ -317,19 +318,38 @@ public class CreatureSpawner : MonoBehaviour
 
                 case (JointType.HingeX):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(1, 0, 0), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
+                        //spawnedSegment.AttachHingeJoint(new Vector3(1, 0, 0), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
+
+                        HingeJoint hingeJoint = spawnedSegmentGameObject.AddComponent<HingeJoint>();
+                        hingeJoint.connectedBody = jointGameObject.GetComponent<Rigidbody>();
+                        hingeJoint.axis = new Vector3(1, 0, 0);
+                        // radius
+                        switch (sgd.joint.childJointFace)
+                        {
+                            case (JointFace)
+                        }
+                        float anchorPoint = jointGameObject.transform.localScale.x / 
+                        hingeJoint.anchor = new Vector3()
+
                     }
                     break;
 
                 case (JointType.HingeY):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(0, 1 * sgd.otherReflectInt, 0), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
+                        HingeJoint hingeJoint = spawnedSegmentGameObject.AddComponent<HingeJoint>();
+                        hingeJoint.connectedBody = jointGameObject.GetComponent<Rigidbody>();
+                        hingeJoint.axis = new Vector3(0, 1, 0);
+
+                        //spawnedSegment.AttachHingeJoint(new Vector3(0, 1 * sgd.otherReflectInt, 0), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
                     }
                     break;
 
                 case (JointType.HingeZ):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(0, 0, 1 * sgd.otherReflectInt), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
+                        HingeJoint hingeJoint = spawnedSegmentGameObject.AddComponent<HingeJoint>();
+                        hingeJoint.connectedBody = jointGameObject.GetComponent<Rigidbody>();
+                        hingeJoint.axis = new Vector3(0, 0, 1);
+                        // spawnedSegment.AttachHingeJoint(new Vector3(0, 0, 1 * sgd.otherReflectInt), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
                     }
                     break;
 
@@ -469,12 +489,12 @@ public class CreatureSpawner : MonoBehaviour
         // Spawn the segment
         if (segmentPool == null) InitializeSegmentObjectPool();
 
-		GameObject jointObject;
+		GameObject jointObject = null;
 		
         if (!ssd.isRoot) 
             ssd.joint.SpawnJoint(hingePrefab, spherePrefab, ssd.parentSegment, ssd.c.transform, out jointObject); // Instantiate joint before child segment
 
-        SetupSegment(sgd, out Segment spawnedSegment, out GameObject spawnedSegmentGameObject, out bool runTerminalOnly);
+        SetupSegment(sgd, out Segment spawnedSegment, out GameObject spawnedSegmentGameObject, jointObject, out bool runTerminalOnly);
 
         
 
