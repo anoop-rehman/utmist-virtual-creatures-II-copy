@@ -233,7 +233,7 @@ public class VisualizeGenotype
                         {
                             if (target.Item2 != null)
                             {
-                                dotString += target.Item2.id + "." + input.id + " -> " + segment.id + "." + neuron.nr.id + ";\n";
+                                dotString += target.Item2.id + "." + input.id + " -> " + segment.id + "." + neuron.nr.id + "[tailport=e, headport=w]" + ";\n";
                             }
                         }
                     
@@ -296,7 +296,7 @@ public class VisualizeGenotype
             UnityEngine.Debug.LogError($"Error: 'dot' command failed with exit code {process.ExitCode}");
         }
 
-        //UnityEngine.Debug.Log("da genotype graph has been created for creature " + cgName + "at location " + Application.persistentDataPath); ;
+        // UnityEngine.Debug.Log("da genotype graph has been created for creature " + cgName + "at location " + OptionsPersist.instance.VCViz); ;
 
         // If we run hello world, uncomment these lines to read the standard output
         //string output = process.StandardOutput.ReadToEnd();
