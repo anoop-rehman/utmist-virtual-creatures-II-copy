@@ -228,6 +228,29 @@ public class CreatureSpawner : MonoBehaviour
         spawnedSegment.SetId(id);
         spawnedSegment.SetCreature(sgd.c);
         sgd.c.segments.Add(spawnedSegment);
+        switch (sgd.joint.childJointFace)
+        {
+            case (JointFace.Top):
+
+                break;
+            case (JointFace.Bottom):
+
+                break;
+            case (JointFace.Right):
+
+                break;
+            case (JointFace.Left):
+
+                break;
+            case (JointFace.Front):
+                spawnedSegmentGameObject.transform.LookAt(jointGameObject.transform, jointGameObject.transform.up));
+                break;
+            case (JointFace.Back):
+
+                break;
+            default:
+                break;
+        }
 
         if (sgd.isRoot)
         {
@@ -324,13 +347,39 @@ public class CreatureSpawner : MonoBehaviour
                         hingeJoint.connectedBody = jointGameObject.GetComponent<Rigidbody>();
                         hingeJoint.axis = new Vector3(1, 0, 0);
                         // radius
+                        float anchorPoint;
                         switch (sgd.joint.childJointFace)
                         {
-                            case (JointFace)
+                            case (JointFace.Top):
+                                anchorPoint = 0.5 + jointGameObject.transform.localScale.x / (2.0f * spawnedSegmentGameObject.transform.localScale.y);
+                                hingeJoint.anchor = new Vector3(0, anchorPoint, 0);
+                                break;
+                            case (JointFace.Bottom):
+                                anchorPoint = 0.5 + jointGameObject.transform.localScale.x / (2.0f * spawnedSegmentGameObject.transform.localScale.y);
+                                anchorPoint = -anchorPoint;
+                                hingeJoint.anchor = new Vector3(0, anchorPoint, 0);
+                                break;
+                            case (JointFace.Right):
+                                anchorPoint = 0.5 + jointGameObject.transform.localScale.x / (2.0f * spawnedSegmentGameObject.transform.localScale.x);
+                                hingeJoint.anchor = new Vector3(anchorPoint, 0, 0);
+                                break;
+                            case (JointFace.Left):
+                                anchorPoint = 0.5 + jointGameObject.transform.localScale.x / (2.0f * spawnedSegmentGameObject.transform.localScale.y);
+                                anchorPoint = -anchorPoint;
+                                hingeJoint.anchor = new Vector3(anchorPoint, 0, 0);
+                                break;
+                            case (JointFace.Front):
+                                anchorPoint = 0.5 + jointGameObject.transform.localScale.x / (2.0f * spawnedSegmentGameObject.transform.localScale.z);
+                                hingeJoint.anchor = new Vector3(0, 0, anchorPoint);
+                                break;
+                            case (JointFace.Back):
+                                anchorPoint = 0.5 + jointGameObject.transform.localScale.x / (2.0f * spawnedSegmentGameObject.transform.localScale.z);
+                                anchorPoint = -anchorPoint;
+                                hingeJoint.anchor = new Vector3(0, 0, anchorPoint);
+                                break;
+                            default:
+                                break;                        
                         }
-                        float anchorPoint = jointGameObject.transform.localScale.x / 
-                        hingeJoint.anchor = new Vector3()
-
                     }
                     break;
 
