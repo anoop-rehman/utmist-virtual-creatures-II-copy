@@ -18,6 +18,8 @@ public class WalkingFitness : Fitness
     // Keep track of old position of the agent.
     // If its current position and old position is the same => It isn't moving so don't reward it for staying still
     public Vector3 oldCOM = Vector3.zero;
+
+    float EPSILON = 0.00001f;
     //--------------------
     ////// Lightsensor Spawn code moved to Environment.cs where we spawn individual creature.
     ////// Idea is to spawn a lightsource associated with each creature so its easy to delete and create new one every generation
@@ -90,7 +92,8 @@ public class WalkingFitness : Fitness
         float distanceMoved = Vector3.Distance(oldCOM, currCom);
         if (distanceMoved < 0.5f)
         {
-            return 0f;
+            // return 0f;
+            return reward;
         }
 
         prevSpeed = currSpeed;
@@ -155,7 +158,7 @@ public class WalkingFitness : Fitness
 
             reward += 5f;
         }
-        reward += 1 / (Mathf.Pow((distance_away).magnitude, 2));
+        reward += 1 / (EPSILON + Mathf.Pow((distance_away).magnitude, 2));
 
 
         oldCOM = currCom;
