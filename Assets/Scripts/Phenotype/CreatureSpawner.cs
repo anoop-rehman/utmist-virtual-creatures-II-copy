@@ -12,6 +12,8 @@ public class CreatureSpawner : MonoBehaviour
     [Header("Prefabs")]
     public Creature creaturePrefab;
     public GameObject segmentPrefab;
+    public GameObject spherePrefab;
+    public GameObject hingePrefab;
 
     [Header("Settings")]
     [SerializeField]
@@ -199,10 +201,14 @@ public class CreatureSpawner : MonoBehaviour
         public Rigidbody parentSegmentRigidbody;
         public bool isRoot;
         public int otherReflectInt;
+        public Transform parentSegmentTransform; // ENVIRONMENT TEAM ADD-ON;
+
+        public CreatureJoint joint;
     }
 
     private void SetupSegment(SegmentGrabData sgd, out Segment spawnedSegment,
         out GameObject spawnedSegmentGameObject,
+        GameObject jointGameObject,
         out bool runTerminalOnly)
     {
         // Calculate required values
@@ -222,6 +228,29 @@ public class CreatureSpawner : MonoBehaviour
         spawnedSegment.SetId(id);
         spawnedSegment.SetCreature(sgd.c);
         sgd.c.segments.Add(spawnedSegment);
+        switch (sgd.joint.childJointFace)
+        {
+            case (JointFace.Top):
+
+                break;
+            case (JointFace.Bottom):
+
+                break;
+            case (JointFace.Right):
+
+                break;
+            case (JointFace.Left):
+
+                break;
+            case (JointFace.Front):
+                spawnedSegmentGameObject.transform.LookAt(jointGameObject.transform, jointGameObject.transform.up));
+                break;
+            case (JointFace.Back):
+
+                break;
+            default:
+                break;
+        }
 
         if (sgd.isRoot)
         {
@@ -265,7 +294,44 @@ public class CreatureSpawner : MonoBehaviour
         if (!sgd.isRoot)
         {
             sgd.c.actionMotors.Add(spawnedSegmentGameObject.GetComponent<HingeJoint>());
-            switch (sgd.sg.jointType)
+
+            //ENVIRONMENT TEAM ADD-ON
+            Vector3 jointPosition = Vector3.zero;
+            switch (sgd.joint.parentJointFace)
+            {
+                case (JointFace.Top):
+                    {
+                        jointPosition += sgd.parentSegmentTransform.up;
+                    }
+                    break;
+                case (JointFace.Bottom):
+                    {
+                        jointPosition -= sgd.parentSegmentTransform.up;
+                    }
+                    break;
+                case (JointFace.Left):
+                    {
+                        jointPosition -= sgd.parentSegmentTransform.right;
+                    }
+                    break;
+                case (JointFace.Right):
+                    {
+                        jointPosition += sgd.parentSegmentTransform.right;
+                    }
+                    break;
+                case (JointFace.Front):
+                    {
+                        jointPosition += sgd.parentSegmentTransform.forward;
+                    }
+                    break;
+                case (JointFace.Back):
+                    {
+                        jointPosition -= sgd.parentSegmentTransform.forward;
+                    }
+                    break;
+            }
+            
+            switch (sgd.joint.jointType)
             {
                 case (JointType.Fixed):
                     {
@@ -275,25 +341,70 @@ public class CreatureSpawner : MonoBehaviour
 
                 case (JointType.HingeX):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(1, 0, 0), sgd.parentSegmentRigidbody);
+                        //spawnedSegment.AttachHingeJoint(new Vector3(1, 0, 0), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
+
+                        HingeJoint hingeJoint = spawnedSegmentGameObject.AddComponent<HingeJoint>();
+                        hingeJoint.connectedBody = jointGameObject.GetComponent<Rigidbody>();
+                        hingeJoint.axis = new Vector3(1, 0, 0);
+                        // radius
+                        float anchorPoint;
+                        switch (sgd.joint.childJointFace)
+                        {
+                            case (JointFace.Top):
+                                anchorPoint = 0.5 + jointGameObject.transform.localScale.x / (2.0f * spawnedSegmentGameObject.transform.localScale.y);
+                                hingeJoint.anchor = new Vector3(0, anchorPoint, 0);
+                                break;
+                            case (JointFace.Bottom):
+                                anchorPoint = 0.5 + jointGameObject.transform.localScale.x / (2.0f * spawnedSegmentGameObject.transform.localScale.y);
+                                anchorPoint = -anchorPoint;
+                                hingeJoint.anchor = new Vector3(0, anchorPoint, 0);
+                                break;
+                            case (JointFace.Right):
+                                anchorPoint = 0.5 + jointGameObject.transform.localScale.x / (2.0f * spawnedSegmentGameObject.transform.localScale.x);
+                                hingeJoint.anchor = new Vector3(anchorPoint, 0, 0);
+                                break;
+                            case (JointFace.Left):
+                                anchorPoint = 0.5 + jointGameObject.transform.localScale.x / (2.0f * spawnedSegmentGameObject.transform.localScale.y);
+                                anchorPoint = -anchorPoint;
+                                hingeJoint.anchor = new Vector3(anchorPoint, 0, 0);
+                                break;
+                            case (JointFace.Front):
+                                anchorPoint = 0.5 + jointGameObject.transform.localScale.x / (2.0f * spawnedSegmentGameObject.transform.localScale.z);
+                                hingeJoint.anchor = new Vector3(0, 0, anchorPoint);
+                                break;
+                            case (JointFace.Back):
+                                anchorPoint = 0.5 + jointGameObject.transform.localScale.x / (2.0f * spawnedSegmentGameObject.transform.localScale.z);
+                                anchorPoint = -anchorPoint;
+                                hingeJoint.anchor = new Vector3(0, 0, anchorPoint);
+                                break;
+                            default:
+                                break;                        
+                        }
                     }
                     break;
 
                 case (JointType.HingeY):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(0, 1 * sgd.otherReflectInt, 0), sgd.parentSegmentRigidbody);
+                        HingeJoint hingeJoint = spawnedSegmentGameObject.AddComponent<HingeJoint>();
+                        hingeJoint.connectedBody = jointGameObject.GetComponent<Rigidbody>();
+                        hingeJoint.axis = new Vector3(0, 1, 0);
+
+                        //spawnedSegment.AttachHingeJoint(new Vector3(0, 1 * sgd.otherReflectInt, 0), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
                     }
                     break;
 
                 case (JointType.HingeZ):
                     {
-                        spawnedSegment.AttachHingeJoint(new Vector3(0, 0, 1 * sgd.otherReflectInt), sgd.parentSegmentRigidbody);
+                        HingeJoint hingeJoint = spawnedSegmentGameObject.AddComponent<HingeJoint>();
+                        hingeJoint.connectedBody = jointGameObject.GetComponent<Rigidbody>();
+                        hingeJoint.axis = new Vector3(0, 0, 1);
+                        // spawnedSegment.AttachHingeJoint(new Vector3(0, 0, 1 * sgd.otherReflectInt), sgd.parentSegmentRigidbody, hingePrefab, jointPosition, dimVector, sgd.c.transform);
                     }
                     break;
 
                 case (JointType.Spherical):
                     {
-                        spawnedSegment.AttachSphericalJoint(sgd.parentSegmentRigidbody);
+                        spawnedSegment.AttachSphericalJoint(sgd.parentSegmentRigidbody, spherePrefab, sgd.c.transform);
                     }
                     break;
 
@@ -369,7 +480,11 @@ public class CreatureSpawner : MonoBehaviour
         public float? parentGlobalScale;
         public bool? parentReflect;
         public List<byte> connectionPath;
+
+        // Joint Parameters
+        public CreatureJoint joint;
     }
+
     Segment SpawnSegment(SpawnSegmentData ssd)
     {
         // Debug.Log(counter);
@@ -394,6 +509,8 @@ public class CreatureSpawner : MonoBehaviour
             List<byte> connectionPath = new List<byte>();
 
             parentScale = 1f;
+
+            ssd.joint = null;
         }
         else
         {
@@ -406,10 +523,12 @@ public class CreatureSpawner : MonoBehaviour
             otherReflectBool = ssd.myConnection.reflected ^ ssd.parentReflect.Value;
             otherReflectInt = otherReflectBool ? -1 : 1;
 
+            
+            /*
             spawnPos = parentTransform.position +
                 parentTransform.right * parentTransform.localScale.x * ssd.myConnection.anchorX * reflectInt * parentReflectInt +
                 parentTransform.up * parentTransform.localScale.y * (ssd.myConnection.anchorY + 0.5f) +
-                parentTransform.forward * parentTransform.localScale.z * ssd.myConnection.anchorZ;
+                parentTransform.forward * parentTransform.localScale.z * ssd.myConnection.anchorZ;*/
 
             spawnAngle = Quaternion.identity;
             spawnAngle *= parentTransform.rotation;
@@ -420,6 +539,13 @@ public class CreatureSpawner : MonoBehaviour
             }
 
             parentScale = ssd.parentGlobalScale.Value * ssd.myConnection.scale;
+
+            Vector3 childSegmentVector = new Vector3(currentSegmentGenotype.dimensionX, currentSegmentGenotype.dimensionY, currentSegmentGenotype.dimensionZ) * parentScale;
+    
+            spawnPos = CalculateSegmentPosition(spawnAngle, parentTransform, ssd.joint, currentSegmentGenotype.childJointFace, currentSegmentGenotype.parentJointFace, childSegmentVector);
+
+            
+
         }
 
         // Package the data
@@ -433,12 +559,22 @@ public class CreatureSpawner : MonoBehaviour
         sgd.recursiveLimitValues = ssd.recursiveLimitValues;
         sgd.connectionPath = ssd.connectionPath;
         sgd.parentSegmentRigidbody = ssd.parentSegment?.GetComponent<Rigidbody>();
+        sgd.parentSegmentTransform = ssd.parentSegment?.transform;
         sgd.isRoot = ssd.isRoot;
         sgd.otherReflectInt = otherReflectInt;
+        sgd.joint = ssd.joint;
 
         // Spawn the segment
         if (segmentPool == null) InitializeSegmentObjectPool();
-        SetupSegment(sgd, out Segment spawnedSegment, out GameObject spawnedSegmentGameObject, out bool runTerminalOnly);
+
+		GameObject jointObject = null;
+		
+        if (!ssd.isRoot) 
+            ssd.joint.SpawnJoint(hingePrefab, spherePrefab, ssd.parentSegment, ssd.c.transform, out jointObject); // Instantiate joint before child segment
+
+        SetupSegment(sgd, out Segment spawnedSegment, out GameObject spawnedSegmentGameObject, jointObject, out bool runTerminalOnly);
+
+        
 
         // Check if self-intersecting TODO
 
@@ -469,6 +605,17 @@ public class CreatureSpawner : MonoBehaviour
                 ssd2.parentReflect = otherReflectBool;
                 ssd2.connectionPath = connectionPathClone;
 
+                // Create new joint parameters for recursion
+                SegmentGenotype newSegmentGenotype = ssd2.cg.GetSegment(ssd2.myConnection.destination);
+                ssd2.joint = new CreatureJoint();
+                ssd2.joint.jointType = newSegmentGenotype.jointType;
+                ssd2.joint.parentJointFace = newSegmentGenotype.parentJointFace;
+
+                Vector3 dimVector = new Vector3(sgd.sg.dimensionX, sgd.sg.dimensionY, sgd.sg.dimensionZ) * sgd.parentScale;
+                Vector3 newDimVector = new Vector3(newSegmentGenotype.dimensionX, newSegmentGenotype.dimensionY, newSegmentGenotype.dimensionZ) * ssd2.parentGlobalScale.Value * ssd2.myConnection.scale;
+                ssd2.joint.SetSize(dimVector, newDimVector);
+                ssd2.joint.SetSpawnPos(spawnPos, ssd2.parentSegment.transform);
+
                 // Recurse to child segment
                 Segment childSegment = SpawnSegment(ssd2);
                 childSegment.SetParent(connection.id, spawnedSegment);
@@ -484,4 +631,103 @@ public class CreatureSpawner : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position + spawnPos, 0.1f);
     }
+
+    // Find out which face (to get the vector) 
+    // Rotate vector using calculated spawnAngle -> Pass in spawnAngle
+    // Sum vector with joint position -> Pass in CreatureJoint
+    // Return new position
+    
+    Vector3 CalculateSegmentPosition(Quaternion childAngle, Transform parentSegmentTransform, CreatureJoint joint, JointFace childJointFace, JointFace parentJointFace, Vector3 childDimension)
+	{
+
+        // To find cylinder radius
+        float jointSize = joint.dimVector.x;
+
+        switch (joint.jointType)
+        {
+            case (JointType.HingeY):
+                if (parentJointFace == JointFace.Top)
+                    jointSize = joint.dimVector.y * 2;
+                else if (parentJointFace == JointFace.Bottom)
+                    jointSize = joint.dimVector.y * 2;
+                else if (parentJointFace == JointFace.Left || parentJointFace == JointFace.Back)
+                    jointSize = joint.dimVector.x;
+                else if (parentJointFace == JointFace.Right || parentJointFace == JointFace.Front)
+                    jointSize = joint.dimVector.x;
+                break;
+            case (JointType.HingeX):
+                if (parentJointFace == JointFace.Top || parentJointFace == JointFace.Front)
+                    jointSize = joint.dimVector.x;
+                else if (parentJointFace == JointFace.Bottom || parentJointFace == JointFace.Back)
+                    jointSize = joint.dimVector.x;
+                else if (parentJointFace == JointFace.Left)
+                    jointSize = joint.dimVector.y * 2;
+                else if (parentJointFace == JointFace.Right)
+                    jointSize = joint.dimVector.y * 2;
+                break;
+            case (JointType.HingeZ):
+                if (parentJointFace == JointFace.Top || parentJointFace == JointFace.Right)
+                    jointSize = joint.dimVector.x;
+                else if (parentJointFace == JointFace.Bottom || parentJointFace == JointFace.Left)
+                    jointSize = joint.dimVector.x;
+                else if (parentJointFace == JointFace.Front)
+                    jointSize = joint.dimVector.y * 2;
+                else if (parentJointFace == JointFace.Back)
+                    jointSize = joint.dimVector.y * 2;
+                break;
+        }
+
+        Vector3 directionVec = Vector3.zero;
+        float dimensionOfInterest = 0f;
+        int shiftDown = 1;
+
+        switch(parentJointFace)
+		{
+            case (JointFace.Top):
+                directionVec = parentSegmentTransform.up;
+                shiftDown = 0;
+                break;
+            case (JointFace.Bottom):
+                directionVec = parentSegmentTransform.up * -1;
+                shiftDown = 0;
+                break;
+            case (JointFace.Right):
+                directionVec = parentSegmentTransform.right;
+                dimensionOfInterest = childDimension.x;
+                break;
+            case (JointFace.Left):
+                directionVec = parentSegmentTransform.right * -1;
+                dimensionOfInterest = childDimension.x;
+                break;
+            case (JointFace.Front):
+                directionVec = parentSegmentTransform.forward;
+                dimensionOfInterest = childDimension.z;
+                break;
+            case (JointFace.Back):
+                directionVec = parentSegmentTransform.forward * -1;
+                dimensionOfInterest = childDimension.z;
+                break;
+            default:
+                break;
+		}
+
+
+        Vector3 spawnPosition = joint.spawnPos - shiftDown * parentSegmentTransform.up * childDimension.y/2.0f;
+        spawnPosition += childAngle * directionVec * (jointSize+dimensionOfInterest)/2.0f;
+        Debug.Log(childDimension);
+        if (joint.jointType == JointType.HingeZ && (parentJointFace == JointFace.Back || parentJointFace == JointFace.Front))
+		{
+            spawnPosition = joint.spawnPos - childAngle * parentSegmentTransform.up * (childDimension.y + joint.dimVector.x / 2.0f) ;
+        } else if (joint.jointType == JointType.HingeY && (parentJointFace == JointFace.Top || parentJointFace == JointFace.Bottom))
+		{
+            spawnPosition = joint.spawnPos - childAngle * parentSegmentTransform.right * (childDimension.x/2.0f + joint.dimVector.x / 2.0f) - parentSegmentTransform.up * childDimension.y/2.0f;
+            
+        } else if (joint.jointType == JointType.HingeX && (parentJointFace == JointFace.Left || parentJointFace == JointFace.Right))
+		{
+            spawnPosition = joint.spawnPos - childAngle * parentSegmentTransform.up * (childDimension.y + joint.dimVector.x / 2.0f);
+        }
+        Debug.Log(spawnPosition);
+
+        return spawnPosition;
+	}
 }

@@ -92,7 +92,7 @@ public class Segment : MonoBehaviour
 
     public FixedJoint fixedJoint;
     public new HingeJoint hingeJoint;
-    public ConfigurableJoint sphericalJoint;
+    public CharacterJoint sphericalJoint;
     public Rigidbody myRigidbody;
     public float jointAxisX;
     public float jointAxisY;
@@ -157,18 +157,32 @@ public class Segment : MonoBehaviour
         }
     }
 
+    // TO-DO: Change to account for Joint.cs implementation
     public void AttachFixedJoint(Rigidbody parentRigidbody)
     {
         fixedJoint = gameObject.AddComponent<FixedJoint>();
         fixedJoint.connectedBody = parentRigidbody;
     }
+    
 
-    public void AttachHingeJoint(Vector3 axis, Rigidbody parentRigidbody)
+    // TO-DO: Change to account for Joint.cs implementation and change to CharacterJoint
+    public void AttachHingeJoint(Vector3 axis, Rigidbody parentRigidbody, GameObject cylinderPrefab, Vector3 jointPosition, Vector3 dimVector, Transform parent)
     {
-        if (hingeJoint != null) Destroy(hingeJoint);
+        if (hingeJoint != null) return;
+        /*GameObject jointObject = Instantiate(cylinderPrefab, Vector3.zero, Quaternion.identity);
+        jointObject.transform.parent = parent;
+        jointObject.transform.localPosition = Vector3.zero;
+        FixedJoint jointObjectj = jointObject.AddComponent<FixedJoint>();
+        jointObjectj.connectedBody = parentRigidbody;
+        jointObjectj.autoConfigureConnectedAnchor = false;
+        jointObject.transform.localRotation = Quaternion.Euler(axis.z != 0 ? 90 : 0, 0, axis.x != 0 ? 90 : 0);
+        jointObjectj.anchor = jointPosition;
         hingeJoint = gameObject.AddComponent<HingeJoint>();
-        hingeJoint.connectedBody = parentRigidbody;
+        hingeJoint.connectedBody = jointObject.GetComponent<Rigidbody>();
         hingeJoint.axis = axis;
+        hingeJoint.anchor = axis.z == 0 ?
+            jointObject.transform.forward * (0.5f + dimVector.z / 2) / dimVector.z :
+            jointObject.transform.right * (0.5f + dimVector.x / 2) / dimVector.x;
         hingeJoint.useMotor = true;
         JointMotor motor = hingeJoint.motor;
         motor.targetVelocity = 0;
@@ -181,11 +195,18 @@ public class Segment : MonoBehaviour
         limits.bounceMinVelocity = 0;
         limits.max = 75f;
         hingeJoint.limits = limits;
-        hingeJoint.useLimits = true;
+        hingeJoint.useLimits = true;*/
     }
 
-    public void AttachSphericalJoint(Rigidbody parentRigidbody)
+    // TO-DO: Change to account for Joint.cs implementation
+    public void AttachSphericalJoint(Rigidbody parentRigidbody, GameObject spherePrefab, Transform parent)
     {
+
+        /*GameObject spawnedJointGameObject = Instantiate(spherePrefab, Vector3.zero, Quaternion.identity);
+        spawnedJointGameObject.transform.parent = parent;
+        sphericalJoint = spawnedJointGameObject.AddComponent<CharacterJoint>();
+        sphericalJoint.connectedBody = parentRigidbody;*/
+        /*
         sphericalJoint = gameObject.AddComponent<ConfigurableJoint>();
         sphericalJoint.connectedBody = parentRigidbody;
         sphericalJoint.xMotion = ConfigurableJointMotion.Locked;
@@ -200,6 +221,7 @@ public class Segment : MonoBehaviour
         jdyz.positionDamper = 99999;
         sphericalJoint.angularYZDrive = jdyz;
         sphericalJoint.targetAngularVelocity = new Vector3(0, 0, 0);
+        */
     }
 
     private void FixedUpdate()

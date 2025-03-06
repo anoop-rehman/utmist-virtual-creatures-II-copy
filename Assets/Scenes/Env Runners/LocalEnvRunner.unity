@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657815, g: 0.49641192, b: 0.57481617, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3628,6 +3628,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   creaturePrefab: {fileID: 5168623450832129693, guid: f57b33118f5715c428887d11a1b04801, type: 3}
   segmentPrefab: {fileID: 6837624401485191407, guid: 56ac4567187132f4f921d8ae50078f2e, type: 3}
+  spherePrefab: {fileID: 7905355095525755881, guid: b4d80ebd3a8a17e48831a58877cdd86c, type: 3}
+  hingePrefab: {fileID: 2712183638841377252, guid: ae11351c3b8069444a17b36560d853be, type: 3}
   spawnPos: {x: 0, y: 0, z: 0}
   creatureGenotype:
     name: mag-bellusavium
@@ -3742,6 +3744,8 @@ MonoBehaviour:
       dimensionX: 0.95580167
       dimensionY: 0.7912781
       dimensionZ: 0.69243497
+      childJointFace: 0
+      parentJointFace: 0
       jointType: 0
     - r: 141
       g: 35
@@ -3912,6 +3916,8 @@ MonoBehaviour:
       dimensionX: 0.74226403
       dimensionY: 0.671633
       dimensionZ: 0.4818324
+      childJointFace: 0
+      parentJointFace: 0
       jointType: 3
     - r: 56
       g: 194
@@ -4001,6 +4007,8 @@ MonoBehaviour:
       dimensionX: 0.7091836
       dimensionY: 0.6497069
       dimensionZ: 1.0235119
+      childJointFace: 0
+      parentJointFace: 0
       jointType: 1
     orientationX: 0
     orientationY: 0
